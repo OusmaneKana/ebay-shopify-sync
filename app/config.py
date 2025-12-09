@@ -1,4 +1,4 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings  # 👈 change this import
 
 class Settings(BaseSettings):
     MONGO_URI: str
