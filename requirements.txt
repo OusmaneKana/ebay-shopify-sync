@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pydantic
+motor
+requests
+python-dotenv
+apscheduler
+shopifyapi
+openai
