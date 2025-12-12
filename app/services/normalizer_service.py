@@ -27,6 +27,7 @@ async def normalize_from_raw():
         price = raw.get("Price")
         quantity = raw.get("QuantityAvailable", 0)
         category_id = raw.get("PrimaryCategoryID")
+        category_name = raw.get("PrimaryCategoryName")
 
         # Map category (simple mapping example)
         category_map = {
@@ -44,7 +45,7 @@ async def normalize_from_raw():
             "images": images,
             "price": price,
             "quantity": quantity,
-            "category": mapped_category,
+            "category": category_name,
             "attributes": {},  # optional, fill later
         }
 
