@@ -89,20 +89,29 @@ async def fetch_all_ebay_products():
                 price_text = None
 
             # Fetch detailed description + images
-            details = get_item_details(item_id) if item_id else {"description": "", "images": images}
+            details = get_item_details(item_id) if item_id else {
+                    "description": "",
+                    "images": images,
+                    "item_specifics": {},
+                }
+
+
 
             raw = {
                 "ItemID": item_id,
                 "SKU": sku,
                 "Title": title,
-                "PrimaryCategoryID": category_id,
                 "QuantityTotal": quantity_total,
                 "QuantitySold": quantity_sold,
                 "QuantityAvailable": quantity_available,
                 "Price": price_text,
                 "Description": details["description"],
                 "Images": details["images"],
+                "ItemSpecifics": details["item_specifics"],  
+                "PrimaryCategoryID": details["category_id"],
+                "PrimaryCategoryName": details["category_name"],
             }
+
 
             products.append({
                 "sku": sku,
@@ -155,10 +164,30 @@ def get_item_details(item_id: str):
     root = ET.fromstring(xml_str)
 
     ns = {"e": "urn:ebay:apis:eBLBaseComponents"}
+
+    # 📌 Description
     desc = root.findtext(".//e:Description", default="", namespaces=ns)
+
+    # 📌 Images
     pics = [p.text for p in root.findall(".//e:PictureDetails/e:PictureURL", namespaces=ns)]
+
+    # 📌 Item Specifics
+    item_specifics = {}
+    for nvl in root.findall(".//e:ItemSpecifics/e:NameValueList", namespaces=ns):
+        name = nvl.findtext("e:Name", default=None, namespaces=ns)
+        values = [v.text for v in nvl.findall("e:Value", namespaces=ns) if v is not None and v.text]
+        if name and values:
+            item_specifics[name] = values if len(values) > 1 else values[0]
+
+    # 📌 CATEGORY (THIS IS THE FIX)
+    category_id = root.findtext(".//e:PrimaryCategory/e:CategoryID", default=None, namespaces=ns)
+    category_name = root.findtext(".//e:PrimaryCategory/e:CategoryName", default=None, namespaces=ns)
 
     return {
         "description": desc,
         "images": pics,
+        "item_specifics": item_specifics,
+        "category_id": category_id,
+        "category_name": category_name,
     }
+
