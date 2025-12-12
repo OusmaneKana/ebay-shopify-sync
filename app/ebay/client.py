@@ -3,7 +3,7 @@ from app.config import settings
 
 EBAY_BASE_URL = "https://api.ebay.com"
 EBAY_TRADING_URL = "https://api.ebay.com/ws/api.dll"
-COMPAT_LEVEL = "1149"
+EBAY_COMPAT_LEVEL = "1209"
 
 
 class EbayClient:
@@ -36,13 +36,15 @@ class EbayClient:
     def trading_post(self, call_name: str, request_xml: str):
         headers = {
             "X-EBAY-API-CALL-NAME": call_name,
-            "X-EBAY-API-COMPATIBILITY-LEVEL": COMPAT_LEVEL,
+            "X-EBAY-API-COMPATIBILITY-LEVEL": EBAY_COMPAT_LEVEL,
             "X-EBAY-API-DEV-NAME": settings.EBAY_DEV_ID,
             "X-EBAY-API-APP-NAME": settings.EBAY_APP_ID,
             "X-EBAY-API-CERT-NAME": settings.EBAY_CERT_ID,
             "X-EBAY-API-SITEID": "0",
+            # use OAuth user token here ⬇
+            "X-EBAY-API-IAF-TOKEN": self.token,
             "Content-Type": "text/xml",
         }
-        r = requests.post(EBAY_TRADING_URL, headers=headers, data=request_xml)
-        r.raise_for_status()
-        return r.text
+        resp = requests.post(EBAY_TRADING_URL, headers=headers, data=request_xml)
+        resp.raise_for_status()
+        return resp.text
