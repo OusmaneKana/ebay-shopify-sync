@@ -3,24 +3,34 @@ from app.database.mongo import db
 
 client = ShopifyClient()
 
+
 async def create_shopify_product(doc):
+    # combine category + attribute tags into Shopify tag string
+    tag_list = []
+
+    if doc.get("category"):
+        tag_list.append(doc["category"])
+
+    tag_list.extend(doc.get("tags", []))
+
+    tags_str = ", ".join(sorted(set(tag_list)))
+
     payload = {
         "product": {
             "title": doc["title"],
-            "body_html": doc["description"],
-            "tags": doc["category"],
-            "images": [{"src": img} for img in doc["images"]],
+            "body_html": doc.get("description") or "",
+            "tags": tags_str,
+            "images": [{"src": img} for img in doc.get("images", [])],
             "variants": [{
                 "sku": doc["sku"],
-                "price": doc["price"],
+                "price": doc.get("price") or "0",
                 "inventory_management": "shopify",
-                "inventory_quantity": doc["quantity"]
-            }]
+                "inventory_quantity": doc.get("quantity", 0),
+            }],
         }
     }
 
     res = client.post("products.json", payload)
-
     product = res.get("product")
     if not product:
         print("❌ Shopify creation failed:", res)
@@ -29,12 +39,12 @@ async def create_shopify_product(doc):
     pid = product["id"]
     vid = product["variants"][0]["id"]
 
-    # Save IDs back into Mongo
     await db.product_normalized.update_one(
         {"_id": doc["_id"]},
         {"$set": {
             "shopify_id": pid,
-            "shopify_variant_id": vid
+            "shopify_variant_id": vid,
+            "last_synced_hash": doc.get("hash"),
         }}
     )
 
