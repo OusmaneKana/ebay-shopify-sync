@@ -10,8 +10,8 @@ async def main():
     print("=== STEP 1: NORMALIZE ===")
     await normalize_from_raw()
 
-    print("\n=== STEP 2: SHOPIFY SYNC ===")
-    await sync_to_shopify()
+    # print("\n=== STEP 2: SHOPIFY SYNC ===")
+    # await sync_to_shopify()
 
 if __name__ == "__main__":
     asyncio.run(main())
