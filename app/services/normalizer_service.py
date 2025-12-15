@@ -160,6 +160,95 @@ def build_tags_from_item_specifics(item_specifics: dict) -> list[str]:
     return sorted(tags)
 
 
+# ---------- NEW: eBay taxonomy helpers ----------
+
+BAD_LEAF_NAMES = {
+    "Other",
+    "Others",
+    "Miscellaneous",
+    "Mixed Lots",
+    "Mixed Lot",
+    "Lot",
+}
+
+
+def parse_ebay_category_path(raw: dict):
+    """
+    Extract and normalize the eBay category path.
+
+    We only assume:
+      - it's a ':'-separated path string
+      - first element = root
+      - last element = leaf
+    """
+    # Adjust these keys to match your actual raw structure if needed
+    path = (
+        raw.get("CategoryPath")
+        or raw.get("CategoryName")
+        or raw.get("CategoryFullName")
+        or ""
+    )
+
+    if not isinstance(path, str):
+        return None, None, [], None
+
+    parts = [p.strip() for p in path.split(":") if p.strip()]
+    if not parts:
+        return None, None, [], None
+
+    root = parts[0]
+    if len(parts) == 1:
+        leaf = parts[0]
+        ancestors = []
+    else:
+        leaf = parts[-1]
+        ancestors = parts[:-1]
+
+    return path, leaf, ancestors, root
+
+
+def choose_category_from_path(
+    leaf: str | None,
+    ancestors: list[str],
+    category_id: str | None,
+) -> str:
+    """
+    Decide which string to use as the internal 'category' field:
+
+    - Prefer the leaf, unless it's a junk label like 'Other' or 'Mixed Lots'.
+    - If leaf is junk, fall back to the closest meaningful ancestor.
+    - If nothing good is found, optionally fall back to a basic ID map,
+      then finally 'Miscellaneous'.
+    """
+
+    # 1) Start from leaf
+    category = (leaf or "").strip() or None
+
+    if category in BAD_LEAF_NAMES:
+        category = None
+
+    # 2) If leaf is unusable, fall back to last ancestor
+    if not category and ancestors:
+        candidate = (ancestors[-1] or "").strip()
+        if candidate and candidate not in BAD_LEAF_NAMES:
+            category = candidate
+
+    # 3) If still nothing, optionally fall back to a minimal ID-based map
+    if not category:
+        id_map = {
+            "37908": "Sculptures & Figurines",
+            "28025": "Bookends",
+        }
+        if category_id and category_id in id_map:
+            category = id_map[category_id]
+
+    # 4) Final fallback
+    if not category:
+        category = "Miscellaneous"
+
+    return category
+
+
 async def normalize_from_raw():
     """
     Read product_raw, build Shopify-friendly normalized docs in product_normalized.
@@ -174,24 +263,38 @@ async def normalize_from_raw():
         if not sku:
             continue
 
-        raw = raw_doc.get("raw", {})
+        raw = raw_doc.get("raw", {}) or {}
 
-        title = raw.get("Title", "").strip()
-        description = raw.get("Description", "").strip()
+        title = (raw.get("Title") or "").strip()
+        description = (raw.get("Description") or "").strip()
         images = raw.get("Images", []) or []
         price = raw.get("Price")
         quantity = raw.get("QuantityAvailable", 0)
         category_id = raw.get("PrimaryCategoryID")
         item_specifics = raw.get("ItemSpecifics", {}) or {}
 
-        # simple mapping; extend as needed
-        category_map = {
-            "37908": "Sculptures & Figurines",
-            "28025": "Bookends",
-        }
-        mapped_category = category_map.get(category_id, "Miscellaneous")
+        # --- eBay taxonomy: path → category + tags + metafield-like structure ---
+        category_path, category_leaf, category_ancestors, category_root = parse_ebay_category_path(raw)
 
-        attr_tags = build_tags_from_item_specifics(item_specifics)
+        # Category (for Shopify): primarily from the leaf, with fallbacks
+        mapped_category = choose_category_from_path(
+            category_leaf,
+            category_ancestors,
+            category_id,
+        )
+
+        # Tags from item specifics
+        attr_tags = set(build_tags_from_item_specifics(item_specifics))
+
+        # Add taxonomy tags from ancestors and root
+        if category_root:
+            attr_tags.add(f"Domain:{category_root}")
+
+        for ancestor in category_ancestors:
+            attr_tags.add(f"Ancestor:{ancestor}")
+
+        # Convert back to sorted list for storage
+        all_tags = sorted(attr_tags)
 
         normalized = {
             "_id": sku,
@@ -201,9 +304,20 @@ async def normalize_from_raw():
             "images": images,
             "price": price,
             "quantity": quantity,
+            # leaf-based (or ancestor-based) category, as discussed
             "category": mapped_category,
+            # raw item specifics
             "attributes": item_specifics,
-            "tags": attr_tags,
+            # combined tags: specifics + taxonomy
+            "tags": all_tags,
+            # structured metafield-like breakdown of the eBay taxonomy
+            "ebay_category": {
+                "id": category_id,
+                "path": category_path,
+                "root": category_root,
+                "leaf": category_leaf,
+                "ancestors": category_ancestors,
+            },
         }
 
         normalized["hash"] = hash_dict({
@@ -213,7 +327,7 @@ async def normalize_from_raw():
             "price": price,
             "quantity": quantity,
             "category": mapped_category,
-            "tags": tuple(attr_tags),
+            "tags": tuple(all_tags),
         })
 
         await db.product_normalized.update_one(
