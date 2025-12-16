@@ -1,5 +1,8 @@
 import hashlib
+from datetime import datetime, timezone, timedelta  # ⬅️ NEW
 from app.database.mongo import db
+
+RECENT_DAYS = 30  # ⬅️ How many days count as "recent"
 
 
 def hash_dict(d: dict) -> str:
@@ -169,30 +172,41 @@ BAD_LEAF_NAMES = {
     "Mixed Lots",
     "Mixed Lot",
     "Lot",
+    "Factory Manufactured",   # ⬅️ NEW: too generic leaf
 }
 
 
-def parse_ebay_category_path(raw: dict):
+
+def parse_ebay_category_path(raw: dict, item_specifics: dict):
     """
     Extract and normalize the eBay category path.
 
-    We only assume:
-      - it's a ':'-separated path string
-      - first element = root
-      - last element = leaf
+    We try, in order:
+      - raw-level fields (if you ever add them)
+      - ItemSpecifics.PrimaryCategoryName (your current payload)
+      - nested PrimaryCategory.CategoryName (for other formats)
     """
-    # Adjust these keys to match your actual raw structure if needed
     path = (
         raw.get("CategoryPath")
         or raw.get("CategoryName")
         or raw.get("CategoryFullName")
+        or raw.get("PrimaryCategoryName")
         or ""
     )
+
+    print(path)
 
     if not isinstance(path, str):
         return None, None, [], None
 
-    parts = [p.strip() for p in path.split(":") if p.strip()]
+    # eBay often uses ":" or " > " etc for hierarchy
+    path_normalized = (
+        path.replace(" > ", ":")
+            .replace("/", ":")
+            .replace("|", ":")
+    )
+
+    parts = [p.strip() for p in path_normalized.split(":") if p.strip()]
     if not parts:
         return None, None, [], None
 
@@ -206,7 +220,6 @@ def parse_ebay_category_path(raw: dict):
 
     return path, leaf, ancestors, root
 
-
 def choose_category_from_path(
     leaf: str | None,
     ancestors: list[str],
@@ -215,16 +228,17 @@ def choose_category_from_path(
     """
     Decide which string to use as the internal 'category' field:
 
-    - Prefer the leaf, unless it's a junk label like 'Other' or 'Mixed Lots'.
-    - If leaf is junk, fall back to the closest meaningful ancestor.
-    - If nothing good is found, optionally fall back to a basic ID map,
-      then finally 'Miscellaneous'.
+    - Prefer the leaf (e.g. 'Vintage Folding Knives').
+    - If the leaf is junk BUT we have ancestors, use the last ancestor.
+    - If still nothing, try an ID-based map.
+    - Only then fall back to 'Miscellaneous'.
     """
 
     # 1) Start from leaf
     category = (leaf or "").strip() or None
 
-    if category in BAD_LEAF_NAMES:
+    # Only discard a bad leaf if we actually have an ancestor
+    if category in BAD_LEAF_NAMES and ancestors:
         category = None
 
     # 2) If leaf is unusable, fall back to last ancestor
@@ -238,6 +252,7 @@ def choose_category_from_path(
         id_map = {
             "37908": "Sculptures & Figurines",
             "28025": "Bookends",
+            "48815": "Vintage Folding Knives",  # ⬅️ you can hard-map this ID too
         }
         if category_id and category_id in id_map:
             category = id_map[category_id]
@@ -247,7 +262,6 @@ def choose_category_from_path(
         category = "Miscellaneous"
 
     return category
-
 
 async def normalize_from_raw():
     """
@@ -273,8 +287,13 @@ async def normalize_from_raw():
         category_id = raw.get("PrimaryCategoryID")
         item_specifics = raw.get("ItemSpecifics", {}) or {}
 
+
         # --- eBay taxonomy: path → category + tags + metafield-like structure ---
-        category_path, category_leaf, category_ancestors, category_root = parse_ebay_category_path(raw)
+        category_path, category_leaf, category_ancestors, category_root = parse_ebay_category_path(
+            raw,
+            item_specifics,
+        )
+
 
         # Category (for Shopify): primarily from the leaf, with fallbacks
         mapped_category = choose_category_from_path(
@@ -282,6 +301,20 @@ async def normalize_from_raw():
             category_ancestors,
             category_id,
         )
+
+        # 👉 Get existing normalized doc to preserve first_seen_at
+        existing_norm = await db.product_normalized.find_one(
+            {"_id": sku},
+            {"first_seen_at": 1}
+        )
+
+        now_utc = datetime.now(timezone.utc)
+
+        if existing_norm and existing_norm.get("first_seen_at"):
+            first_seen_at = existing_norm["first_seen_at"]
+        else:
+            # First time we normalize this SKU
+            first_seen_at = now_utc
 
         # Tags from item specifics
         attr_tags = set(build_tags_from_item_specifics(item_specifics))
@@ -291,7 +324,18 @@ async def normalize_from_raw():
             attr_tags.add(f"Domain:{category_root}")
 
         for ancestor in category_ancestors:
-            attr_tags.add(f"Ancestor:{ancestor}")
+            attr_tags.add(f"Category:{ancestor}")
+
+        # Ensure first_seen_at is timezone-aware (UTC)
+        if first_seen_at.tzinfo is None:
+            first_seen_at = first_seen_at.replace(tzinfo=timezone.utc)
+
+        # Ensure now_utc is also UTC-aware (already is, but explicit is fine)
+        if now_utc.tzinfo is None:
+            now_utc = now_utc.replace(tzinfo=timezone.utc)
+
+        if first_seen_at >= (now_utc - timedelta(days=RECENT_DAYS)):
+            attr_tags.add("Recently Added")
 
         # Convert back to sorted list for storage
         all_tags = sorted(attr_tags)
@@ -308,7 +352,7 @@ async def normalize_from_raw():
             "category": mapped_category,
             # raw item specifics
             "attributes": item_specifics,
-            # combined tags: specifics + taxonomy
+            # combined tags: specifics + taxonomy + recency
             "tags": all_tags,
             # structured metafield-like breakdown of the eBay taxonomy
             "ebay_category": {
@@ -318,6 +362,9 @@ async def normalize_from_raw():
                 "leaf": category_leaf,
                 "ancestors": category_ancestors,
             },
+            # when we first saw/imported this product
+            "first_seen_at": first_seen_at,
+            "last_normalized_at": now_utc,
         }
 
         normalized["hash"] = hash_dict({
@@ -328,6 +375,9 @@ async def normalize_from_raw():
             "quantity": quantity,
             "category": mapped_category,
             "tags": tuple(all_tags),
+            "last_normalized_at": now_utc,
+            # you can include date only if you want, but not required:
+            # "first_seen_at": first_seen_at.isoformat(),
         })
 
         await db.product_normalized.update_one(
