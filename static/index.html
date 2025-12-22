@@ -24,6 +24,7 @@
         <button onclick="callAPI('/sync/dev/normalize-raw')">Normalize Raw</button>
         <button onclick="callAPIWithLimit('/sync/dev/sync-shopify', 'dev-limit')">Sync Shopify</button>
         <button onclick="callAPI('/sync/dev/purge-shopify')">Purge All Shopify Products</button>
+        <button onclick="callAPI('/sync/dev/shopify-health')">Check Shopify Connection</button>
     </div>
 
     <div class="section">
@@ -35,6 +36,7 @@
         <button onclick="callAPI('/sync/prod/normalize-raw')">Normalize Raw</button>
         <button onclick="callAPIWithLimit('/sync/prod/sync-shopify', 'prod-limit')">Sync Shopify</button>
         <button onclick="callAPI('/sync/prod/purge-shopify')">Purge All Shopify Products</button>
+        <button onclick="callAPI('/sync/prod/shopify-health')">Check Shopify Connection</button>
     </div>
 
     <div id="output"></div>

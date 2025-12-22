@@ -35,6 +35,18 @@ async def purge_shopify_dev():
     deleted = purge_all_shopify_products(client)
     return {"message": "Shopify products purged (DEV)", "deleted": deleted}
 
+
+@dev_router.post("/shopify-health")
+async def shopify_health_dev():
+    client = ShopifyClient()
+    try:
+        resp = client.get("shop.json")
+        last = getattr(client, "last_response", None)
+        ok = last is not None and last.status_code == 200
+        return {"ok": ok, "status_code": last.status_code if last is not None else None, "shop": resp}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
 # Prod environment routes
 prod_router = APIRouter()
 
@@ -69,6 +81,22 @@ async def purge_shopify_prod():
     deleted = purge_all_shopify_products(client)
     return {"message": "Shopify products purged (PROD)", "deleted": deleted}
 
+
+@prod_router.post("/shopify-health")
+async def shopify_health_prod():
+    client = ShopifyClient(
+        api_key=settings.SHOPIFY_API_KEY_PROD,
+        password=settings.SHOPIFY_PASSWORD_PROD,
+        store_url=settings.SHOPIFY_STORE_URL_PROD
+    )
+    try:
+        resp = client.get("shop.json")
+        last = getattr(client, "last_response", None)
+        ok = last is not None and last.status_code == 200
+        return {"ok": ok, "status_code": last.status_code if last is not None else None, "shop": resp}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
 # Legacy routes (for backward compatibility)
 @router.post("/run")
 async def run_sync():
@@ -94,3 +122,16 @@ async def sync_shopify(limit: int = None):
 async def purge_shopify():
     deleted = purge_all_shopify_products()
     return {"message": "Shopify products purged", "deleted": deleted}
+
+
+@router.post("/shopify-health")
+async def shopify_health():
+    # legacy/neutral route — uses default client settings
+    client = ShopifyClient()
+    try:
+        resp = client.get("shop.json")
+        last = getattr(client, "last_response", None)
+        ok = last is not None and last.status_code == 200
+        return {"ok": ok, "status_code": last.status_code if last is not None else None, "shop": resp}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
