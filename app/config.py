@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     SHOPIFY_PASSWORD: str
     SHOPIFY_STORE_URL: str
 
+    SHOPIFY_API_KEY_PROD: str
+    SHOPIFY_PASSWORD_PROD: str
+    SHOPIFY_STORE_URL_PROD: str
+
     class Config:
         env_file = ".env"
 

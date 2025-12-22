@@ -4,11 +4,15 @@ from app.config import settings
 API_VERSION = "2023-10"  # or newer if you want
 
 class ShopifyClient:
-    def __init__(self):
-        # For private app style auth: https://API_KEY:PASSWORD@STORE/admin/api/...
+    def __init__(self, api_key=None, password=None, store_url=None):
+        # Use provided params or fall back to dev settings
+        self.api_key = api_key or settings.SHOPIFY_API_KEY
+        self.password = password or settings.SHOPIFY_PASSWORD
+        self.store_url = store_url or settings.SHOPIFY_STORE_URL
+
         self.base_url = (
-            f"https://{settings.SHOPIFY_API_KEY}:{settings.SHOPIFY_PASSWORD}"
-            f"@{settings.SHOPIFY_STORE_URL}/admin/api/{API_VERSION}"
+            f"https://{self.api_key}:{self.password}"
+            f"@{self.store_url}/admin/api/{API_VERSION}"
         )
 
     def _url(self, endpoint: str) -> str:

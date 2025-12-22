@@ -1,12 +1,13 @@
 from app.shopify.client import ShopifyClient
 
 
-def purge_all_shopify_products():
+def purge_all_shopify_products(client=None):
     """
     Delete all products from Shopify store.
     Returns the number of products deleted.
     """
-    client = ShopifyClient()
+    if client is None:
+        client = ShopifyClient()
     products = []
     endpoint = "products.json?limit=250"
 

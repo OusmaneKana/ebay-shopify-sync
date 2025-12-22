@@ -4,7 +4,9 @@ from app.database.mongo import db
 client = ShopifyClient()
 
 
-async def create_shopify_product(doc):
+async def create_shopify_product(doc, shopify_client=None):
+    if shopify_client is None:
+        shopify_client = client
     # combine category + attribute tags into Shopify tag string
     tag_list = []
 
@@ -30,7 +32,7 @@ async def create_shopify_product(doc):
         }
     }
 
-    res = client.post("products.json", payload)
+    res = shopify_client.post("products.json", payload)
     product = res.get("product")
     if not product:
         print("❌ Shopify creation failed:", res)
