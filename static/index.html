@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBay → Shopify Sync Admin</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+        #output { margin-top: 20px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>eBay → Shopify Sync Admin Panel</h1>
+    <button onclick="callAPI('/sync/sync-ebay-raw')">Sync eBay Raw</button>
+    <button onclick="callAPI('/sync/normalize-raw')">Normalize Raw</button>
+    <button onclick="callAPI('/sync/sync-shopify')">Sync Shopify</button>
+    <button onclick="callAPI('/sync/purge-shopify')">Purge All Shopify Products</button>
+    <div id="output"></div>
+
+    <script>
+        async function callAPI(endpoint) {
+            const output = document.getElementById('output');
+            output.textContent = 'Processing...';
+            try {
+                const response = await fetch(endpoint, { method: 'POST' });
+                const data = await response.json();
+                output.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

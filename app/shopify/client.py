@@ -20,6 +20,7 @@ class ShopifyClient:
     def get(self, endpoint: str, params: dict | None = None) -> dict:
         url = self._url(endpoint)
         resp = requests.get(url, params=params)
+        self.last_response = resp  # Store the response
         if resp.status_code >= 400:
             print(f"Shopify GET Error {resp.status_code}: {resp.text}")
         return resp.json()
@@ -27,6 +28,7 @@ class ShopifyClient:
     def post(self, endpoint: str, payload: dict) -> dict:
         url = self._url(endpoint)
         resp = requests.post(url, json=payload)
+        self.last_response = resp  # Store the response
         if resp.status_code >= 400:
             print(f"Shopify POST Error {resp.status_code}: {resp.text}")
         return resp.json()
@@ -34,6 +36,15 @@ class ShopifyClient:
     def put(self, endpoint: str, payload: dict) -> dict:
         url = self._url(endpoint)
         resp = requests.put(url, json=payload)
+        self.last_response = resp  # Store the response
         if resp.status_code >= 400:
             print(f"Shopify PUT Error {resp.status_code}: {resp.text}")
+        return resp.json()
+
+    def delete(self, endpoint: str) -> dict:
+        url = self._url(endpoint)
+        resp = requests.delete(url)
+        self.last_response = resp  # Store the response
+        if resp.status_code >= 400:
+            print(f"Shopify DELETE Error {resp.status_code}: {resp.text}")
         return resp.json()
