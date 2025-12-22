@@ -1,5 +1,8 @@
+import logging
 import requests
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 EBAY_BASE_URL = "https://api.ebay.com"
 EBAY_TRADING_URL = "https://api.ebay.com/ws/api.dll"
@@ -29,7 +32,7 @@ class EbayClient:
         response = requests.get(url, headers=headers, params=params)
 
         if response.status_code != 200:
-            print("eBay API Error:", response.text)
+            logger.error(f"eBay API Error (status {response.status_code}): {response.text}")
 
         return response.json()
 

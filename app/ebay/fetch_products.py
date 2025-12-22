@@ -1,6 +1,9 @@
+import logging
 import xml.etree.ElementTree as ET
 from app.ebay.client import EbayClient
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 client = EbayClient()
 
@@ -10,7 +13,7 @@ async def fetch_all_ebay_products():
     with clear logging.
     """
 
-    print("▶ Starting eBay product fetch...\n")
+    logger.info("▶ Starting eBay product fetch...")
 
     call_name = "GetMyeBaySelling"
     page_number = 1

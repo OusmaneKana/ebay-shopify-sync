@@ -1,6 +1,9 @@
 import hashlib
+import logging
 from datetime import datetime, timezone, timedelta
 from app.database.mongo import db
+
+logger = logging.getLogger(__name__)
 
 RECENT_DAYS = 30  # How many days count as "recent"
 
@@ -507,7 +510,7 @@ async def normalize_from_raw():
       - normalized["metafields"]["raw"]["attributes"] leftovers
       - normalized["metafields"]["system"]["domain"] inferred domain
     """
-    print("▶ Normalizing RAW eBay products...")
+    logger.info("▶ Normalizing RAW eBay products...")
 
     cursor = db.product_raw.find({})
     count = 0
@@ -630,5 +633,5 @@ async def normalize_from_raw():
 
         count += 1
 
-    print(f"✔ Normalization complete. {count} products updated.")
+    logger.info(f"✔ Normalization complete. {count} products updated.")
     return {"normalized": count}
