@@ -1,14 +1,261 @@
 import hashlib
-from datetime import datetime, timezone, timedelta  # ⬅️ NEW
+from datetime import datetime, timezone, timedelta
 from app.database.mongo import db
 
-RECENT_DAYS = 30  # ⬅️ How many days count as "recent"
+RECENT_DAYS = 30  # How many days count as "recent"
+
+# ----------------------------
+# Metafield routing (NEW)
+# ----------------------------
+
+UNIVERSAL_META_MAP: dict[str, tuple[str, str, str]] = {
+    # key: (namespace, key, suggested_type)
+    "Country of Origin": ("antique", "country_of_origin", "single_line_text"),
+    "Country/Region of Origin": ("antique", "country_of_origin", "single_line_text"),
+    "Place of Origin": ("antique", "place_of_origin", "single_line_text"),
+    "Region of Origin": ("antique", "region_of_origin", "single_line_text"),
+    "Origin": ("antique", "origin", "single_line_text"),
+    "Culture": ("antique", "culture", "single_line_text"),
+
+    "Antique": ("antique", "is_antique", "boolean"),
+    "Vintage": ("antique", "is_vintage", "boolean"),
+    "Era": ("antique", "era", "single_line_text"),
+    "Decade": ("antique", "decade", "single_line_text"),
+    "Time Period Manufactured": ("antique", "time_period", "single_line_text"),
+    "Time Period Produced": ("antique", "time_period_produced", "single_line_text"),
+    "Year Manufactured": ("antique", "year_manufactured", "number_integer"),
+    "Year of Production": ("antique", "year_of_production", "number_integer"),
+    "Year Printed": ("antique", "year_printed", "number_integer"),
+    "Publication Year": ("antique", "publication_year", "number_integer"),
+
+    "Brand": ("maker", "brand", "single_line_text"),
+    "Maker": ("maker", "maker", "single_line_text"),
+    "Manufacturer": ("maker", "manufacturer", "single_line_text"),
+    "Publisher": ("maker", "publisher", "single_line_text"),
+    "Model": ("maker", "model", "single_line_text"),
+    "Product Line": ("maker", "product_line", "single_line_text"),
+
+    "Material": ("material", "primary", "single_line_text"),
+    "Primary Material": ("material", "primary", "single_line_text"),
+    "Metal": ("material", "metal", "single_line_text"),
+    "Finish": ("material", "finish", "single_line_text"),
+    "Production Technique": ("material", "technique", "single_line_text"),
+    "Production Style": ("material", "production_style", "single_line_text"),
+    "Surface Coating": ("material", "surface_coating", "single_line_text"),
+
+    "Color": ("theme", "color", "single_line_text"),
+    "Pattern": ("theme", "pattern", "single_line_text"),
+    "Theme": ("theme", "primary", "single_line_text"),
+    "Subject": ("theme", "subject", "single_line_text"),
+    "Style": ("theme", "style", "single_line_text"),
+    "Occasion": ("theme", "occasion", "single_line_text"),
+
+    "Handmade": ("collectible", "handmade", "boolean"),
+    "Signed": ("collectible", "signed", "boolean"),
+    "Signed By": ("collectible", "signed_by", "single_line_text"),
+    "Signed by": ("collectible", "signed_by", "single_line_text"),
+    "Autograph Authentication": ("collectible", "authentication", "single_line_text"),
+    "Certification": ("collectible", "certification", "single_line_text"),
+    "Special Attributes": ("collectible", "special_attributes", "list.single_line_text"),
+    "Features": ("collectible", "features", "list.single_line_text"),
+}
+
+DOMAIN_META_MAP: dict[str, dict[str, tuple[str, str, str]]] = {
+    "blade": {
+        "Blade Material": ("blade", "blade_material", "single_line_text"),
+        "Handle Material": ("blade", "handle_material", "single_line_text"),
+        "Blade Type": ("blade", "blade_type", "single_line_text"),
+        "Blade Color": ("blade", "blade_color", "single_line_text"),
+        "Tang": ("blade", "tang", "single_line_text"),
+        "Blade Length": ("blade", "blade_length", "single_line_text"),
+        "Type": ("blade", "type", "single_line_text"),
+    },
+    "book": {
+        "Binding": ("book", "binding", "single_line_text"),
+        "Language": ("book", "language", "single_line_text"),
+        "Author": ("book", "author", "single_line_text"),
+        "Illustrator": ("book", "illustrator", "single_line_text"),
+        "Topic": ("book", "topic", "single_line_text"),
+        "Subject": ("book", "subject", "single_line_text"),
+        "Place of Publication": ("book", "place_of_publication", "single_line_text"),
+        "Book Title": ("book", "book_title", "single_line_text"),
+        "Edition": ("book", "edition", "single_line_text"),
+        "Book Series": ("book", "book_series", "single_line_text"),
+        "Series Title": ("book", "series_title", "single_line_text"),
+    },
+    "clock": {
+        "Movement": ("clock", "movement", "single_line_text"),
+        "Power Source": ("clock", "power_source", "single_line_text"),
+        "Chime Sequence": ("clock", "chime_sequence", "single_line_text"),
+        "Display Type": ("clock", "display_type", "single_line_text"),
+        "Frame Material": ("clock", "frame_material", "single_line_text"),
+        "Number Type": ("clock", "number_type", "single_line_text"),
+    },
+    "art": {
+        "Artist": ("art", "artist", "single_line_text"),
+        "Production Technique": ("art", "production_technique", "single_line_text"),
+        "Type": ("art", "type", "single_line_text"),
+        "Size": ("art", "size", "single_line_text"),
+        "Framing": ("art", "framing", "single_line_text"),
+        "Image Orientation": ("art", "image_orientation", "single_line_text"),
+    },
+    "militaria": {
+        "Conflict": ("militaria", "conflict", "single_line_text"),
+        "Theme": ("militaria", "theme", "single_line_text"),
+        "Region of Origin": ("militaria", "region_of_origin", "single_line_text"),
+    },
+}
+
+IGNORE_VALUES = {"", "Unknown", "N/A", "na", "NA", "None", "No Idea", "Does Not Apply"}
 
 
 def hash_dict(d: dict) -> str:
     """Stable hash of important fields to detect changes."""
     s = str(sorted(d.items()))
     return hashlib.md5(s.encode()).hexdigest()
+
+
+def _is_ignored_value(v: str) -> bool:
+    return v.strip() in IGNORE_VALUES
+
+
+def coerce_value(value, mf_type: str):
+    """
+    Coerce raw eBay values into stable values for metafields/tags.
+    We keep this conservative: only convert when we're confident.
+    """
+    if value is None:
+        return None
+
+    # Normalize lists
+    if isinstance(value, list):
+        cleaned = []
+        for x in value:
+            if x is None:
+                continue
+            sx = str(x).strip()
+            if not sx or _is_ignored_value(sx):
+                continue
+            cleaned.append(sx)
+        return cleaned or None
+
+    # Scalars -> string normalization
+    s = str(value).strip()
+    if not s or _is_ignored_value(s):
+        return None
+
+    if mf_type == "boolean":
+        sl = s.lower()
+        if sl in {"yes", "true", "y", "1"}:
+            return True
+        if sl in {"no", "false", "n", "0"}:
+            return False
+        # If it's not clearly boolean, don't force it
+        return None
+
+    if mf_type == "number_integer":
+        # Only accept pure-ish integers
+        try:
+            # Handles "1906", " 1906 "
+            if any(ch.isalpha() for ch in s):
+                return None
+            # Allow digits with minor punctuation (commas)
+            si = s.replace(",", "").strip()
+            if si.isdigit() or (si.startswith("-") and si[1:].isdigit()):
+                return int(si)
+        except Exception:
+            return None
+        return None
+
+    if mf_type == "number_decimal":
+        try:
+            if any(ch.isalpha() for ch in s):
+                return None
+            sd = s.replace(",", "").strip()
+            return float(sd)
+        except Exception:
+            return None
+
+    # single_line_text and everything else
+    return s
+
+
+def infer_domain(category: str, item_specifics: dict) -> str | None:
+    """
+    Lightweight domain inference so we can route attributes into namespaces.
+    Uses category + presence of telltale keys.
+    """
+    cat = (category or "").lower()
+    keys = " ".join([str(k).lower() for k in (item_specifics or {}).keys()])
+
+    text = f"{cat} {keys}"
+
+    # blade / knives
+    if any(t in text for t in ["blade material", "tang", "blade type", "bowie", "knife", "knives", "solingen", "damascus"]):
+        return "blade"
+
+    # books
+    if any(t in text for t in ["binding", "publisher", "illustrator", "year printed", "book series", "book title", "hardcover", "paperback"]):
+        return "book"
+
+    # clocks
+    if any(t in text for t in ["movement", "chime", "chime sequence", "wind up", "display type", "mantel clock", "desk clock", "alarm clock"]):
+        return "clock"
+
+    # art
+    if any(t in text for t in ["painting", "print", "engraving", "artist", "watercolor", "acrylic", "framing", "image orientation"]):
+        return "art"
+
+    # militaria
+    if any(t in text for t in ["militaria", "conflict", "ww i", "ww ii", "civil war"]):
+        return "militaria"
+
+    return None
+
+
+def build_structured_metafields(category: str, item_specifics: dict) -> tuple[dict, dict]:
+    """
+    Returns:
+      - structured_metafields: {namespace: {key: value}}
+      - raw_leftovers: attributes not mapped into structured fields
+    """
+    if not isinstance(item_specifics, dict):
+        return {}, {}
+
+    domain = infer_domain(category, item_specifics)
+
+    structured: dict[str, dict] = {}
+    leftovers: dict[str, object] = {}
+
+    for raw_key, raw_value in item_specifics.items():
+        k = str(raw_key).strip()
+        target = None
+
+        # universal first
+        if k in UNIVERSAL_META_MAP:
+            target = UNIVERSAL_META_MAP[k]
+        # then domain map
+        elif domain and k in DOMAIN_META_MAP.get(domain, {}):
+            target = DOMAIN_META_MAP[domain][k]
+
+        if not target:
+            leftovers[k] = raw_value
+            continue
+
+        namespace, mf_key, mf_type = target
+        coerced = coerce_value(raw_value, mf_type)
+        if coerced is None:
+            continue
+
+        structured.setdefault(namespace, {})[mf_key] = coerced
+
+    # Always store the remaining attributes in a JSON-like bucket
+    structured.setdefault("raw", {})["attributes"] = leftovers
+    # Also store detected domain for debugging/templating
+    if domain:
+        structured.setdefault("system", {})["domain"] = domain
+
+    return structured, leftovers
 
 
 def build_tags_from_item_specifics(item_specifics: dict) -> list[str]:
@@ -112,11 +359,7 @@ def build_tags_from_item_specifics(item_specifics: dict) -> list[str]:
     tags: set[str] = set()
 
     def add_tag(prefix: str, value):
-        if isinstance(value, list):
-            values = value
-        else:
-            values = [value]
-
+        values = value if isinstance(value, list) else [value]
         for v in values:
             v = str(v).strip()
             if not v or v in ignore_values:
@@ -124,7 +367,7 @@ def build_tags_from_item_specifics(item_specifics: dict) -> list[str]:
             tags.add(f"{prefix}:{v}")
 
     for key, value in item_specifics.items():
-        k = key.strip()
+        k = str(key).strip()
 
         if k in brand_keys:
             add_tag("Brand", value)
@@ -163,7 +406,7 @@ def build_tags_from_item_specifics(item_specifics: dict) -> list[str]:
     return sorted(tags)
 
 
-# ---------- NEW: eBay taxonomy helpers ----------
+# ---------- eBay taxonomy helpers (unchanged) ----------
 
 BAD_LEAF_NAMES = {
     "Other",
@@ -172,9 +415,8 @@ BAD_LEAF_NAMES = {
     "Mixed Lots",
     "Mixed Lot",
     "Lot",
-    "Factory Manufactured",   # ⬅️ NEW: too generic leaf
+    "Factory Manufactured",   # too generic leaf
 }
-
 
 
 def parse_ebay_category_path(raw: dict, item_specifics: dict):
@@ -193,8 +435,6 @@ def parse_ebay_category_path(raw: dict, item_specifics: dict):
         or raw.get("PrimaryCategoryName")
         or ""
     )
-
-    print(path)
 
     if not isinstance(path, str):
         return None, None, [], None
@@ -220,6 +460,7 @@ def parse_ebay_category_path(raw: dict, item_specifics: dict):
 
     return path, leaf, ancestors, root
 
+
 def choose_category_from_path(
     leaf: str | None,
     ancestors: list[str],
@@ -233,39 +474,38 @@ def choose_category_from_path(
     - If still nothing, try an ID-based map.
     - Only then fall back to 'Miscellaneous'.
     """
-
-    # 1) Start from leaf
     category = (leaf or "").strip() or None
 
-    # Only discard a bad leaf if we actually have an ancestor
     if category in BAD_LEAF_NAMES and ancestors:
         category = None
 
-    # 2) If leaf is unusable, fall back to last ancestor
     if not category and ancestors:
         candidate = (ancestors[-1] or "").strip()
         if candidate and candidate not in BAD_LEAF_NAMES:
             category = candidate
 
-    # 3) If still nothing, optionally fall back to a minimal ID-based map
     if not category:
         id_map = {
             "37908": "Sculptures & Figurines",
             "28025": "Bookends",
-            "48815": "Vintage Folding Knives",  # ⬅️ you can hard-map this ID too
+            "48815": "Vintage Folding Knives",
         }
         if category_id and category_id in id_map:
             category = id_map[category_id]
 
-    # 4) Final fallback
     if not category:
         category = "Miscellaneous"
 
     return category
 
+
 async def normalize_from_raw():
     """
     Read product_raw, build Shopify-friendly normalized docs in product_normalized.
+    Adds:
+      - normalized["metafields"] namespaced structure
+      - normalized["metafields"]["raw"]["attributes"] leftovers
+      - normalized["metafields"]["system"]["domain"] inferred domain
     """
     print("▶ Normalizing RAW eBay products...")
 
@@ -287,22 +527,22 @@ async def normalize_from_raw():
         category_id = raw.get("PrimaryCategoryID")
         item_specifics = raw.get("ItemSpecifics", {}) or {}
 
-
         # --- eBay taxonomy: path → category + tags + metafield-like structure ---
         category_path, category_leaf, category_ancestors, category_root = parse_ebay_category_path(
             raw,
             item_specifics,
         )
 
-
-        # Category (for Shopify): primarily from the leaf, with fallbacks
         mapped_category = choose_category_from_path(
             category_leaf,
             category_ancestors,
             category_id,
         )
 
-        # 👉 Get existing normalized doc to preserve first_seen_at
+        # NEW: build structured metafields from ItemSpecifics
+        structured_metafields, _leftovers = build_structured_metafields(mapped_category, item_specifics)
+
+        # Preserve first_seen_at
         existing_norm = await db.product_normalized.find_one(
             {"_id": sku},
             {"first_seen_at": 1}
@@ -313,10 +553,9 @@ async def normalize_from_raw():
         if existing_norm and existing_norm.get("first_seen_at"):
             first_seen_at = existing_norm["first_seen_at"]
         else:
-            # First time we normalize this SKU
             first_seen_at = now_utc
 
-        # Tags from item specifics
+        # Tags from item specifics (unchanged)
         attr_tags = set(build_tags_from_item_specifics(item_specifics))
 
         # Add taxonomy tags from ancestors and root
@@ -326,18 +565,16 @@ async def normalize_from_raw():
         for ancestor in category_ancestors:
             attr_tags.add(f"Category:{ancestor}")
 
-        # Ensure first_seen_at is timezone-aware (UTC)
+        # Ensure tz-aware
         if first_seen_at.tzinfo is None:
             first_seen_at = first_seen_at.replace(tzinfo=timezone.utc)
 
-        # Ensure now_utc is also UTC-aware (already is, but explicit is fine)
         if now_utc.tzinfo is None:
             now_utc = now_utc.replace(tzinfo=timezone.utc)
 
         if first_seen_at >= (now_utc - timedelta(days=RECENT_DAYS)):
             attr_tags.add("Recently Added")
 
-        # Convert back to sorted list for storage
         all_tags = sorted(attr_tags)
 
         normalized = {
@@ -348,13 +585,20 @@ async def normalize_from_raw():
             "images": images,
             "price": price,
             "quantity": quantity,
-            # leaf-based (or ancestor-based) category, as discussed
+
+            # leaf-based (or ancestor-based) category
             "category": mapped_category,
-            # raw item specifics
+
+            # raw item specifics (keep as-is, useful for audits/debug)
             "attributes": item_specifics,
+
+            # NEW: namespaced, Shopify-ready metafield structure
+            "metafields": structured_metafields,
+
             # combined tags: specifics + taxonomy + recency
             "tags": all_tags,
-            # structured metafield-like breakdown of the eBay taxonomy
+
+            # structured breakdown of the eBay taxonomy
             "ebay_category": {
                 "id": category_id,
                 "path": category_path,
@@ -362,7 +606,7 @@ async def normalize_from_raw():
                 "leaf": category_leaf,
                 "ancestors": category_ancestors,
             },
-            # when we first saw/imported this product
+
             "first_seen_at": first_seen_at,
             "last_normalized_at": now_utc,
         }
@@ -376,8 +620,6 @@ async def normalize_from_raw():
             "category": mapped_category,
             "tags": tuple(all_tags),
             "last_normalized_at": now_utc,
-            # you can include date only if you want, but not required:
-            # "first_seen_at": first_seen_at.isoformat(),
         })
 
         await db.product_normalized.update_one(
