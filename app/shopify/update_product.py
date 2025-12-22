@@ -3,7 +3,9 @@ from app.shopify.client import ShopifyClient
 client = ShopifyClient()
 
 
-async def update_shopify_product(old_doc, new_doc):
+async def update_shopify_product(old_doc, new_doc, shopify_client=None):
+    if shopify_client is None:
+        shopify_client = client
     pid = old_doc.get("shopify_id")
     vid = old_doc.get("shopify_variant_id")
     if not pid or not vid:
@@ -18,7 +20,7 @@ async def update_shopify_product(old_doc, new_doc):
     tags_str = ", ".join(sorted(set(tag_list)))
 
     # update main product properties
-    client.put(f"products/{pid}.json", {
+    shopify_client.put(f"products/{pid}.json", {
         "product": {
             "id": pid,
             "title": new_doc["title"],
@@ -28,7 +30,7 @@ async def update_shopify_product(old_doc, new_doc):
     })
 
     # update variant price (inventory can be separate if you want)
-    client.put(f"variants/{vid}.json", {
+    shopify_client.put(f"variants/{vid}.json", {
         "variant": {
             "id": vid,
             "price": new_doc.get("price") or "0",
