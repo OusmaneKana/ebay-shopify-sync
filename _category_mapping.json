@@ -1,0 +1,332 @@
+{
+  "Home Décor & Art": {
+    "Ceramic and Porcelain Sculptures / Figurines": [
+      "Category:Figurine",
+      "Category:Figurines",
+      "Category:Figurines & Statues",
+      "Category:Sculpture",
+      "Category:Porcelain"
+    ],
+    "Bronze & Other Metal Sculptures / Figurines": [
+      "Category:Figurine",
+      "Category:Figurines & Statues",
+      "Category:Sculpture",
+      "Category:Metalware"
+    ],
+    "Other Sculptures / Statues / Figurines": [
+      "Category:Sculpture",
+      "Category:Statue",
+      "Category:Figurines & Statues",
+      "Category:Figurine"
+    ],
+    "Paintings, Prints & Lithographs": [
+      "Category:Painting",
+      "Category:Print",
+      "Category:Art"
+    ],
+    "Bookends": [
+      "Category:Bookends"
+    ],
+    "Vanity, Perfume & Shaving": [
+      "Category:Vanity, Perfume & Shaving",
+      "Category:Compact",
+      "Category:Compacts"
+    ],
+    "Candle holders / Candelabras": [
+      "Category:Candle Holder",
+      "Category:Candlesticks & Candelabras"
+    ],
+    "Vases / Jars/ Urns": [
+      "Category:Vase",
+      "Category:Bottle"
+    ],
+    "Lamps & Lighting": [
+      "Category:Lamps, Lighting",
+      "Category:Table Lamp"
+    ]
+  },
+  "Pottery & Glass & Kitchen": {
+    "Crystal & Cut Glass": [
+      "Category:Crystal",
+      "Category:Decorative Glass",
+      "Category:Glassware & Drinkware"
+    ],
+    "China Sets / Dinnerware": [
+      "Category:China",
+      "Category:Dinnerware & Serveware",
+      "Category:Decorative Cookware, Dinnerware & Serveware"
+    ],
+    "Cookware / Kitchen Tools & Gadgets": [
+      "Category:Kitchen Tools & Gadgets",
+      "Category:Kitchen, Dining & Bar"
+    ],
+    "Barware / Drinkware": [
+      "Category:Barware",
+      "Category:Drinkware & Barware",
+      "Category:Glassware & Drinkware"
+    ]
+  },
+  "Militaria": {
+    "Civil War & Spanish american War.": [
+      "Category:Civil War (1861-65)",
+      "Category:Militaria"
+    ],
+    "WWI (1914-1918)": [
+      "Category:WW I (1914-18)",
+      "Category:Militaria"
+    ],
+    "WWII (1939-1945)": [
+      "Category:WW II (1939-45)",
+      "Category:Militaria"
+    ],
+    "WW1 & WW2": [
+      "Category:WW I (1914-18)",
+      "Category:WW II (1939-45)",
+      "Category:Militaria"
+    ],
+    "Korean War & Vietnam War": [
+      "Category:Vietnam (1961-75)",
+      "Category:Militaria",
+      "Category:Military & War"
+    ],
+    "Military Collectibles (Badges, Medals, Uniforms, etc)": [
+      "Category:Badge",
+      "Category:Medal",
+      "Category:Militaria",
+      "Category:Military"
+    ],
+    "Knifes & Bayonets": [
+      "Category:Knives, Swords & Blades",
+      "Category:Knife",
+      "Category:Militaria"
+    ],
+    "Medals & Belt Buckles": [
+      "Category:Medal",
+      "Category:Holsters, Belts & Pouches",
+      "Category:Militaria"
+    ],
+    "Flags, Signs & Banners": [
+      "Category:Sign",
+      "Category:Signs & Tins",
+      "Category:Militaria"
+    ],
+    "Hats & Helmets": [
+      "Category:Personal, Field Gear",
+      "Category:Militaria",
+      "Category:Military"
+    ]
+  },
+  "Clocks": {
+    "Nautical / Ship Clocks": [
+      "Category:Ship's Clock",
+      "Category:Ship Bell",
+      "Category:Maritime"
+    ],
+    "Wall Clocks": [
+      "Category:Wall Clock",
+      "Category:Clocks"
+    ],
+    "Mantel / Desk Clocks": [
+      "Category:Mantel Clock",
+      "Category:Desk Clock",
+      "Category:Clocks"
+    ],
+    "Antique Desk & Mantel Clocks": [
+      "Category:Desk Clock",
+      "Category:Mantel Clock",
+      "Category:Clocks"
+    ]
+  },
+  "Jewelry & Watches": {
+    "Watches": [
+      "Category:Watches",
+      "Category:Wristwatch",
+      "Category:Pocket Watch"
+    ],
+    "Jewelry": [
+      "Category:Fine Jewelry",
+      "Category:Vintage & Antique Jewelry",
+      "Category:Jewelry & Watches"
+    ],
+    "Accessories": [
+      "Category:Men's Accessories",
+      "Category:Women's Accessories",
+      "Category:Vintage Accessories"
+    ]
+  },
+  "Tobacciana": {
+    "Vintage Advertising": [
+      "Category:Advertising",
+      "Category:Advertising-Print"
+    ],
+    "Collectible Pipes & Cigarette Holders": [
+      "Category:Pipes",
+      "Category:Tobacciana",
+      "Category:Lighters"
+    ],
+    "Antique Tobacco and Cigarette Boxes": [
+      "Category:Box",
+      "Category:Tobacciana",
+      "Category:Collectibles"
+    ]
+  },
+  "Books & Magazines / Writing Instruments": {
+    "Rare / Vintage Books": [
+      "Category:Books & Magazines",
+      "Category:Book",
+      "Category:Antiques"
+    ],
+    "Collectible Books / Comic Books": [
+      "Category:Books & Magazines",
+      "Category:Book",
+      "Category:Comic Book",
+      "Category:Comics"
+    ],
+    "Pens / Writing Instruments": [
+      "Category:Pens & Writing Instruments",
+      "Category:Fountain Pen",
+      "Category:Ballpoint Pen"
+    ],
+    "Booklets / Pamphlets": [
+      "Category:Publications",
+      "Category:Books & Magazines"
+    ]
+  },
+  "Cameras & Photography": {
+    "Vintage Cameras": [
+      "Category:Vintage Cameras",
+      "Category:Cameras & Photo",
+      "Category:Film Photography"
+    ],
+    "Camera Lenses & Accessories": [
+      "Category:Lenses & Filters",
+      "Category:Parts & Accessories",
+      "Category:Cameras & Photo"
+    ],
+    "Photography / Film": [
+      "Category:Film Photography",
+      "Category:Photographic Images",
+      "Category:Photograph"
+    ]
+  },
+  "Clothing, Shoes & Accessories": {
+    "Vintage Clothing": [
+      "Category:Clothing, Shoes & Accessories",
+      "Category:Vintage Accessories"
+    ],
+    "Shoes": [
+      "Category:Clothing, Shoes & Accessories"
+    ],
+    "Accessories (Bags, Scarves, etc)": [
+      "Category:Women's Accessories",
+      "Category:Men's Accessories",
+      "Category:Scarf",
+      "Category:Hat"
+    ]
+  },
+  "Sports Memorabilia": {
+    "Autographed Memorabilia": [
+      "Category:Autographs",
+      "Category:Autographs-Original",
+      "Category:Sports Memorabilia"
+    ],
+    "Sports Accessories": [
+      "Category:Sporting Goods",
+      "Category:Sports"
+    ],
+    "Hunting & Fishing": [
+      "Category:Hunting",
+      "Category:Fishing",
+      "Category:Outdoor Sports"
+    ]
+  },
+  "Cultures & Ethnicities": {
+    "African Art": [
+      "Category:African",
+      "Category:Ethnographic",
+      "Category:Cultures & Ethnicities"
+    ],
+    "Asian Art": [
+      "Category:Asian",
+      "Category:Asian Antiques",
+      "Category:Cultures & Ethnicities"
+    ],
+    "Middle Eastern Art": [
+      "Category:Islam",
+      "Category:Ethnographic",
+      "Category:Cultures & Ethnicities"
+    ],
+    "North & South America Art": [
+      "Category:Art",
+      "Category:Ethnographic",
+      "Category:Cultures & Ethnicities",
+      "Category:United States",
+      "Category:Canada"
+    ]
+  },
+  "Religion & Spirituality": {
+    "Religious Sculptures": [
+      "Category:Religion & Spirituality",
+      "Category:Sculpture"
+    ],
+    "Religious Paintings / Icons": [
+      "Category:Religion & Spirituality",
+      "Category:Christianity",
+      "Category:Painting",
+      "Category:Print"
+    ],
+    "Religious Books": [
+      "Category:Religion & Spirituality",
+      "Category:Books & Magazines",
+      "Category:Book"
+    ]
+  },
+  "Other Antiques & Collectibles": {
+    "Political Memorabilia": [
+      "Category:Political",
+      "Category:Political Parties Memorabilia",
+      "Category:Historical Memorabilia"
+    ],
+    "Rocks, Fossils & Minerals": [
+      "Category:Rocks, Fossils & Minerals",
+      "Category:Fossils",
+      "Category:Crystals & Mineral Specimens"
+    ],
+    "Science  & Medicine": [
+      "Category:Science & Medicine (1930-Now)",
+      "Category:Science & Medicine (Pre-1930)",
+      "Category:Scientific Instruments"
+    ],
+    "Railroadiana & Trains": [
+      "Category:Railroadiana & Trains",
+      "Category:Transportation"
+    ],
+    "Coins & Currency": [
+      "Category:Coins & Paper Money",
+      "Category:Coins",
+      "Category:Paper Money"
+    ],
+    "Transportation & Motor Memorabilia": [
+      "Category:Transportation",
+      "Category:Automobiles",
+      "Category:Gas & Oil",
+      "Category:Historical Memorabilia"
+    ],
+    "Paperweights": [
+      "Category:Paperweight",
+      "Category:Decorative Glass",
+      "Category:Glassware & Drinkware"
+    ],
+    "Photos & Frames": [
+      "Category:Photograph",
+      "Category:Photographic Images",
+      "Category:Photo Frame",
+      "Category:Photo Picture Frame"
+    ],
+    "Other Collectibles": [
+      "Category:Collectibles",
+      "Category:Decorative Collectibles",
+      "Category:Everything Else"
+    ]
+  }
+}

@@ -32,7 +32,7 @@ async def sync_shopify_dev(limit: int = None):
 @dev_router.post("/purge-shopify")
 async def purge_shopify_dev():
     client = ShopifyClient()
-    deleted = purge_all_shopify_products(client)
+    deleted = await purge_all_shopify_products(client)
     return {"message": "Shopify products purged (DEV)", "deleted": deleted}
 
 
@@ -40,10 +40,10 @@ async def purge_shopify_dev():
 async def shopify_health_dev():
     client = ShopifyClient()
     try:
-        resp = client.get("shop.json")
+        resp = await client.get("shop.json")
         last = getattr(client, "last_response", None)
-        ok = last is not None and last.status_code == 200
-        return {"ok": ok, "status_code": last.status_code if last is not None else None, "shop": resp}
+        ok = last is not None and last.status == 200
+        return {"ok": ok, "status_code": last.status if last is not None else None, "shop": resp}
     except Exception as e:
         return {"ok": False, "error": str(e)}
 
@@ -78,7 +78,7 @@ async def purge_shopify_prod():
         password=settings.SHOPIFY_PASSWORD_PROD,
         store_url=settings.SHOPIFY_STORE_URL_PROD
     )
-    deleted = purge_all_shopify_products(client)
+    deleted = await purge_all_shopify_products(client)
     return {"message": "Shopify products purged (PROD)", "deleted": deleted}
 
 
@@ -90,10 +90,10 @@ async def shopify_health_prod():
         store_url=settings.SHOPIFY_STORE_URL_PROD
     )
     try:
-        resp = client.get("shop.json")
+        resp = await client.get("shop.json")
         last = getattr(client, "last_response", None)
-        ok = last is not None and last.status_code == 200
-        return {"ok": ok, "status_code": last.status_code if last is not None else None, "shop": resp}
+        ok = last is not None and last.status == 200
+        return {"ok": ok, "status_code": last.status if last is not None else None, "shop": resp}
     except Exception as e:
         return {"ok": False, "error": str(e)}
 

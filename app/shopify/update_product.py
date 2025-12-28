@@ -20,7 +20,7 @@ async def update_shopify_product(old_doc, new_doc, shopify_client=None):
     tags_str = ", ".join(sorted(set(tag_list)))
 
     # update main product properties
-    shopify_client.put(f"products/{pid}.json", {
+    await shopify_client.put(f"products/{pid}.json", {
         "product": {
             "id": pid,
             "title": new_doc["title"],
@@ -30,7 +30,7 @@ async def update_shopify_product(old_doc, new_doc, shopify_client=None):
     })
 
     # update variant price (inventory can be separate if you want)
-    shopify_client.put(f"variants/{vid}.json", {
+    await shopify_client.put(f"variants/{vid}.json", {
         "variant": {
             "id": vid,
             "price": new_doc.get("price") or "0",

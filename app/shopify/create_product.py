@@ -256,7 +256,7 @@ async def create_shopify_product(doc, shopify_client=None):
         }
     }
 
-    res = shopify_client.post("products.json", payload)
+    res = await shopify_client.post("products.json", payload)
     product = (res or {}).get("product")
     if not product:
         print("❌ Shopify creation failed:", res)
