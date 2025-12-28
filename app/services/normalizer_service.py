@@ -2,6 +2,11 @@ import hashlib
 import logging
 from datetime import datetime, timezone, timedelta
 from app.database.mongo import db
+import re,json
+from functools import lru_cache
+from openai import OpenAI
+from app.config import settings
+
 
 logger = logging.getLogger(__name__)
 
@@ -110,6 +115,157 @@ DOMAIN_META_MAP: dict[str, dict[str, tuple[str, str, str]]] = {
 }
 
 IGNORE_VALUES = {"", "Unknown", "N/A", "na", "NA", "None", "No Idea", "Does Not Apply"}
+COLLECTION_KEYS_PATH = getattr(settings, "COLLECTION_KEYS_PATH", "app/resources/collection_keys.json")
+OPENAI_MODEL = getattr(settings, "OPENAI_MODEL_COLLECTION_KEY", "gpt-4.1-mini")
+OPENAI_API_KEY = settings.OPENAI_API_KEY
+@lru_cache(maxsize=1)
+def load_collection_keys() -> dict:
+    with open(COLLECTION_KEYS_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@lru_cache(maxsize=1)
+def allowed_collection_keys() -> list[str]:
+    data = load_collection_keys()
+    keys: list[str] = []
+    for _group, collections in data.items():
+        for _collection_name, sc_key in collections.items():
+            if sc_key and isinstance(sc_key, str):
+                keys.append(sc_key.strip())
+    # de-dupe but keep stable order
+    seen = set()
+    out = []
+    for k in keys:
+        if k not in seen:
+            out.append(k)
+            seen.add(k)
+    return out
+
+def pick_existing_sc_tag(tags: list[str]) -> str | None:
+    for t in tags or []:
+        if isinstance(t, str) and t.startswith("SC:"):
+            return t
+    return None
+
+def infer_collection_key_from_mapping(category: str, item_specifics: dict) -> str | None:
+    """
+    Try to match the product category to a collection key in the mapping file.
+    """
+    data = load_collection_keys()
+    
+    # Direct lookup: if category matches a collection name in mapping, return its SC key
+    for _group, collections in data.items():
+        for collection_name, sc_key in collections.items():
+            if collection_name.lower() == category.lower():
+                return sc_key
+    
+    # Partial match: if category contains key words from collection names
+    category_lower = category.lower()
+    for _group, collections in data.items():
+        for collection_name, sc_key in collections.items():
+            collection_lower = collection_name.lower()
+            # Check if collection name is a substring or close match
+            if collection_lower in category_lower or category_lower in collection_lower:
+                return sc_key
+    
+    return None
+
+def build_collection_key_fingerprint(title: str, category: str, tags: list[str], attributes: dict, metafields: dict) -> str:
+    # Keep fingerprint tight so minor changes don’t trigger new LLM calls
+    core = {
+        "title": (title or "")[:180],
+        "category": category or "",
+        "tags": sorted([t for t in (tags or []) if isinstance(t, str) and (t.startswith("Category:") or t.startswith("Material:") or t.startswith("Domain:"))])[:80],
+        "attributes_keys": sorted(list((attributes or {}).keys()))[:80],
+        "metafields": metafields.get("system", {}),
+    }
+    return hash_dict(core)
+
+def infer_collection_key_llm(
+    title: str,
+    category: str,
+    tags: list[str],
+    attributes: dict,
+    metafields: dict,
+) -> str | None:
+    if not OPENAI_API_KEY:
+        # If you didn't wire OPENAI_API_KEY yet, just skip silently
+        return None
+
+    allowed = allowed_collection_keys()
+    if not allowed:
+        return None
+
+    client = OpenAI(api_key=OPENAI_API_KEY)
+
+    # Keep prompt grounded in YOUR normalized signals
+    sys_msg = (
+        "You are a product classifier for an antiques Shopify store.\n"
+        "Your job: choose exactly ONE collection key tag for this product.\n"
+        "Rules:\n"
+        "- Only choose from allowed_keys.\n"
+        "- Return null if nothing fits.\n"
+        "- Choose the most specific match.\n"
+        "- Do NOT invent new tags.\n"
+    )
+
+    user_payload = {
+        "title": title,
+        "category": category,
+        "tags": tags[:120],
+        "metafields_summary": {
+            # small but useful
+            "system": metafields.get("system", {}),
+            "material": metafields.get("material", {}),
+            "antique": metafields.get("antique", {}),
+            "maker": metafields.get("maker", {}),
+            "theme": metafields.get("theme", {}),
+        },
+        "attributes_sample": dict(list((attributes or {}).items())[:40]),
+        "allowed_keys": allowed,
+    }
+
+    # Structured output via JSON schema (strict)
+    # If your OpenAI SDK version doesn’t support this exact shape, tell me and I’ll adapt to your installed version.
+    resp = client.responses.create(
+    model=OPENAI_MODEL,
+    input=[
+        {"role": "system", "content": sys_msg},
+        {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
+    ],
+    text={
+        "format": {
+            "type": "json_schema",
+            "name": "collection_key_choice",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "collection_key": {"type": ["string", "null"]},
+                    "reason": {"type": "string"}
+                },
+                "required": ["collection_key", "reason"],
+                "additionalProperties": False
+            }
+        }
+    },
+)
+
+    # The Responses API gives you a single output_text; parse it
+    raw = resp.output_text.strip()
+    try:
+        data = json.loads(raw)
+    except Exception:
+        return None
+
+    ck = data.get("collection_key")
+    if ck is None:
+        return None
+
+    ck = str(ck).strip()
+    if ck not in allowed:
+        return None
+
+    return ck
+
 
 
 def hash_dict(d: dict) -> str:
@@ -512,126 +668,183 @@ async def normalize_from_raw():
     """
     logger.info("▶ Normalizing RAW eBay products...")
 
-    cursor = db.product_raw.find({})
+    batch_size = 100
+    last_id = None
     count = 0
 
-    async for raw_doc in cursor:
-        sku = raw_doc.get("SKU") or raw_doc.get("_id")
-        if not sku:
-            continue
+    while True:
+        query = {}
+        if last_id is not None:
+            query["_id"] = {"$gt": last_id}
 
-        raw = raw_doc.get("raw", {}) or {}
+        cursor = db.product_raw.find(query).limit(batch_size).sort("_id", 1)
 
-        title = (raw.get("Title") or "").strip()
-        description = (raw.get("Description") or "").strip()
-        images = raw.get("Images", []) or []
-        price = raw.get("Price")
-        quantity = raw.get("QuantityAvailable", 0)
-        category_id = raw.get("PrimaryCategoryID")
-        item_specifics = raw.get("ItemSpecifics", {}) or {}
+        batch_docs = []
+        async for raw_doc in cursor:
+            batch_docs.append(raw_doc)
+            last_id = raw_doc["_id"]
 
-        # --- eBay taxonomy: path → category + tags + metafield-like structure ---
-        category_path, category_leaf, category_ancestors, category_root = parse_ebay_category_path(
-            raw,
-            item_specifics,
-        )
+        if not batch_docs:
+            break
 
-        mapped_category = choose_category_from_path(
-            category_leaf,
-            category_ancestors,
-            category_id,
-        )
+        for raw_doc in batch_docs:
+            sku = raw_doc.get("SKU") or raw_doc.get("_id")
+            if not sku:
+                continue
 
-        # NEW: build structured metafields from ItemSpecifics
-        structured_metafields, _leftovers = build_structured_metafields(mapped_category, item_specifics)
+            raw = raw_doc.get("raw", {}) or {}
 
-        # Preserve first_seen_at
-        existing_norm = await db.product_normalized.find_one(
-            {"_id": sku},
-            {"first_seen_at": 1}
-        )
+            title = (raw.get("Title") or "").strip()
+            description = (raw.get("Description") or "").strip()
+            images = raw.get("Images", []) or []
+            price = raw.get("Price")
+            quantity = raw.get("QuantityAvailable", 0)
+            category_id = raw.get("PrimaryCategoryID")
+            item_specifics = raw.get("ItemSpecifics", {}) or {}
 
-        now_utc = datetime.now(timezone.utc)
+            # --- eBay taxonomy: path → category + tags + metafield-like structure ---
+            category_path, category_leaf, category_ancestors, category_root = parse_ebay_category_path(
+                raw,
+                item_specifics,
+            )
 
-        if existing_norm and existing_norm.get("first_seen_at"):
-            first_seen_at = existing_norm["first_seen_at"]
-        else:
-            first_seen_at = now_utc
+            mapped_category = choose_category_from_path(
+                category_leaf,
+                category_ancestors,
+                category_id,
+            )
 
-        # Tags from item specifics (unchanged)
-        attr_tags = set(build_tags_from_item_specifics(item_specifics))
+            # NEW: build structured metafields from ItemSpecifics
+            structured_metafields, _leftovers = build_structured_metafields(mapped_category, item_specifics)
 
-        # Add taxonomy tags from ancestors and root
-        if category_root:
-            attr_tags.add(f"Domain:{category_root}")
+            # Preserve first_seen_at
+            existing_norm = await db.product_normalized.find_one(
+                {"_id": sku},
+                {"first_seen_at": 1}
+            )
 
-        for ancestor in category_ancestors:
-            attr_tags.add(f"Category:{ancestor}")
+            now_utc = datetime.now(timezone.utc)
 
-        # Ensure tz-aware
-        if first_seen_at.tzinfo is None:
-            first_seen_at = first_seen_at.replace(tzinfo=timezone.utc)
+            if existing_norm and existing_norm.get("first_seen_at"):
+                first_seen_at = existing_norm["first_seen_at"]
+            else:
+                first_seen_at = now_utc
 
-        if now_utc.tzinfo is None:
-            now_utc = now_utc.replace(tzinfo=timezone.utc)
+            # Tags from item specifics (unchanged)
+            attr_tags = set(build_tags_from_item_specifics(item_specifics))
 
-        if first_seen_at >= (now_utc - timedelta(days=RECENT_DAYS)):
-            attr_tags.add("Recently Added")
+            # Add taxonomy tags from ancestors and root
+            if category_root:
+                attr_tags.add(f"Domain:{category_root}")
 
-        all_tags = sorted(attr_tags)
+            for ancestor in category_ancestors:
+                attr_tags.add(f"Category:{ancestor}")
 
-        normalized = {
-            "_id": sku,
-            "sku": sku,
-            "title": title,
-            "description": description,
-            "images": images,
-            "price": price,
-            "quantity": quantity,
+            # Ensure tz-aware
+            if first_seen_at.tzinfo is None:
+                first_seen_at = first_seen_at.replace(tzinfo=timezone.utc)
 
-            # leaf-based (or ancestor-based) category
-            "category": mapped_category,
+            if now_utc.tzinfo is None:
+                now_utc = now_utc.replace(tzinfo=timezone.utc)
 
-            # raw item specifics (keep as-is, useful for audits/debug)
-            "attributes": item_specifics,
+            if first_seen_at >= (now_utc - timedelta(days=RECENT_DAYS)):
+                attr_tags.add("Recently Added")
 
-            # NEW: namespaced, Shopify-ready metafield structure
-            "metafields": structured_metafields,
+            all_tags = sorted(attr_tags)
+                    # --- COLLECTION KEY (SC:...) ---
+            existing_sc = pick_existing_sc_tag(all_tags)
 
-            # combined tags: specifics + taxonomy + recency
-            "tags": all_tags,
+            # only re-run the model if we don't already have one OR inputs changed
+            ck_fingerprint = build_collection_key_fingerprint(title, mapped_category, all_tags, item_specifics, structured_metafields)
+            prev_ck_fp = existing_norm.get("collection_key_fingerprint") if existing_norm else None
+            prev_ck = existing_norm.get("collection_key") if existing_norm else None
 
-            # structured breakdown of the eBay taxonomy
-            "ebay_category": {
-                "id": category_id,
-                "path": category_path,
-                "root": category_root,
-                "leaf": category_leaf,
-                "ancestors": category_ancestors,
-            },
+            collection_key = None
 
-            "first_seen_at": first_seen_at,
-            "last_normalized_at": now_utc,
-        }
+            if existing_sc:
+                # Already has SC: tag in tags
+                collection_key = existing_sc
+            elif prev_ck and prev_ck_fp == ck_fingerprint:
+                # Reuse previous collection key if inputs haven't changed
+                collection_key = prev_ck
+            else:
+                # Try mapping-based approach first
+                collection_key = infer_collection_key_from_mapping(mapped_category, item_specifics)
+                
+                # Fall back to LLM if mapping didn't find a match
+                if not collection_key:
+                    try:
+                        collection_key = infer_collection_key_llm(
+                            title=title,
+                            category=mapped_category,
+                            tags=all_tags,
+                            attributes=item_specifics,
+                            metafields=structured_metafields,
+                        )
+                    except Exception as e:
+                        logger.warning(f"LLM collection-key inference failed for SKU={sku}: {e}")
+                        collection_key = None
 
-        normalized["hash"] = hash_dict({
-            "title": title,
-            "description": description,
-            "images": tuple(images),
-            "price": price,
-            "quantity": quantity,
-            "category": mapped_category,
-            "tags": tuple(all_tags),
-            "last_normalized_at": now_utc,
-        })
+            if collection_key:
+                attr_tags.add(collection_key)
+                all_tags = sorted(attr_tags)
 
-        await db.product_normalized.update_one(
-            {"_id": sku},
-            {"$set": normalized},
-            upsert=True
-        )
 
-        count += 1
+            normalized = {
+                "_id": sku,
+                "sku": sku,
+                "title": title,
+                "description": description,
+                "images": images,
+                "price": price,
+                "quantity": quantity,
+
+                # leaf-based (or ancestor-based) category
+                "category": mapped_category,
+
+                # raw item specifics (keep as-is, useful for audits/debug)
+                "attributes": item_specifics,
+
+                # NEW: namespaced, Shopify-ready metafield structure
+                "metafields": structured_metafields,
+
+                # combined tags: specifics + taxonomy + recency
+                "tags": all_tags,
+
+                # structured breakdown of the eBay taxonomy
+                "ebay_category": {
+                    "id": category_id,
+                    "path": category_path,
+                    "root": category_root,
+                    "leaf": category_leaf,
+                    "ancestors": category_ancestors,
+                },
+
+                "first_seen_at": first_seen_at,
+                "last_normalized_at": now_utc,
+                "collection_key": collection_key,
+                "collection_key_fingerprint": ck_fingerprint,
+
+            }
+
+            normalized["hash"] = hash_dict({
+                "title": title,
+                "description": description,
+                "images": tuple(images),
+                "price": price,
+                "quantity": quantity,
+                "category": mapped_category,
+                "tags": tuple(all_tags),
+                "last_normalized_at": now_utc,
+            })
+
+            await db.product_normalized.update_one(
+                {"_id": sku},
+                {"$set": normalized},
+                upsert=True
+            )
+
+            count += 1
 
     logger.info(f"✔ Normalization complete. {count} products updated.")
     return {"normalized": count}

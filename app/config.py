@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     SHOPIFY_PASSWORD_PROD: str
     SHOPIFY_STORE_URL_PROD: str
 
+    OPENAI_API_KEY: str | None = None
+
     class Config:
         env_file = ".env"
 

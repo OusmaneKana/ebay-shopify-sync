@@ -1,0 +1,103 @@
+{
+  "Home Décor & Art": {
+    "Ceramic and Porcelain Sculptures / Figurines": "SC:ceramic-porcelain-figurines",
+    "Bronze & Other Metal Sculptures / Figurines": "SC:metal-sculptures-figurines",
+    "Other Sculptures / Statues / Figurines": "SC:other-sculptures-statues-figurines",
+
+    "Paintings, Prints & Lithographs": "SC:paintings-prints-lithographs",
+    "Bookends": "SC:bookends",
+    "Vanity, Perfume & Shaving": "SC:vanity-perfume-shaving",
+    "Candle holders / Candelabras": "SC:candle-holders-candelabras",
+    "Vases / Jars/ Urns": "SC:vases-jars-urns",
+    "Lamps & Lighting": "SC:lamps-lighting"
+  },
+
+  "Pottery & Glass & Kitchen": {
+    "Crystal & Cut Glass": "SC:crystal-cut-glass",
+    "China Sets / Dinnerware": "SC:china-dinnerware",
+    "Cookware / Kitchen Tools & Gadgets": "SC:cookware-kitchen-tools",
+    "Barware / Drinkware": "SC:barware-drinkware"
+  },
+
+  "Militaria": {
+    "Civil War & Spanish american War.": "SC:civil-war-spanish-american-war",
+    "WWI (1914-1918)": "SC:ww1",
+    "WWII (1939-1945)": "SC:ww2",
+    "WW1 & WW2": "SC:ww1-ww2",
+    "Korean War & Vietnam War": "SC:korean-vietnam-war",
+    "Military Collectibles (Badges, Medals, Uniforms, etc)": "SC:military-collectibles",
+    "Knifes & Bayonets": "SC:knives-bayonets",
+    "Medals & Belt Buckles": "SC:medals-belt-buckles",
+    "Flags, Signs & Banners": "SC:flags-signs-banners",
+    "Hats & Helmets": "SC:hats-helmets"
+  },
+
+  "Clocks": {
+    "Nautical / Ship Clocks": "SC:nautical-ship-clocks",
+    "Wall Clocks": "SC:wall-clocks",
+    "Mantel / Desk Clocks": "SC:mantel-desk-clocks",
+    "Antique Desk & Mantel Clocks": "SC:antique-desk-mantel-clocks"
+  },
+
+  "Jewelry & Watches": {
+    "Watches": "SC:watches",
+    "Jewelry": "SC:jewelry",
+    "Accessories": "SC:accessories"
+  },
+
+  "Tobacciana": {
+    "Vintage Advertising": "SC:vintage-advertising",
+    "Collectible Pipes & Cigarette Holders": "SC:pipes-cigarette-holders",
+    "Antique Tobacco and Cigarette Boxes": "SC:tobacco-cigarette-boxes"
+  },
+
+  "Books & Magazines / Writing Instruments": {
+    "Rare / Vintage Books": "SC:rare-vintage-books",
+    "Collectible Books / Comic Books": "SC:collectible-books-comics",
+    "Pens / Writing Instruments": "SC:pens-writing-instruments",
+    "Booklets / Pamphlets": "SC:booklets-pamphlets"
+  },
+
+  "Cameras & Photography": {
+    "Vintage Cameras": "SC:vintage-cameras",
+    "Camera Lenses & Accessories": "SC:camera-lenses-accessories",
+    "Photography / Film": "SC:photography-film"
+  },
+
+  "Clothing, Shoes & Accessories": {
+    "Vintage Clothing": "SC:vintage-clothing",
+    "Shoes": "SC:shoes",
+    "Accessories (Bags, Scarves, etc)": "SC:clothing-accessories"
+  },
+
+  "Sports Memorabilia": {
+    "Autographed Memorabilia": "SC:autographed-memorabilia",
+    "Sports Accessories": "SC:sports-accessories",
+    "Hunting & Fishing": "SC:hunting-fishing"
+  },
+
+  "Cultures & Ethnicities": {
+    "African Art": "SC:african-art",
+    "Asian Art": "SC:asian-art",
+    "Middle Eastern Art": "SC:middle-eastern-art",
+    "North & South America Art": "SC:north-south-america-art"
+  },
+
+  "Religion & Spirituality": {
+    "Religious Sculptures": "SC:religious-sculptures",
+    "Religious Paintings / Icons": "SC:religious-paintings-icons",
+    "Religious Books": "SC:religious-books"
+  },
+
+  "Other Antiques & Collectibles": {
+    "Political Memorabilia": "SC:political-memorabilia",
+    "Rocks, Fossils & Minerals": "SC:rocks-fossils-minerals",
+    "Science  & Medicine": "SC:science-medicine",
+    "Railroadiana & Trains": "SC:railroadiana-trains",
+    "Coins & Currency": "SC:coins-currency",
+    "Transportation & Motor Memorabilia": "SC:transportation-motor-memorabilia",
+    "Paperweights": "SC:paperweights",
+    "Photos & Frames": "SC:photos-frames",
+    "Other Collectibles": "SC:other-collectibles"
+  }
+}

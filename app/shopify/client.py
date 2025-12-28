@@ -1,4 +1,4 @@
-import requests
+import aiohttp
 from app.config import settings
 
 API_VERSION = "2023-10"  # or newer if you want
@@ -21,34 +21,42 @@ class ShopifyClient:
             endpoint = endpoint[1:]
         return f"{self.base_url}/{endpoint}"
 
-    def get(self, endpoint: str, params: dict | None = None) -> dict:
+    async def get(self, endpoint: str, params: dict | None = None) -> dict:
         url = self._url(endpoint)
-        resp = requests.get(url, params=params)
-        self.last_response = resp  # Store the response
-        if resp.status_code >= 400:
-            print(f"Shopify GET Error {resp.status_code}: {resp.text}")
-        return resp.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, params=params) as resp:
+                self.last_response = resp  # Store the response
+                if resp.status >= 400:
+                    text = await resp.text()
+                    print(f"Shopify GET Error {resp.status}: {text}")
+                return await resp.json()
 
-    def post(self, endpoint: str, payload: dict) -> dict:
+    async def post(self, endpoint: str, payload: dict) -> dict:
         url = self._url(endpoint)
-        resp = requests.post(url, json=payload)
-        self.last_response = resp  # Store the response
-        if resp.status_code >= 400:
-            print(f"Shopify POST Error {resp.status_code}: {resp.text}")
-        return resp.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, json=payload) as resp:
+                self.last_response = resp  # Store the response
+                if resp.status >= 400:
+                    text = await resp.text()
+                    print(f"Shopify POST Error {resp.status}: {text}")
+                return await resp.json()
 
-    def put(self, endpoint: str, payload: dict) -> dict:
+    async def put(self, endpoint: str, payload: dict) -> dict:
         url = self._url(endpoint)
-        resp = requests.put(url, json=payload)
-        self.last_response = resp  # Store the response
-        if resp.status_code >= 400:
-            print(f"Shopify PUT Error {resp.status_code}: {resp.text}")
-        return resp.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.put(url, json=payload) as resp:
+                self.last_response = resp  # Store the response
+                if resp.status >= 400:
+                    text = await resp.text()
+                    print(f"Shopify PUT Error {resp.status}: {text}")
+                return await resp.json()
 
-    def delete(self, endpoint: str) -> dict:
+    async def delete(self, endpoint: str) -> dict:
         url = self._url(endpoint)
-        resp = requests.delete(url)
-        self.last_response = resp  # Store the response
-        if resp.status_code >= 400:
-            print(f"Shopify DELETE Error {resp.status_code}: {resp.text}")
-        return resp.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.delete(url) as resp:
+                self.last_response = resp  # Store the response
+                if resp.status >= 400:
+                    text = await resp.text()
+                    print(f"Shopify DELETE Error {resp.status}: {text}")
+                return await resp.json()

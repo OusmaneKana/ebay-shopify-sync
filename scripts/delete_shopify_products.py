@@ -1,9 +1,10 @@
+import asyncio
 from app.shopify.client import ShopifyClient
 
 client = ShopifyClient()
 
 
-def get_all_products(limit=250):
+async def get_all_products(limit=250):
     """
     Fetch all products using cursor-based pagination.
     """
@@ -11,13 +12,13 @@ def get_all_products(limit=250):
     endpoint = f"products.json?limit={limit}"
 
     while endpoint:
-        res = client.get(endpoint)
+        res = await client.get(endpoint)
 
         batch = res.get("products", [])
         products.extend(batch)
 
         # Shopify pagination via Link header
-        link_header = client.last_response_headers.get("Link")
+        link_header = getattr(client.last_response, 'headers', {}).get("Link")
         next_link = None
 
         if link_header:
@@ -31,15 +32,15 @@ def get_all_products(limit=250):
     return products
 
 
-def delete_all_products():
-    products = get_all_products()
+async def delete_all_products():
+    products = await get_all_products()
 
     print(f"⚠️ Found {len(products)} products to delete")
 
     for p in products:
         pid = p["id"]
         try:
-            client.delete(f"products/{pid}.json")
+            await client.delete(f"products/{pid}.json")
             print(f"🗑️ Deleted product {pid}")
         except Exception as e:
             print(f"❌ Failed to delete {pid}: {e}")
@@ -48,4 +49,5 @@ def delete_all_products():
 
 
 if __name__ == "__main__":
+    asyncio.run(delete_all_products())
     delete_all_products()

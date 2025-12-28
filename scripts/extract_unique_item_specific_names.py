@@ -5,16 +5,32 @@ sys.path.append(ROOT)
 from app.database.mongo import db
 
 async def extract_item_specific_keys():
-    cursor = db.product_raw.find({})
+    batch_size = 100
+    last_id = None
     unique_keys = set()
 
-    async for doc in cursor:
-        raw = doc.get("raw", {})
-        item_specifics = raw.get("ItemSpecifics", {})
+    while True:
+        query = {}
+        if last_id is not None:
+            query["_id"] = {"$gt": last_id}
 
-        if isinstance(item_specifics, dict):
-            for key in item_specifics.keys():
-                unique_keys.add(key)
+        cursor = db.product_raw.find(query).limit(batch_size).sort("_id", 1)
+
+        batch_docs = []
+        async for doc in cursor:
+            batch_docs.append(doc)
+            last_id = doc["_id"]
+
+        if not batch_docs:
+            break
+
+        for doc in batch_docs:
+            raw = doc.get("raw", {})
+            item_specifics = raw.get("ItemSpecifics", {})
+
+            if isinstance(item_specifics, dict):
+                for key in item_specifics.keys():
+                    unique_keys.add(key)
 
     data = sorted(unique_keys)
     print(json.dumps(data, indent=2))
