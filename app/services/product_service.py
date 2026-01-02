@@ -1,9 +1,6 @@
 from app.database.mongo import db
 from app.ebay.fetch_products import fetch_all_ebay_products
 
-from app.database.mongo import db
-from app.ebay.fetch_products import fetch_all_ebay_products
-
 async def sync_ebay_raw_to_mongo():
     items = await fetch_all_ebay_products()
     if not items:
