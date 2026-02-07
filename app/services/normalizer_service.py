@@ -6,11 +6,12 @@ import re,json
 from functools import lru_cache
 from openai import OpenAI
 from app.config import settings
+import asyncio
 
 
 logger = logging.getLogger(__name__)
 
-RECENT_DAYS = 30  # How many days count as "recent"
+RECENT_DAYS = 7  # How many days count as "recent"
 
 # ----------------------------
 # Metafield routing (NEW)
@@ -115,9 +116,10 @@ DOMAIN_META_MAP: dict[str, dict[str, tuple[str, str, str]]] = {
 }
 
 IGNORE_VALUES = {"", "Unknown", "N/A", "na", "NA", "None", "No Idea", "Does Not Apply"}
-COLLECTION_KEYS_PATH = getattr(settings, "COLLECTION_KEYS_PATH", "app/resources/collection_keys.json")
+COLLECTION_KEYS_PATH = getattr(settings, "COLLECTION_KEYS_PATH", "app/resources/category_mapping.json")
 OPENAI_MODEL = getattr(settings, "OPENAI_MODEL_COLLECTION_KEY", "gpt-4.1-mini")
 OPENAI_API_KEY = settings.OPENAI_API_KEY
+OPENAI_CLIENT = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 @lru_cache(maxsize=1)
 def load_collection_keys() -> dict:
     with open(COLLECTION_KEYS_PATH, "r", encoding="utf-8") as f:
@@ -195,7 +197,9 @@ def infer_collection_key_llm(
     if not allowed:
         return None
 
-    client = OpenAI(api_key=OPENAI_API_KEY)
+    client = OPENAI_CLIENT
+    if client is None:
+        return None
 
     # Keep prompt grounded in YOUR normalized signals
     sys_msg = (
@@ -417,6 +421,94 @@ def build_structured_metafields(category: str, item_specifics: dict) -> tuple[di
     return structured, leftovers
 
 
+# --- Canonical tag key sets (hoisted for performance) ---
+
+TAG_BRAND_KEYS = {
+    "Brand", "Maker", "Manufacturer", "Make", "Artist", "Author",
+    "Sculptor", "Publisher", "Giuseppe Armani", "Lladro",
+}
+
+TAG_MODEL_KEYS = {
+    "Model", "Series", "Series Title", "Series/Movie", "Product Line",
+    "Game Title", "Movie/TV Title", "TV Show", "TV/Streaming Show", "Book Series",
+}
+
+TAG_MATERIAL_KEYS = {
+    "Material", "Primary Material", "Case Material", "Band Material",
+    "Handle Material", "Handle/Strap Material", "Metal", "Metal Purity",
+    "Glass Type", "Glassware Type", "Porcelain Type", "Production Style",
+    "Production Technique", "Surface Coating",
+}
+
+TAG_COLOR_KEYS = {
+    "Color", "Colour", "Main Color", "Exterior Color", "Band Color",
+    "Case Color", "Dial Color", "Lens Color", "Frame Color",
+    "Lining Color", "Light Color", "Cord Color", "Blade Color",
+}
+
+TAG_ERA_KEYS = {
+    "Decade", "Era", "Time Period", "Time Period Manufactured",
+    "Time Period Produced", "Historical Period", "Year Manufactured",
+    "Year of Manufacture", "Year", "Year Issued", "Year Printed",
+    "Publication Year", "Release Year", "Date of Origin", "Date of Creation",
+    "Post-WWII", "Victorian", "Mid-20th century", "early 1900",
+}
+
+TAG_ORIGIN_KEYS = {
+    "Country of Origin", "Country/Region of Origin", "Place of Origin",
+    "Region", "Region of Origin", "Country", "Country/Region",
+    "Country of Manufacture", "Place of Publication", "Culture",
+    "Ethnic & Regional Style", "Tribal Affiliation", "Tribe", "Origin",
+}
+
+TAG_STYLE_KEYS = {
+    "Style", "Look", "Occasion", "Season", "Holiday", "Room",
+    "Jewelry Department", "Department",
+}
+
+TAG_MOVEMENT_KEYS = {"Movement", "Escapement Type"}
+
+TAG_CATEGORY_KEYS = {
+    "Object Type", "Product Type", "Product", "Collection",
+    "Game Type", "Sport", "Sport/Activity", "Type",
+    "Type of Advertising", "Type of Glass", "Type of Tool",
+}
+
+TAG_STONE_KEYS = {
+    "Main Stone", "Main Stone Color", "Main Stone Shape",
+    "Secondary Stone", "Total Carat Weight", "Diamond Clarity Grade",
+    "Diamond Color Grade", "Cut Grade",
+}
+
+TAG_FEATURE_KEYS = {
+    "Features", "Special Features", "Special Attributes", "Limited Edition",
+    "Retired", "Handmade", "Autographed", "Signed", "Signed By", "Signed by",
+    "Certificate of Authenticity (COA)", "Certification",
+}
+
+TAG_SIZE_KEYS = {
+    "Size", "Length", "Height", "Width (Inches)", "Diameter",
+    "Ring Size", "Necklace Length", "Case Size", "Lug Width",
+    "Band Width", "Max Wrist Size", "Item Length", "Item Height",
+    "Item Width", "Item Diameter", "Scale",
+}
+
+TAG_THEME_KEYS = {
+    "Theme", "Subject", "Subject/Theme", "Topic", "Holiday",
+    "Series", "Franchise", "Character", "Character Family",
+    "Character/Story/Theme", "Superhero Team",
+}
+
+TAG_SPORT_KEYS = {
+    "Sport", "Sport/Activity", "League", "Team", "Team-Baseball",
+    "Event/Tournament", "Player", "Player/Athlete",
+}
+
+TAG_ROOM_KEYS = {"Room"}
+
+TAG_IGNORE_VALUES = {"", "No", "Not Water Resistant", "Unknown", "N/A", "na", "NA", "None"}
+
+
 def build_tags_from_item_specifics(item_specifics: dict) -> list[str]:
     """
     Convert ItemSpecifics into normalized Shopify tags using canonical dimensions.
@@ -425,138 +517,48 @@ def build_tags_from_item_specifics(item_specifics: dict) -> list[str]:
     """
     if not isinstance(item_specifics, dict):
         return []
-
-    # --- canonical groups of keys ---
-    brand_keys = {
-        "Brand", "Maker", "Manufacturer", "Make", "Artist", "Author",
-        "Sculptor", "Publisher", "Giuseppe Armani", "Lladro"
-    }
-
-    model_keys = {
-        "Model", "Series", "Series Title", "Series/Movie", "Product Line",
-        "Game Title", "Movie/TV Title", "TV Show", "TV/Streaming Show", "Book Series"
-    }
-
-    material_keys = {
-        "Material", "Primary Material", "Case Material", "Band Material",
-        "Handle Material", "Handle/Strap Material", "Metal", "Metal Purity",
-        "Glass Type", "Glassware Type", "Porcelain Type", "Production Style",
-        "Production Technique", "Surface Coating"
-    }
-
-    color_keys = {
-        "Color", "Colour", "Main Color", "Exterior Color", "Band Color",
-        "Case Color", "Dial Color", "Lens Color", "Frame Color",
-        "Lining Color", "Light Color", "Cord Color", "Blade Color"
-    }
-
-    era_keys = {
-        "Decade", "Era", "Time Period", "Time Period Manufactured",
-        "Time Period Produced", "Historical Period", "Year Manufactured",
-        "Year of Manufacture", "Year", "Year Issued", "Year Printed",
-        "Publication Year", "Release Year", "Date of Origin", "Date of Creation",
-        "Post-WWII", "Victorian", "Mid-20th century", "early 1900"
-    }
-
-    origin_keys = {
-        "Country of Origin", "Country/Region of Origin", "Place of Origin",
-        "Region", "Region of Origin", "Country", "Country/Region",
-        "Country of Manufacture", "Place of Publication", "Culture",
-        "Ethnic & Regional Style", "Tribal Affiliation", "Tribe", "Origin"
-    }
-
-    style_keys = {
-        "Style", "Look", "Occasion", "Season", "Holiday", "Room",
-        "Jewelry Department", "Department"
-    }
-
-    movement_keys = {
-        "Movement", "Escapement Type"
-    }
-
-    category_keys = {
-        "Object Type", "Product Type", "Product", "Collection",
-        "Game Type", "Sport", "Sport/Activity", "Type",
-        "Type of Advertising", "Type of Glass", "Type of Tool"
-    }
-
-    stone_keys = {
-        "Main Stone", "Main Stone Color", "Main Stone Shape",
-        "Secondary Stone", "Total Carat Weight", "Diamond Clarity Grade",
-        "Diamond Color Grade", "Cut Grade"
-    }
-
-    feature_keys = {
-        "Features", "Special Features", "Special Attributes", "Limited Edition",
-        "Retired", "Handmade", "Autographed", "Signed", "Signed By", "Signed by",
-        "Certificate of Authenticity (COA)", "Certification"
-    }
-
-    size_keys = {
-        "Size", "Length", "Height", "Width (Inches)", "Diameter",
-        "Ring Size", "Necklace Length", "Case Size", "Lug Width",
-        "Band Width", "Max Wrist Size", "Item Length", "Item Height",
-        "Item Width", "Item Diameter", "Scale"
-    }
-
-    theme_keys = {
-        "Theme", "Subject", "Subject/Theme", "Topic", "Holiday",
-        "Series", "Franchise", "Character", "Character Family",
-        "Character/Story/Theme", "Superhero Team"
-    }
-
-    sport_keys = {
-        "Sport", "Sport/Activity", "League", "Team", "Team-Baseball",
-        "Event/Tournament", "Player", "Player/Athlete"
-    }
-
-    room_keys = {"Room"}
-
-    # --- values to ignore as tags ---
-    ignore_values = {"", "No", "Not Water Resistant", "Unknown", "N/A", "na", "NA", "None"}
-
     tags: set[str] = set()
 
     def add_tag(prefix: str, value):
         values = value if isinstance(value, list) else [value]
         for v in values:
             v = str(v).strip()
-            if not v or v in ignore_values:
+            if not v or v in TAG_IGNORE_VALUES:
                 continue
             tags.add(f"{prefix}:{v}")
 
     for key, value in item_specifics.items():
         k = str(key).strip()
 
-        if k in brand_keys:
+        if k in TAG_BRAND_KEYS:
             add_tag("Brand", value)
-        elif k in model_keys:
+        elif k in TAG_MODEL_KEYS:
             add_tag("Model", value)
-        elif k in material_keys:
+        elif k in TAG_MATERIAL_KEYS:
             add_tag("Material", value)
-        elif k in color_keys:
+        elif k in TAG_COLOR_KEYS:
             add_tag("Color", value)
-        elif k in era_keys:
+        elif k in TAG_ERA_KEYS:
             add_tag("Era", value)
-        elif k in origin_keys:
+        elif k in TAG_ORIGIN_KEYS:
             add_tag("Origin", value)
-        elif k in style_keys:
+        elif k in TAG_STYLE_KEYS:
             add_tag("Style", value)
-        elif k in movement_keys:
+        elif k in TAG_MOVEMENT_KEYS:
             add_tag("Movement", value)
-        elif k in category_keys:
+        elif k in TAG_CATEGORY_KEYS:
             add_tag("Category", value)
-        elif k in stone_keys:
+        elif k in TAG_STONE_KEYS:
             add_tag("Stone", value)
-        elif k in feature_keys:
+        elif k in TAG_FEATURE_KEYS:
             add_tag("Feature", value)
-        elif k in size_keys:
+        elif k in TAG_SIZE_KEYS:
             add_tag("Size", value)
-        elif k in theme_keys:
+        elif k in TAG_THEME_KEYS:
             add_tag("Theme", value)
-        elif k in sport_keys:
+        elif k in TAG_SPORT_KEYS:
             add_tag("Sport", value)
-        elif k in room_keys:
+        elif k in TAG_ROOM_KEYS:
             add_tag("Room", value)
         else:
             # ignore noisy one-offs to keep tags clean
@@ -658,6 +660,45 @@ def choose_category_from_path(
     return category
 
 
+def normalize_shipping(shipping_raw: dict) -> list[dict]:
+    """
+    Normalize shipping details to a list of shipping options with service and cost.
+    """
+    options = []
+    domestic_opts = shipping_raw.get('service_options') or []
+    intl_opts = shipping_raw.get('international_service_options') or []
+    logger.debug(f"Normalizing shipping data: {len(domestic_opts)} domestic, {len(intl_opts)} international options")
+
+    # Domestic shipping options
+    if domestic_opts:
+        for opt in domestic_opts:
+            service = opt.get("service")
+            cost = opt.get("cost")
+            if service and cost:
+                options.append({
+                    "service": service,
+                    "cost": cost,
+                    "type": "domestic"
+                })
+                logger.debug(f"Added domestic shipping: {service} - ${cost}")
+
+    # International shipping options
+    if intl_opts:
+        for opt in intl_opts:
+            service = opt.get("service")
+            cost = opt.get("cost")
+            if service and cost:
+                options.append({
+                    "service": service,
+                    "cost": cost,
+                    "type": "international"
+                })
+                logger.debug(f"Added international shipping: {service} - ${cost}")
+
+    logger.debug(f"Shipping normalization complete: {len(options)} total options")
+    return options
+
+
 async def normalize_from_raw():
     """
     Read product_raw, build Shopify-friendly normalized docs in product_normalized.
@@ -671,6 +712,9 @@ async def normalize_from_raw():
     batch_size = 100
     last_id = None
     count = 0
+
+    # Limit concurrent normalization work so we don't overload Mongo or external services
+    sem = asyncio.Semaphore(10)
 
     while True:
         query = {}
@@ -687,164 +731,257 @@ async def normalize_from_raw():
         if not batch_docs:
             break
 
+        # Prefetch existing normalized docs for this batch to avoid N+1 lookups
+        sku_list: list = []
         for raw_doc in batch_docs:
             sku = raw_doc.get("SKU") or raw_doc.get("_id")
-            if not sku:
-                continue
+            if sku:
+                sku_list.append(sku)
 
-            raw = raw_doc.get("raw", {}) or {}
-
-            title = (raw.get("Title") or "").strip()
-            description = (raw.get("Description") or "").strip()
-            images = raw.get("Images", []) or []
-            price = raw.get("Price")
-            quantity = raw.get("QuantityAvailable", 0)
-            category_id = raw.get("PrimaryCategoryID")
-            item_specifics = raw.get("ItemSpecifics", {}) or {}
-
-            # --- eBay taxonomy: path → category + tags + metafield-like structure ---
-            category_path, category_leaf, category_ancestors, category_root = parse_ebay_category_path(
-                raw,
-                item_specifics,
+        existing_by_sku: dict = {}
+        if sku_list:
+            cursor_norm = db.product_normalized.find(
+                {"_id": {"$in": sku_list}},
+                {"first_seen_at": 1, "collection_key": 1, "collection_key_fingerprint": 1},
             )
+            async for doc in cursor_norm:
+                existing_by_sku[doc["_id"]] = doc
 
-            mapped_category = choose_category_from_path(
-                category_leaf,
-                category_ancestors,
-                category_id,
-            )
+        # Single timestamp per batch is sufficient and cheaper
+        now_utc = datetime.now(timezone.utc)
 
-            # NEW: build structured metafields from ItemSpecifics
-            structured_metafields, _leftovers = build_structured_metafields(mapped_category, item_specifics)
+        async def process_raw(raw_doc: dict) -> int:
+            async with sem:
+                sku = raw_doc.get("SKU") or raw_doc.get("_id")
+                if not sku:
+                    logger.warning("Found raw product with no SKU, skipping")
+                    return 0
 
-            # Preserve first_seen_at
-            existing_norm = await db.product_normalized.find_one(
-                {"_id": sku},
-                {"first_seen_at": 1}
-            )
+                logger.debug(f"Processing normalization for SKU: {sku}")
+                raw = raw_doc.get("raw", {}) or {}
 
-            now_utc = datetime.now(timezone.utc)
-
-            if existing_norm and existing_norm.get("first_seen_at"):
-                first_seen_at = existing_norm["first_seen_at"]
-            else:
-                first_seen_at = now_utc
-
-            # Tags from item specifics (unchanged)
-            attr_tags = set(build_tags_from_item_specifics(item_specifics))
-
-            # Add taxonomy tags from ancestors and root
-            if category_root:
-                attr_tags.add(f"Domain:{category_root}")
-
-            for ancestor in category_ancestors:
-                attr_tags.add(f"Category:{ancestor}")
-
-            # Ensure tz-aware
-            if first_seen_at.tzinfo is None:
-                first_seen_at = first_seen_at.replace(tzinfo=timezone.utc)
-
-            if now_utc.tzinfo is None:
-                now_utc = now_utc.replace(tzinfo=timezone.utc)
-
-            if first_seen_at >= (now_utc - timedelta(days=RECENT_DAYS)):
-                attr_tags.add("Recently Added")
-
-            all_tags = sorted(attr_tags)
-                    # --- COLLECTION KEY (SC:...) ---
-            existing_sc = pick_existing_sc_tag(all_tags)
-
-            # only re-run the model if we don't already have one OR inputs changed
-            ck_fingerprint = build_collection_key_fingerprint(title, mapped_category, all_tags, item_specifics, structured_metafields)
-            prev_ck_fp = existing_norm.get("collection_key_fingerprint") if existing_norm else None
-            prev_ck = existing_norm.get("collection_key") if existing_norm else None
-
-            collection_key = None
-
-            if existing_sc:
-                # Already has SC: tag in tags
-                collection_key = existing_sc
-            elif prev_ck and prev_ck_fp == ck_fingerprint:
-                # Reuse previous collection key if inputs haven't changed
-                collection_key = prev_ck
-            else:
-                # Try mapping-based approach first
-                collection_key = infer_collection_key_from_mapping(mapped_category, item_specifics)
-                
-                # Fall back to LLM if mapping didn't find a match
-                if not collection_key:
+                title = (raw.get("Title") or "").strip()
+                description = (raw.get("Description") or "").strip()
+                images = raw.get("Images", []) or []
+                # Normalize price to a numeric value (float) when possible
+                raw_price = raw.get("Price")
+                price = None
+                if isinstance(raw_price, (int, float)):
+                    price = float(raw_price)
+                elif raw_price is not None:
                     try:
-                        collection_key = infer_collection_key_llm(
-                            title=title,
-                            category=mapped_category,
-                            tags=all_tags,
-                            attributes=item_specifics,
-                            metafields=structured_metafields,
-                        )
-                    except Exception as e:
-                        logger.warning(f"LLM collection-key inference failed for SKU={sku}: {e}")
-                        collection_key = None
+                        # Allow common string formats like "49.99" or "$49.99"
+                        price_str = str(raw_price).replace("$", "").strip()
+                        price = float(price_str) if price_str else None
+                    except (TypeError, ValueError):
+                        price = None
+                quantity = raw.get("QuantityAvailable", 0)
+                category_id = raw.get("PrimaryCategoryID")
+                item_specifics = raw.get("ItemSpecifics", {}) or {}
 
-            if collection_key:
-                attr_tags.add(collection_key)
+                # --- eBay taxonomy: path → category + tags + metafield-like structure ---
+                category_path, category_leaf, category_ancestors, category_root = parse_ebay_category_path(
+                    raw,
+                    item_specifics,
+                )
+
+                mapped_category = choose_category_from_path(
+                    category_leaf,
+                    category_ancestors,
+                    category_id,
+                )
+
+                # NEW: build structured metafields from ItemSpecifics
+                structured_metafields, _leftovers = build_structured_metafields(mapped_category, item_specifics)
+
+                # Preserve first_seen_at
+                existing_norm = existing_by_sku.get(sku)
+
+                if existing_norm and existing_norm.get("first_seen_at"):
+                    first_seen_at = existing_norm["first_seen_at"]
+                else:
+                    first_seen_at = now_utc
+
+                # Tags from item specifics (unchanged)
+                attr_tags = set(build_tags_from_item_specifics(item_specifics))
+
+                # Add taxonomy tags from ancestors and root
+                if category_root:
+                    attr_tags.add(f"Domain:{category_root}")
+
+                for ancestor in category_ancestors:
+                    attr_tags.add(f"Category:{ancestor}")
+
+                # Ensure tz-aware for comparisons and storage
+                if first_seen_at.tzinfo is None:
+                    first_seen_at = first_seen_at.replace(tzinfo=timezone.utc)
+
+                local_now_utc = now_utc
+                if local_now_utc.tzinfo is None:
+                    local_now_utc = local_now_utc.replace(tzinfo=timezone.utc)
+
+                if first_seen_at >= (local_now_utc - timedelta(days=RECENT_DAYS)):
+                    attr_tags.add("Recently Added")
+
                 all_tags = sorted(attr_tags)
 
+                # --- COLLECTION KEY (SC:...) ---
+                existing_sc = pick_existing_sc_tag(all_tags)
 
-            normalized = {
-                "_id": sku,
-                "sku": sku,
-                "title": title,
-                "description": description,
-                "images": images,
-                "price": price,
-                "quantity": quantity,
+                # only re-run the model if we don't already have one OR inputs changed
+                ck_fingerprint = build_collection_key_fingerprint(
+                    title, mapped_category, all_tags, item_specifics, structured_metafields
+                )
+                prev_ck_fp = existing_norm.get("collection_key_fingerprint") if existing_norm else None
+                prev_ck = existing_norm.get("collection_key") if existing_norm else None
 
-                # leaf-based (or ancestor-based) category
-                "category": mapped_category,
+                collection_key = None
 
-                # raw item specifics (keep as-is, useful for audits/debug)
-                "attributes": item_specifics,
+                if existing_sc:
+                    # Already has SC: tag in tags
+                    collection_key = existing_sc
+                    logger.debug(f"SKU {sku}: Using existing SC tag: {collection_key}")
+                elif prev_ck and prev_ck_fp == ck_fingerprint:
+                    # Reuse previous collection key if inputs haven't changed
+                    collection_key = prev_ck
+                    logger.debug(f"SKU {sku}: Reusing previous collection key: {collection_key}")
+                else:
+                    # Try mapping-based approach first
+                    collection_key = infer_collection_key_from_mapping(mapped_category, item_specifics)
+                    logger.debug(f"SKU {sku}: Mapping-based collection key: {collection_key}")
 
-                # NEW: namespaced, Shopify-ready metafield structure
-                "metafields": structured_metafields,
+                    # Fall back to LLM if mapping didn't find a match
+                    if not collection_key:
+                        try:
+                            collection_key = await asyncio.to_thread(
+                                infer_collection_key_llm,
+                                title,
+                                mapped_category,
+                                all_tags,
+                                item_specifics,
+                                structured_metafields,
+                            )
+                            logger.debug(f"SKU {sku}: LLM-inferred collection key: {collection_key}")
+                        except Exception as e:  # pragma: no cover - defensive around external API
+                            logger.warning(f"LLM collection-key inference failed for SKU={sku}: {e}")
+                            collection_key = None
 
-                # combined tags: specifics + taxonomy + recency
-                "tags": all_tags,
+                if collection_key:
+                    attr_tags.add(collection_key)
+                    all_tags = sorted(attr_tags)
 
-                # structured breakdown of the eBay taxonomy
-                "ebay_category": {
-                    "id": category_id,
-                    "path": category_path,
-                    "root": category_root,
-                    "leaf": category_leaf,
-                    "ancestors": category_ancestors,
-                },
+                # Normalize shipping
+                normalized_shipping = normalize_shipping(raw.get("Shipping", {}))
 
-                "first_seen_at": first_seen_at,
-                "last_normalized_at": now_utc,
-                "collection_key": collection_key,
-                "collection_key_fingerprint": ck_fingerprint,
+                # Adjust price based on shipping cost
+                adjusted_price = price
+                if normalized_shipping:
+                    # Get the first domestic shipping cost
+                    shipping_cost = None
+                    for opt in normalized_shipping:
+                        if opt.get("type") == "domestic":
+                            try:
+                                shipping_cost = float(opt.get("cost", 0))
+                                break
+                            except (ValueError, TypeError):
+                                continue
 
-            }
+                    if shipping_cost is not None:
+                        # Apply pricing adjustment based on shipping cost tier
+                        if shipping_cost == 8.0:
+                            adjusted_price = (price or 0) + 10
+                            attr_tags.add("free_shipping")
+                            logger.debug(
+                                f"SKU {sku}: $8 shipping → +$10 to price, added free_shipping tag"
+                            )
+                        elif shipping_cost == 14.0:
+                            adjusted_price = (price or 0) + 15
+                            attr_tags.add("free_shipping")
+                            logger.debug(
+                                f"SKU {sku}: $14 shipping → +$15 to price, added free_shipping tag"
+                            )
+                        elif shipping_cost == 18.0:
+                            adjusted_price = (price or 0) + 20
+                            attr_tags.add("free_shipping")
+                            logger.debug(
+                                f"SKU {sku}: $18 shipping → +$20 to price, added free_shipping tag"
+                            )
 
-            normalized["hash"] = hash_dict({
-                "title": title,
-                "description": description,
-                "images": tuple(images),
-                "price": price,
-                "quantity": quantity,
-                "category": mapped_category,
-                "tags": tuple(all_tags),
-                "last_normalized_at": now_utc,
-            })
+                    # Update all_tags with any new tags added
+                    all_tags = sorted(attr_tags)
 
-            await db.product_normalized.update_one(
-                {"_id": sku},
-                {"$set": normalized},
-                upsert=True
-            )
+                normalized = {
+                    "_id": sku,
+                    "sku": sku,
+                    "title": title,
+                    "description": description,
+                    "images": images,
+                    "price": adjusted_price,
+                    "quantity": quantity,
 
-            count += 1
+                    # leaf-based (or ancestor-based) category
+                    "category": mapped_category,
+
+                    # raw item specifics (keep as-is, useful for audits/debug)
+                    "attributes": item_specifics,
+
+                    # NEW: namespaced, Shopify-ready metafield structure
+                    "metafields": structured_metafields,
+
+                    # combined tags: specifics + taxonomy + recency
+                    "tags": all_tags,
+
+                    # shipping options and costs
+                    "shipping": normalized_shipping,
+
+                    # structured breakdown of the eBay taxonomy
+                    "ebay_category": {
+                        "id": category_id,
+                        "path": category_path,
+                        "root": category_root,
+                        "leaf": category_leaf,
+                        "ancestors": category_ancestors,
+                    },
+
+                    "first_seen_at": first_seen_at,
+                    "last_normalized_at": local_now_utc,
+                    "collection_key": collection_key,
+                    "collection_key_fingerprint": ck_fingerprint,
+
+                }
+
+                normalized["hash"] = hash_dict(
+                    {
+                        "title": title,
+                        "description": description,
+                        "images": tuple(images),
+                        "price": adjusted_price,
+                        "quantity": quantity,
+                        "category": mapped_category,
+                        "tags": tuple(all_tags),
+                        "metafields": structured_metafields,
+                        "shipping": normalized_shipping,
+                        "last_normalized_at": local_now_utc,
+                    }
+                )
+
+                await db.product_normalized.update_one(
+                    {"_id": sku},
+                    {"$set": normalized},
+                    upsert=True,
+                )
+
+                logger.debug(
+                    f"✓ Saved normalized product for SKU: {sku} | Category: {mapped_category} | Tags: {len(all_tags)}"
+                )
+
+                return 1
+
+        # Process this batch concurrently with bounded concurrency
+        tasks = [asyncio.create_task(process_raw(raw_doc)) for raw_doc in batch_docs]
+        if tasks:
+            results = await asyncio.gather(*tasks)
+            count += sum(results)
 
     logger.info(f"✔ Normalization complete. {count} products updated.")
     return {"normalized": count}

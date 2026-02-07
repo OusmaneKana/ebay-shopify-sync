@@ -1,6 +1,6 @@
 import hashlib
 import asyncio
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 
 from app.shopify.client import ShopifyClient
@@ -52,3 +52,24 @@ async def ebay_order_webhook(request: Request, make_unavailable: bool = True):
     return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
   return JSONResponse({"ok": True, "queued": True})
+
+
+@router.get("/ebay/callback")
+async def ebay_auth_callback(request: Request):
+    code = request.query_params.get("code")
+    state = request.query_params.get("state")
+    error = request.query_params.get("error")
+    error_desc = request.query_params.get("error_description")
+
+    # eBay can redirect back with an error if user cancels/denies
+    if error:
+        return JSONResponse(
+            {"ok": False, "error": error, "error_description": error_desc},
+            status_code=400,
+        )
+
+    if not code:
+        raise HTTPException(status_code=400, detail="Missing ?code in callback")
+
+    print("Received eBay OAuth callback:", {"code": code[:20] + "...", "state": state})
+    return JSONResponse({"ok": True, "code_received": True})

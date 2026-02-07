@@ -1,15 +1,49 @@
 import logging
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from app.api.router import api_router
 from app.services.scheduler import start_scheduler
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# Create logs directory if it doesn't exist
+logs_dir = Path("logs")
+logs_dir.mkdir(exist_ok=True)
+
+# Configure logging with both console and file handlers
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+# Console handler (INFO level)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
 )
+console_handler.setFormatter(console_formatter)
+
+# File handler (DEBUG level) - all logs
+file_handler = logging.FileHandler('logs/app.log')
+file_handler.setLevel(logging.DEBUG)
+file_formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+file_handler.setFormatter(file_formatter)
+
+# Error file handler - errors and warnings only
+error_handler = logging.FileHandler('logs/errors.log')
+error_handler.setLevel(logging.WARNING)
+error_formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+error_handler.setFormatter(error_formatter)
+
+logger.addHandler(console_handler)
+logger.addHandler(file_handler)
+logger.addHandler(error_handler)
 
 app = FastAPI(title="eBay → Shopify Sync Middleware")
 

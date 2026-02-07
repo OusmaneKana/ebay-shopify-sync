@@ -1,41 +1,114 @@
+import logging
 from app.shopify.client import ShopifyClient
+from app.shopify.create_product import process_structured_metafields_to_shopify_payload
 
+logger = logging.getLogger(__name__)
 client = ShopifyClient()
 
 
 async def update_shopify_product(old_doc, new_doc, shopify_client=None):
     if shopify_client is None:
         shopify_client = client
+    
     pid = old_doc.get("shopify_id")
     vid = old_doc.get("shopify_variant_id")
+    doc_id = old_doc.get('_id')
+    
     if not pid or not vid:
-        print(f"⚠ Cannot update Shopify product for {old_doc.get('_id')}: missing IDs")
+        logger.warning(f"⚠ Cannot update Shopify product for {doc_id}: missing IDs (product_id={pid}, variant_id={vid})")
         return None
 
-    # rebuild tags string from latest normalized doc
-    tag_list = []
-    if new_doc.get("category"):
-        tag_list.append(new_doc["category"])
-    tag_list.extend(new_doc.get("tags", []))
-    tags_str = ", ".join(sorted(set(tag_list)))
+    try:
+        logger.info(f"Updating product ID: {pid}, Variant ID: {vid}")
 
-    # update main product properties
-    await shopify_client.put(f"products/{pid}.json", {
-        "product": {
-            "id": pid,
-            "title": new_doc["title"],
-            "body_html": new_doc.get("description") or "",
-            "tags": tags_str,
-        }
-    })
+        # Rebuild tags string from latest normalized doc
+        tag_list = []
+        if new_doc.get("category"):
+            tag_list.append(new_doc["category"])
+        tag_list.extend(new_doc.get("tags", []))
+        tags_str = ", ".join(sorted(set(tag_list)))
 
-    # update variant price (inventory can be separate if you want)
-    await shopify_client.put(f"variants/{vid}.json", {
-        "variant": {
-            "id": vid,
-            "price": new_doc.get("price") or "0",
-        }
-    })
+        # Update main product properties
+        try:
+            await shopify_client.put(f"products/{pid}.json", {
+                "product": {
+                    "id": pid,
+                    "title": new_doc["title"],
+                    "body_html": new_doc.get("description") or "",
+                    "tags": tags_str,
+                }
+            })
+            logger.debug(f"Updated product properties for {pid}")
+        except Exception as e:
+            logger.error(f"Failed to update product properties for {pid}: {e}", exc_info=True)
+            raise
 
-    print(f"✔ Updated Shopify product {pid}")
-    return pid
+        # Update variant price
+        try:
+            await shopify_client.put(f"variants/{vid}.json", {
+                "variant": {
+                    "id": vid,
+                    "price": new_doc.get("price") or "0",
+                }
+            })
+            logger.debug(f"Updated variant price for {vid}")
+        except Exception as e:
+            logger.error(f"Failed to update variant price for {vid}: {e}", exc_info=True)
+            raise
+
+        # Handle metafields: fetch existing, update or create
+        mf_struct = new_doc.get("metafields", {})
+        if mf_struct:
+            try:
+                # Get existing metafields for the product
+                existing_mf_res = await shopify_client.get("metafields.json", params={
+                    "owner_id": pid,
+                    "owner_resource": "product"
+                })
+                existing_mf = existing_mf_res.get("metafields", [])
+                # Map existing by (namespace, key) to metafield dict
+                existing_map = {(mf["namespace"], mf["key"]): mf for mf in existing_mf}
+
+                metafields_payload = process_structured_metafields_to_shopify_payload(mf_struct)
+                for mf in metafields_payload:
+                    key = (mf["namespace"], mf["key"])
+                    try:
+                        if key in existing_map:
+                            # Update existing metafield
+                            mf_id = existing_map[key]["id"]
+                            update_payload = {
+                                "metafield": {
+                                    "id": mf_id,
+                                    "value": mf["value"],
+                                    "type": mf["type"],
+                                }
+                            }
+                            await shopify_client.put(f"metafields/{mf_id}.json", update_payload)
+                            logger.debug(f"Updated metafield {key} (id={mf_id}) for product {pid}")
+                        else:
+                            # Create new metafield
+                            mf_payload = {
+                                "metafield": {
+                                    "namespace": mf["namespace"],
+                                    "key": mf["key"],
+                                    "value": mf["value"],
+                                    "type": mf["type"],
+                                    "owner_id": pid,
+                                    "owner_resource": "product",
+                                }
+                            }
+                            await shopify_client.post("metafields.json", mf_payload)
+                            logger.debug(f"Created metafield {key} for product {pid}")
+                    except Exception as e:
+                        logger.error(f"Failed to update/create metafield {key} for product {pid}: {e}", exc_info=True)
+                        raise
+            except Exception as e:
+                logger.error(f"Failed to handle metafields for product {pid}: {e}", exc_info=True)
+                raise
+
+        logger.info(f"✔ Successfully updated Shopify product {pid} (eBay doc: {doc_id})")
+        return pid
+
+    except Exception as e:
+        logger.error(f"✗ Failed to update Shopify product {pid} for eBay item {doc_id}: {str(e)}", exc_info=True)
+        raise
