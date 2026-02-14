@@ -165,13 +165,40 @@ async def fetch_all_ebay_products():
 
         # Merge metadata and details into final product records
         for meta, details in zip(page_items_meta, details_list):
+            # Prefer quantity figures from GetItem details when available,
+            # fall back to the summary values from GetMyeBaySelling.
+            detail_qty_total = details.get("quantity_total")
+            detail_qty_sold = details.get("quantity_sold")
+            detail_qty_available = details.get("quantity_available")
+
+            quantity_total = detail_qty_total if detail_qty_total is not None else meta["quantity_total"]
+            quantity_sold = detail_qty_sold if detail_qty_sold is not None else meta["quantity_sold"]
+            quantity_available = (
+                detail_qty_available
+                if detail_qty_available is not None
+                else meta["quantity_available"]
+            )
+
+            # If there is any discrepancy between summary and detail, log it once per item
+            if (
+                detail_qty_available is not None
+                and detail_qty_available != meta["quantity_available"]
+            ):
+                logger.info(
+                    "Quantity mismatch for ItemID %s (SKU %s): summary=%s, detail=%s",
+                    meta["item_id"],
+                    meta["sku"],
+                    meta["quantity_available"],
+                    detail_qty_available,
+                )
+
             raw = {
                 "ItemID": meta["item_id"],
                 "SKU": meta["sku"],
                 "Title": meta["title"],
-                "QuantityTotal": meta["quantity_total"],
-                "QuantitySold": meta["quantity_sold"],
-                "QuantityAvailable": meta["quantity_available"],
+                "QuantityTotal": quantity_total,
+                "QuantitySold": quantity_sold,
+                "QuantityAvailable": quantity_available,
                 "Price": meta["price_text"],
                 "Description": details["description"],
                 "Images": details["images"],
@@ -188,7 +215,7 @@ async def fetch_all_ebay_products():
                     "title": meta["title"],
                     "categoryId": meta["category_id"],
                     "images": details["images"],
-                    "quantity": meta["quantity_available"],
+                    "quantity": quantity_available,
                     "price": meta["price_text"],
                     "raw": raw,
                 }
@@ -236,6 +263,21 @@ def get_item_details(item_id: str):
 
     ns = {"e": "urn:ebay:apis:eBLBaseComponents"}
 
+    # Quantity details (authoritative per-item view)
+    try:
+        quantity_total = int(root.findtext(".//e:Item/e:Quantity", default="0", namespaces=ns) or 0)
+    except ValueError:
+        quantity_total = 0
+
+    try:
+        quantity_sold = int(
+            root.findtext(".//e:Item/e:SellingStatus/e:QuantitySold", default="0", namespaces=ns) or 0
+        )
+    except ValueError:
+        quantity_sold = 0
+
+    quantity_available = max(quantity_total - quantity_sold, 0)
+
     # Description
     desc = root.findtext(".//e:Description", default="", namespaces=ns)
 
@@ -272,6 +314,56 @@ def get_item_details(item_id: str):
     ships = [el.text for el in root.findall(".//e:ShippingDetails/e:ShipToLocations", namespaces=ns) if el is not None and el.text]
     shipping["ships_to_locations"] = ships if ships else None
 
+    # Shipping package weight & dimensions (if configured on the eBay listing)
+    pkg = root.find(".//e:Item/e:ShippingPackageDetails", namespaces=ns)
+    if pkg is not None:
+        package_details: dict[str, object] = {}
+
+        # WeightMajor / WeightMinor
+        weight_major_elem = pkg.find("e:WeightMajor", namespaces=ns)
+        weight_minor_elem = pkg.find("e:WeightMinor", namespaces=ns)
+
+        def _extract_measure(elem):
+            if elem is None or not elem.text:
+                return None
+            value = elem.text.strip()
+            if not value:
+                return None
+            out: dict[str, object] = {"value": value}
+            unit = elem.get("unit")
+            if unit:
+                out["unit"] = unit
+            system = elem.get("measurementSystem")
+            if system:
+                out["measurement_system"] = system
+            return out
+
+        weight_major = _extract_measure(weight_major_elem)
+        weight_minor = _extract_measure(weight_minor_elem)
+        if weight_major is not None or weight_minor is not None:
+            package_details["weight"] = {
+                "major": weight_major,
+                "minor": weight_minor,
+            }
+
+        # PackageLength / PackageWidth / PackageDepth
+        dims: dict[str, object] = {}
+        for xml_name, key_name in [
+            ("PackageLength", "length"),
+            ("PackageWidth", "width"),
+            ("PackageDepth", "height"),
+        ]:
+            elem = pkg.find(f"e:{xml_name}", namespaces=ns)
+            m = _extract_measure(elem)
+            if m is not None:
+                dims[key_name] = m
+
+        if dims:
+            package_details["dimensions"] = dims
+
+        if package_details:
+            shipping["package_details"] = package_details
+
     # ShippingServiceOptions
     service_options = []
     for s in root.findall(".//e:ShippingDetails/e:ShippingServiceOptions", namespaces=ns):
@@ -306,5 +398,8 @@ def get_item_details(item_id: str):
         "category_id": category_id,
         "category_name": category_name,
         "shipping": shipping,
+        "quantity_total": quantity_total,
+        "quantity_sold": quantity_sold,
+        "quantity_available": quantity_available,
     }
 

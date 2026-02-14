@@ -3,6 +3,7 @@ import asyncio
 from app.database.mongo import db
 from app.shopify.create_product import create_shopify_product
 from app.shopify.update_product import update_shopify_product
+from app.shopify.update_inventory import set_inventory_quantity_by_variant
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,18 @@ async def sync_to_shopify(shopify_client=None, limit=None):
             # Update existing product
             try:
                 await update_shopify_product(doc, doc, shopify_client)
+                # Ensure Shopify inventory quantity matches normalized quantity
+                try:
+                    quantity = doc.get("quantity")
+                    variant_id = doc.get("shopify_variant_id")
+                    if variant_id is not None and quantity is not None:
+                        await set_inventory_quantity_by_variant(int(variant_id), int(quantity), shopify_client)
+                except Exception as e:
+                    logger.error(
+                        "Failed to set inventory for Shopify variant %s: %s",
+                        doc.get("shopify_variant_id"),
+                        e,
+                    )
                 await db.product_normalized.update_one(
                     {"_id": doc["_id"]},
                     {"$set": {"last_synced_hash": hash_now}},

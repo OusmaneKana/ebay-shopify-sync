@@ -218,6 +218,57 @@ def process_structured_metafields_to_shopify_payload(metafields_struct: dict) ->
 # ----------------------------------------------------------------------
 
 
+def extract_weight_for_shopify_variant(doc) -> tuple[float | None, str | None]:
+    """Derive a Shopify-friendly (weight, weight_unit) from normalized package data.
+
+    Looks for doc["package"]["weight"] (or metafields.shipping.package.weight) and converts
+    common eBay patterns like lbs/oz into a single numeric weight value and unit
+    acceptable to Shopify ("lb", "kg", "oz").
+    """
+
+    package = doc.get("package") or (
+        (doc.get("metafields") or {}).get("shipping") or {}
+    ).get("package")
+    if not isinstance(package, dict):
+        return None, None
+
+    weight = package.get("weight") or {}
+    if not isinstance(weight, dict):
+        return None, None
+
+    def _val_unit(d: object) -> tuple[float | None, str | None]:
+        if not isinstance(d, dict):
+            return None, None
+        value = d.get("value")
+        if value is None:
+            return None, None
+        try:
+            v = float(str(value).strip())
+        except Exception:
+            return None, None
+        unit = d.get("unit")
+        return v, (str(unit).strip().lower() if unit else None)
+
+    major_v, major_u = _val_unit(weight.get("major"))
+    minor_v, minor_u = _val_unit(weight.get("minor"))
+
+    # Prefer pounds/ounces if present
+    if major_v is not None:
+        if major_u in {"lb", "lbs", "pound", "pounds", None}:
+            total_lb = major_v
+            if minor_v is not None and minor_u in {"oz", "ounce", "ounces"}:
+                total_lb += minor_v / 16.0
+            return total_lb, "lb"
+        if major_u in {"kg", "kilogram", "kilograms"}:
+            return major_v, "kg"
+
+    # Fallback: ounces only
+    if minor_v is not None and minor_u in {"oz", "ounce", "ounces"}:
+        return minor_v, "oz"
+
+    return None, None
+
+
 async def create_shopify_product(doc, shopify_client=None):
     if shopify_client is None:
         shopify_client = client
@@ -240,6 +291,20 @@ async def create_shopify_product(doc, shopify_client=None):
     price = doc.get("price")
     price_str = str(price) if price not in (None, "") else "0"
 
+    # Derive variant weight from normalized package data, if available
+    weight_value, weight_unit = extract_weight_for_shopify_variant(doc)
+
+    variant_payload = {
+        "sku": doc.get("sku", ""),
+        "price": price_str,
+        "inventory_management": "shopify",
+        "inventory_quantity": int(doc.get("quantity", 0) or 0),
+    }
+
+    if weight_value is not None and weight_unit:
+        variant_payload["weight"] = weight_value
+        variant_payload["weight_unit"] = weight_unit
+
     payload = {
         "product": {
             "title": doc.get("title", ""),
@@ -247,12 +312,7 @@ async def create_shopify_product(doc, shopify_client=None):
             "tags": tags_str,
             "metafields": metafields_payload,
             "images": images,
-            "variants": [{
-                "sku": doc.get("sku", ""),
-                "price": price_str,
-                "inventory_management": "shopify",
-                "inventory_quantity": int(doc.get("quantity", 0) or 0),
-            }],
+            "variants": [variant_payload],
         }
     }
 

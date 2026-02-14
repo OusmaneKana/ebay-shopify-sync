@@ -871,7 +871,60 @@ async def normalize_from_raw():
                     all_tags = sorted(attr_tags)
 
                 # Normalize shipping
-                normalized_shipping = normalize_shipping(raw.get("Shipping", {}))
+                shipping_raw = raw.get("Shipping", {}) or {}
+                normalized_shipping = normalize_shipping(shipping_raw)
+
+                # Extract package weight/dimensions from Shipping.package_details (if present)
+                package_details_raw = shipping_raw.get("package_details") or {}
+                normalized_package: dict = {}
+
+                def _normalize_measure(measure: object) -> dict | None:
+                    if not isinstance(measure, dict):
+                        return None
+                    value = measure.get("value")
+                    if value is None:
+                        return None
+                    try:
+                        v = float(str(value).strip())
+                    except Exception:
+                        return None
+                    out: dict[str, object] = {"value": v}
+                    unit = measure.get("unit")
+                    if unit:
+                        out["unit"] = str(unit)
+                    msys = measure.get("measurement_system") or measure.get("measurementSystem")
+                    if msys:
+                        out["measurement_system"] = str(msys)
+                    return out
+
+                if isinstance(package_details_raw, dict):
+                    weight_raw = package_details_raw.get("weight") or {}
+                    dims_raw = package_details_raw.get("dimensions") or {}
+
+                    # Weight (major/minor, e.g. lb/oz)
+                    weight_norm: dict = {}
+                    major_norm = _normalize_measure(weight_raw.get("major")) if isinstance(weight_raw, dict) else None
+                    minor_norm = _normalize_measure(weight_raw.get("minor")) if isinstance(weight_raw, dict) else None
+                    if major_norm is not None:
+                        weight_norm["major"] = major_norm
+                    if minor_norm is not None:
+                        weight_norm["minor"] = minor_norm
+                    if weight_norm:
+                        normalized_package["weight"] = weight_norm
+
+                    # Dimensions (length/width/height)
+                    dims_norm: dict = {}
+                    if isinstance(dims_raw, dict):
+                        for key in ("length", "width", "height"):
+                            m = _normalize_measure(dims_raw.get(key))
+                            if m is not None:
+                                dims_norm[key] = m
+                    if dims_norm:
+                        normalized_package["dimensions"] = dims_norm
+
+                # Expose package info as a shipping namespace metafield for Shopify
+                if normalized_package:
+                    structured_metafields.setdefault("shipping", {})["package"] = normalized_package
 
                 # Adjust price based on shipping cost
                 adjusted_price = price
@@ -934,6 +987,9 @@ async def normalize_from_raw():
                     # shipping options and costs
                     "shipping": normalized_shipping,
 
+                    # package-level weight and dimensions (already mirrored into metafields.shipping.package)
+                    "package": normalized_package,
+
                     # structured breakdown of the eBay taxonomy
                     "ebay_category": {
                         "id": category_id,
@@ -961,6 +1017,7 @@ async def normalize_from_raw():
                         "tags": tuple(all_tags),
                         "metafields": structured_metafields,
                         "shipping": normalized_shipping,
+                        "package": normalized_package,
                         "last_normalized_at": local_now_utc,
                     }
                 )

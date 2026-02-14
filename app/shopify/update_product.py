@@ -1,6 +1,9 @@
 import logging
 from app.shopify.client import ShopifyClient
-from app.shopify.create_product import process_structured_metafields_to_shopify_payload
+from app.shopify.create_product import (
+    process_structured_metafields_to_shopify_payload,
+    extract_weight_for_shopify_variant,
+)
 
 logger = logging.getLogger(__name__)
 client = ShopifyClient()
@@ -43,13 +46,21 @@ async def update_shopify_product(old_doc, new_doc, shopify_client=None):
             logger.error(f"Failed to update product properties for {pid}: {e}", exc_info=True)
             raise
 
-        # Update variant price
+        # Update variant price and weight
+        weight_value, weight_unit = extract_weight_for_shopify_variant(new_doc)
+
+        variant_payload = {
+            "id": vid,
+            "price": new_doc.get("price") or "0",
+        }
+
+        if weight_value is not None and weight_unit:
+            variant_payload["weight"] = weight_value
+            variant_payload["weight_unit"] = weight_unit
+
         try:
             await shopify_client.put(f"variants/{vid}.json", {
-                "variant": {
-                    "id": vid,
-                    "price": new_doc.get("price") or "0",
-                }
+                "variant": variant_payload
             })
             logger.debug(f"Updated variant price for {vid}")
         except Exception as e:
