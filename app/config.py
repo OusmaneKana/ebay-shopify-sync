@@ -7,7 +7,10 @@ class Settings(BaseSettings):
     EBAY_APP_ID: str
     EBAY_CERT_ID: str
     EBAY_DEV_ID: str
-    EBAY_OAUTH_TOKEN: str
+    # Legacy manual token - used as fallback before the OAuth flow has run
+    EBAY_OAUTH_TOKEN: str = ""
+    # RuName from eBay Developer Portal (Auth Accepted URL name)
+    EBAY_RUNAME: str = ""
 
     SHOPIFY_API_KEY: str
     SHOPIFY_PASSWORD: str

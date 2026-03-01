@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
 from app.ebay.client import EbayClient
-from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +15,7 @@ async def fetch_all_ebay_products():
     Fetch ALL active products from eBay using Trading API (GetMyeBaySelling),
     with clear logging.
     """
+    await client.ensure_fresh_token()
 
     logger.info("▶ Starting eBay product fetch...")
 
@@ -66,7 +66,7 @@ async def fetch_all_ebay_products():
         request_xml = f"""<?xml version="1.0" encoding="utf-8"?>
         <{call_name}Request xmlns="urn:ebay:apis:eBLBaseComponents">
           <RequesterCredentials>
-            <eBayAuthToken>{settings.EBAY_OAUTH_TOKEN}</eBayAuthToken>
+            <eBayAuthToken>{client.token}</eBayAuthToken>
           </RequesterCredentials>
           <Version>1209</Version>
           <DetailLevel>ReturnAll</DetailLevel>
@@ -251,7 +251,7 @@ def get_item_details(item_id: str):
     request_xml = f"""<?xml version="1.0" encoding="utf-8"?>
     <GetItemRequest xmlns="urn:ebay:apis:eBLBaseComponents">
       <RequesterCredentials>
-        <eBayAuthToken>{settings.EBAY_OAUTH_TOKEN}</eBayAuthToken>
+        <eBayAuthToken>{client.token}</eBayAuthToken>
       </RequesterCredentials>
       <ItemID>{item_id}</ItemID>
       <DetailLevel>ReturnAll</DetailLevel>

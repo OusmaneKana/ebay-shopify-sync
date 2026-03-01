@@ -38,11 +38,11 @@ async def normalize_raw_dev():
     }
 
 @dev_router.post("/sync-shopify")
-async def sync_shopify_dev(limit: int = None):
+async def sync_shopify_dev():
     # Use dev Shopify client
     start = time.perf_counter()
     client = ShopifyClient()
-    result = await sync_to_shopify(client, limit)
+    result = await sync_to_shopify(client)
     elapsed = time.perf_counter() - start
     return {
         "message": "Shopify sync completed (DEV)",
@@ -108,7 +108,7 @@ async def normalize_raw_prod():
     }
 
 @prod_router.post("/sync-shopify")
-async def sync_shopify_prod(limit: int = None):
+async def sync_shopify_prod():
     # Use prod Shopify client
     start = time.perf_counter()
     client = ShopifyClient(
@@ -116,7 +116,7 @@ async def sync_shopify_prod(limit: int = None):
         password=settings.SHOPIFY_PASSWORD_PROD,
         store_url=settings.SHOPIFY_STORE_URL_PROD
     )
-    result = await sync_to_shopify(client, limit)
+    result = await sync_to_shopify(client)
     elapsed = time.perf_counter() - start
     return {
         "message": "Shopify sync completed (PROD)",
@@ -195,9 +195,9 @@ async def normalize_raw():
     }
 
 @router.post("/sync-shopify")
-async def sync_shopify(limit: int = None):
+async def sync_shopify():
     start = time.perf_counter()
-    result = await sync_to_shopify(None, limit)
+    result = await sync_to_shopify(None)
     elapsed = time.perf_counter() - start
     return {
         "message": "Shopify sync completed",

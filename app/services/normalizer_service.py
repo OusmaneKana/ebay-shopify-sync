@@ -742,7 +742,7 @@ async def normalize_from_raw():
         if sku_list:
             cursor_norm = db.product_normalized.find(
                 {"_id": {"$in": sku_list}},
-                {"first_seen_at": 1, "collection_key": 1, "collection_key_fingerprint": 1},
+                {"first_seen_at": 1, "collection_key": 1, "collection_key_fingerprint": 1, "hash": 1},
             )
             async for doc in cursor_norm:
                 existing_by_sku[doc["_id"]] = doc
@@ -963,6 +963,29 @@ async def normalize_from_raw():
                     # Update all_tags with any new tags added
                     all_tags = sorted(attr_tags)
 
+                # Compute a stable hash of the normalized business fields.
+                # This intentionally excludes transient fields like last_normalized_at
+                # so we can skip writing unchanged documents.
+                new_hash = hash_dict(
+                    {
+                        "title": title,
+                        "description": description,
+                        "images": tuple(images),
+                        "price": adjusted_price,
+                        "quantity": quantity,
+                        "category": mapped_category,
+                        "tags": tuple(all_tags),
+                        "metafields": structured_metafields,
+                        "shipping": normalized_shipping,
+                        "package": normalized_package,
+                    }
+                )
+
+                existing_hash = existing_norm.get("hash") if existing_norm else None
+                if existing_hash == new_hash:
+                    logger.debug(f"SKU {sku}: normalized hash unchanged, skipping update")
+                    return 0
+
                 normalized = {
                     "_id": sku,
                     "sku": sku,
@@ -1003,24 +1026,9 @@ async def normalize_from_raw():
                     "last_normalized_at": local_now_utc,
                     "collection_key": collection_key,
                     "collection_key_fingerprint": ck_fingerprint,
+                    "hash": new_hash,
 
                 }
-
-                normalized["hash"] = hash_dict(
-                    {
-                        "title": title,
-                        "description": description,
-                        "images": tuple(images),
-                        "price": adjusted_price,
-                        "quantity": quantity,
-                        "category": mapped_category,
-                        "tags": tuple(all_tags),
-                        "metafields": structured_metafields,
-                        "shipping": normalized_shipping,
-                        "package": normalized_package,
-                        "last_normalized_at": local_now_utc,
-                    }
-                )
 
                 await db.product_normalized.update_one(
                     {"_id": sku},

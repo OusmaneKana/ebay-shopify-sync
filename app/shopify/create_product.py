@@ -131,7 +131,10 @@ def _normalize_metafield_type_and_value(value, mf_type: str):
             return mf_type, json.dumps(str(value))
 
     # Text fields: Shopify expects a string
-    s = value if isinstance(value, str) else str(value)
+    if isinstance(value, list):
+        s = ", ".join(str(v).strip() for v in value if v is not None and str(v).strip())
+    else:
+        s = value if isinstance(value, str) else str(value)
     s = s.strip()
     if is_ignorable_str(s):
         return None, None
@@ -196,7 +199,7 @@ def process_structured_metafields_to_shopify_payload(metafields_struct: dict) ->
             elif isinstance(v, float):
                 inferred_type = "number_decimal"
             elif isinstance(v, list):
-                inferred_type = "list.single_line_text_field"
+                inferred_type = "single_line_text_field"
             elif isinstance(v, (dict,)):
                 inferred_type = "json"
             else:
@@ -319,7 +322,7 @@ async def create_shopify_product(doc, shopify_client=None):
     res = await shopify_client.post("products.json", payload)
     product = (res or {}).get("product")
     if not product:
-        print("❌ Shopify creation failed:", res)
+        print(f"❌ Shopify creation failed for SKU={doc.get('_id')} title={doc.get('title')!r}:", res)
         return None
 
     pid = product["id"]

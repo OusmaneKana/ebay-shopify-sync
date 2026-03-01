@@ -11,14 +11,13 @@ EBAY_COMPAT_LEVEL = "1209"
 
 class EbayClient:
     def __init__(self):
-        # OAuth user token you already use for Sell APIs
+        # Start with the env var token as fallback; replaced by get_valid_token() at runtime
         self.token = settings.EBAY_OAUTH_TOKEN
 
-        # Optional, but good to have in case you need them
-        # Make sure these exist in your settings, or remove if unused
-        # self.app_id = settings.EBAY_APP_ID
-        # self.dev_id = settings.EBAY_DEV_ID
-        # self.cert_id = settings.EBAY_CERT_ID
+    async def ensure_fresh_token(self):
+        """Fetch a valid token from MongoDB (refreshing if expired). Call at the start of sync operations."""
+        from app.services.ebay_auth_service import get_valid_token
+        self.token = await get_valid_token()
 
     def get(self, endpoint, params=None):
         """
@@ -44,10 +43,10 @@ class EbayClient:
             "X-EBAY-API-APP-NAME": settings.EBAY_APP_ID,
             "X-EBAY-API-CERT-NAME": settings.EBAY_CERT_ID,
             "X-EBAY-API-SITEID": "0",
-            # use OAuth user token here ⬇
             "X-EBAY-API-IAF-TOKEN": self.token,
             "Content-Type": "text/xml",
         }
         resp = requests.post(EBAY_TRADING_URL, headers=headers, data=request_xml)
         resp.raise_for_status()
         return resp.text
+

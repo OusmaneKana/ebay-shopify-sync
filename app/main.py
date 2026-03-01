@@ -1,4 +1,5 @@
 import logging
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -23,8 +24,10 @@ console_formatter = logging.Formatter(
 )
 console_handler.setFormatter(console_formatter)
 
-# File handler (DEBUG level) - all logs
-file_handler = logging.FileHandler('logs/app.log')
+# File handler (DEBUG level) with rotation to prevent unbounded growth
+file_handler = RotatingFileHandler(
+    'logs/app.log', maxBytes=10 * 1024 * 1024, backupCount=5
+)
 file_handler.setLevel(logging.DEBUG)
 file_formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
@@ -32,8 +35,10 @@ file_formatter = logging.Formatter(
 )
 file_handler.setFormatter(file_formatter)
 
-# Error file handler - errors and warnings only
-error_handler = logging.FileHandler('logs/errors.log')
+# Error file handler - errors and warnings only, also rotated
+error_handler = RotatingFileHandler(
+    'logs/errors.log', maxBytes=5 * 1024 * 1024, backupCount=3
+)
 error_handler.setLevel(logging.WARNING)
 error_formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',

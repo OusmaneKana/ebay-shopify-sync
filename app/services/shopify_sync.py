@@ -8,8 +8,8 @@ from app.shopify.update_inventory import set_inventory_quantity_by_variant
 logger = logging.getLogger(__name__)
 
 
-async def sync_to_shopify(shopify_client=None, limit=None):
-    logger.info("▶ Syncing normalized products to Shopify..." + (f" (limit: {limit})" if limit else ""))
+async def sync_to_shopify(shopify_client=None):
+    logger.info("▶ Syncing normalized products to Shopify (no limit) ...")
 
     batch_size = 500
     last_id = None
@@ -26,9 +26,6 @@ async def sync_to_shopify(shopify_client=None, limit=None):
         nonlocal created, updated, skipped, total_processed
 
         async with sem:
-            # Enforce overall limit as a soft cap
-            if limit is not None and total_processed >= limit:
-                return
 
             shopify_id = doc.get("shopify_id")
             hash_now = doc.get("hash")
@@ -90,14 +87,8 @@ async def sync_to_shopify(shopify_client=None, limit=None):
         if last_id is not None:
             query["_id"] = {"$gt": last_id}
 
-        # If a limit is set, avoid fetching far more than needed
-        if limit is not None:
-            remaining = max(limit - total_processed, 0)
-            if remaining == 0:
-                break
-            this_batch_size = min(batch_size, remaining)
-        else:
-            this_batch_size = batch_size
+        # Always fetch full batches; overall dataset is bounded by Mongo query
+        this_batch_size = batch_size
 
         # Projection can be narrowed further if desired
         projection = None
@@ -116,9 +107,6 @@ async def sync_to_shopify(shopify_client=None, limit=None):
         tasks = [asyncio.create_task(process_doc(doc)) for doc in batch_docs]
         if tasks:
             await asyncio.gather(*tasks)
-
-        if limit and total_processed >= limit:
-            break
 
     logger.info(f"✔ Shopify Sync Done → {created} created, {updated} updated, {skipped} skipped")
     return {"created": created, "updated": updated, "skipped": skipped}
