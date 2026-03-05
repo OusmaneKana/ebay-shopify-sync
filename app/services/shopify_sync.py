@@ -28,7 +28,8 @@ async def sync_to_shopify(shopify_client=None):
         async with sem:
 
             shopify_id = doc.get("shopify_id")
-            hash_now = doc.get("hash")
+            # Prefer explicit content_hash if present; fall back to legacy 'hash'
+            hash_now = doc.get("content_hash") or doc.get("hash")
             hash_prev = doc.get("last_synced_hash")
 
             # Create new product if no Shopify ID yet
@@ -108,5 +109,55 @@ async def sync_to_shopify(shopify_client=None):
         if tasks:
             await asyncio.gather(*tasks)
 
-    logger.info(f"✔ Shopify Sync Done → {created} created, {updated} updated, {skipped} skipped")
+    logger.info(f"✔ Shopify Sync Done ", created, updated, skipped)
+    return {"created": created, "updated": updated, "skipped": skipped}
+
+
+async def sync_new_products_to_shopify(shopify_client=None, limit: int | None = None):
+    """Create Shopify products only for normalized docs that don't yet have a shopify_id.
+
+    This is useful when you want to backfill newly normalized items without
+    touching existing Shopify products.
+    """
+
+    logger.info("▶ Syncing NEW normalized products to Shopify (no existing shopify_id) ...")
+
+    total_processed = 0
+    created = 0
+
+    max_concurrency = 10
+    sem = asyncio.Semaphore(max_concurrency)
+
+    async def process_doc(doc):
+        nonlocal created, total_processed
+
+        async with sem:
+            try:
+                await create_shopify_product(doc, shopify_client)
+                created += 1
+                logger.info("Created new Shopify product for eBay item %s", doc.get("_id", "unknown"))
+            except Exception as e:
+                logger.error(
+                    "Failed to create Shopify product for eBay item %s: %s",
+                    doc.get("_id", "unknown"),
+                    e,
+                )
+            finally:
+                total_processed += 1
+
+    query = {"shopify_id": {"$exists": False}}
+    cursor = db.product_normalized.find(query).sort("_id", 1)
+    if limit is not None:
+        cursor = cursor.limit(limit)
+
+    batch_docs = [doc async for doc in cursor]
+    if not batch_docs:
+        logger.info("No NEW normalized products without shopify_id found.")
+        return {"created": 0, "processed": 0}
+
+    tasks = [asyncio.create_task(process_doc(doc)) for doc in batch_docs]
+    await asyncio.gather(*tasks)
+
+    logger.info("✔ Shopify NEW products sync done → %s created (processed=%s)", created, total_processed)
+    return {"created": created, "processed": total_processed}
     return {"created": created, "updated": updated, "skipped": skipped}

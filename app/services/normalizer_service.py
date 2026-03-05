@@ -278,6 +278,21 @@ def hash_dict(d: dict) -> str:
     return hashlib.md5(s.encode()).hexdigest()
 
 
+def compute_content_hash(fields: dict) -> str:
+    """Stable content hash for normalized Shopify-relevant fields.
+
+    Uses JSON with sorted keys for determinism; falls back to hash_dict if
+    something isn't JSON-serializable.
+    """
+
+    try:
+        payload = json.dumps(fields, sort_keys=True, separators=(",", ":"))
+    except TypeError:
+        # Fallback: still deterministic, but less structured than JSON
+        return hash_dict(fields)
+    return hashlib.md5(payload.encode("utf-8")).hexdigest()
+
+
 def _is_ignored_value(v: str) -> bool:
     return v.strip() in IGNORE_VALUES
 
@@ -963,25 +978,27 @@ async def normalize_from_raw():
                     # Update all_tags with any new tags added
                     all_tags = sorted(attr_tags)
 
-                # Compute a stable hash of the normalized business fields.
+                # Compute a stable "content hash" of the normalized business fields.
                 # This intentionally excludes transient fields like last_normalized_at
                 # so we can skip writing unchanged documents.
-                new_hash = hash_dict(
-                    {
-                        "title": title,
-                        "description": description,
-                        "images": tuple(images),
-                        "price": adjusted_price,
-                        "quantity": quantity,
-                        "category": mapped_category,
-                        "tags": tuple(all_tags),
-                        "metafields": structured_metafields,
-                        "shipping": normalized_shipping,
-                        "package": normalized_package,
-                    }
-                )
+                content_fields = {
+                    "title": title,
+                    "description": description,
+                    "images": tuple(images),
+                    "price": adjusted_price,
+                    "quantity": quantity,
+                    "category": mapped_category,
+                    "tags": tuple(all_tags),
+                    "metafields": structured_metafields,
+                    "shipping": normalized_shipping,
+                    "package": normalized_package,
+                }
 
-                existing_hash = existing_norm.get("hash") if existing_norm else None
+                new_hash = compute_content_hash(content_fields)
+
+                existing_hash = None
+                if existing_norm:
+                    existing_hash = existing_norm.get("content_hash") or existing_norm.get("hash")
                 if existing_hash == new_hash:
                     logger.debug(f"SKU {sku}: normalized hash unchanged, skipping update")
                     return 0
@@ -1026,7 +1043,10 @@ async def normalize_from_raw():
                     "last_normalized_at": local_now_utc,
                     "collection_key": collection_key,
                     "collection_key_fingerprint": ck_fingerprint,
+                    # Backwards compatibility: keep legacy 'hash' field, but also
+                    # store a more explicit 'content_hash' used by Shopify sync.
                     "hash": new_hash,
+                    "content_hash": new_hash,
 
                 }
 

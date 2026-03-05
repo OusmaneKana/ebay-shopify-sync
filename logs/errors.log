@@ -8862,3 +8862,1020 @@ aiohttp.client_exceptions.ContentTypeError: 502, message='Attempt to decode JSON
 2026-02-23 16:17:19 - app.shopify.client - ERROR - [client.py:56] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: products.json
 2026-02-23 16:19:22 - app.shopify.client - ERROR - [client.py:56] - Shopify POST Error 422: {"errors":{"type":["'list.single_line_text_field' must be consistent with the definition's type: 'single_line_text_field'."]}} | Endpoint: products.json
 2026-02-23 16:21:41 - app.shopify.client - ERROR - [client.py:56] - Shopify POST Error 422: {"errors":{"type":["'list.single_line_text_field' must be consistent with the definition's type: 'single_line_text_field'."]}} | Endpoint: products.json
+2026-03-04 09:30:57 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800273551641.json
+2026-03-04 09:30:57 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800273551641 not found in Shopify
+2026-03-04 09:30:57 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800273551641 (SKU 156164354227)
+2026-03-04 09:30:57 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800391254297.json
+2026-03-04 09:30:57 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800391254297 not found in Shopify
+2026-03-04 09:30:57 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800391254297 (SKU 156633994179)
+2026-03-04 09:30:58 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800391319833.json
+2026-03-04 09:30:58 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800391319833 not found in Shopify
+2026-03-04 09:30:58 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800391319833 (SKU 156634048719)
+2026-03-04 09:30:59 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800392073497.json
+2026-03-04 09:30:59 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800392073497 not found in Shopify
+2026-03-04 09:30:59 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800392073497 (SKU 156634077466)
+2026-03-04 09:31:00 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800627544345.json
+2026-03-04 09:31:00 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800627544345 not found in Shopify
+2026-03-04 09:31:00 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800627544345 (SKU EB-156982325284)
+2026-03-04 09:31:00 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800392663321.json
+2026-03-04 09:31:00 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800392663321 not found in Shopify
+2026-03-04 09:31:00 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800392663321 (SKU 156635680513)
+2026-03-04 09:31:00 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800423792921.json
+2026-03-04 09:31:00 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800423792921 not found in Shopify
+2026-03-04 09:31:00 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800423792921 (SKU 156982462887)
+2026-03-04 09:31:00 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801143410969.json
+2026-03-04 09:31:00 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801143410969 not found in Shopify
+2026-03-04 09:31:00 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801143410969 (SKU EB-157389897272)
+2026-03-04 09:31:01 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800411472153.json
+2026-03-04 09:31:01 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800411472153 not found in Shopify
+2026-03-04 09:31:01 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800411472153 (SKU 156893420699)
+2026-03-04 09:31:01 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800487723289.json
+2026-03-04 09:31:01 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800487723289 not found in Shopify
+2026-03-04 09:31:01 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800487723289 (SKU 157098029916)
+2026-03-04 09:31:02 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800402690329.json
+2026-03-04 09:31:02 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800402690329 not found in Shopify
+2026-03-04 09:31:02 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800402690329 (SKU 156796984510)
+2026-03-04 09:31:02 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800553455897.json
+2026-03-04 09:31:02 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800553455897 not found in Shopify
+2026-03-04 09:31:02 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800553455897 (SKU EB-156583293308)
+2026-03-04 09:31:03 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800402755865.json
+2026-03-04 09:31:03 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800402755865 not found in Shopify
+2026-03-04 09:31:03 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800402755865 (SKU 156796986745)
+2026-03-04 09:31:03 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800388534553.json
+2026-03-04 09:31:03 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800388534553 not found in Shopify
+2026-03-04 09:31:03 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800388534553 (SKU 156583389305)
+2026-03-04 09:31:04 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800635146521.json
+2026-03-04 09:31:04 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800635146521 not found in Shopify
+2026-03-04 09:31:04 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800635146521 (SKU EB-157101027007)
+2026-03-04 09:31:04 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801143902489.json
+2026-03-04 09:31:04 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801143902489 not found in Shopify
+2026-03-04 09:31:04 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801143902489 (SKU EB-157394649068)
+2026-03-04 09:31:06 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801144295705.json
+2026-03-04 09:31:06 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801144295705 not found in Shopify
+2026-03-04 09:31:06 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801144295705 (SKU EB-157394674125)
+2026-03-04 09:31:06 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800507711769.json
+2026-03-04 09:31:06 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800507711769 not found in Shopify
+2026-03-04 09:31:06 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800507711769 (SKU 157326741561)
+2026-03-04 09:31:06 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800635179289.json
+2026-03-04 09:31:06 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800635179289 not found in Shopify
+2026-03-04 09:31:06 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800635179289 (SKU EB-157101143865)
+2026-03-04 09:31:06 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800507810073.json
+2026-03-04 09:31:06 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800507810073 not found in Shopify
+2026-03-04 09:31:06 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800507810073 (SKU 157326763452)
+2026-03-04 09:31:07 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800507875609.json
+2026-03-04 09:31:07 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800507875609 not found in Shopify
+2026-03-04 09:31:07 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800507875609 (SKU 157326772382)
+2026-03-04 09:31:07 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800508530969.json
+2026-03-04 09:31:07 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800508530969 not found in Shopify
+2026-03-04 09:31:07 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800508530969 (SKU 157326773344)
+2026-03-04 09:31:08 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800411734297.json
+2026-03-04 09:31:08 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800411734297 not found in Shopify
+2026-03-04 09:31:08 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800411734297 (SKU 156899823070)
+2026-03-04 09:31:08 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800637866265.json
+2026-03-04 09:31:08 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800637866265 not found in Shopify
+2026-03-04 09:31:08 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800637866265 (SKU EB-157176370217)
+2026-03-04 09:31:09 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800402919705.json
+2026-03-04 09:31:09 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800402919705 not found in Shopify
+2026-03-04 09:31:09 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800402919705 (SKU 156806616854)
+2026-03-04 09:31:09 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800402985241.json
+2026-03-04 09:31:09 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800402985241 not found in Shopify
+2026-03-04 09:31:09 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800402985241 (SKU 156806639069)
+2026-03-04 09:31:10 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800664637721.json
+2026-03-04 09:31:10 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800664637721 not found in Shopify
+2026-03-04 09:31:10 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800664637721 (SKU EB-157329496263)
+2026-03-04 09:31:10 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800567415065.json
+2026-03-04 09:31:10 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800567415065 not found in Shopify
+2026-03-04 09:31:10 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800567415065 (SKU EB-156806685396)
+2026-03-04 09:31:11 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800508563737.json
+2026-03-04 09:31:11 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800508563737 not found in Shopify
+2026-03-04 09:31:11 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800508563737 (SKU 157329519921)
+2026-03-04 09:31:12 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801145049369.json
+2026-03-04 09:31:12 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801145049369 not found in Shopify
+2026-03-04 09:31:12 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801145049369 (SKU EB-157399235122)
+2026-03-04 09:31:12 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800400298265.json
+2026-03-04 09:31:12 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800400298265 not found in Shopify
+2026-03-04 09:31:12 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800400298265 (SKU 156715046884)
+2026-03-04 09:31:12 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800656871705.json
+2026-03-04 09:31:12 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800656871705 not found in Shopify
+2026-03-04 09:31:12 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800656871705 (SKU EB-157254710111)
+2026-03-04 09:31:13 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801147080985.json
+2026-03-04 09:31:13 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801147080985 not found in Shopify
+2026-03-04 09:31:13 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801147080985 (SKU EB-157401498898)
+2026-03-04 09:31:13 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801147506969.json
+2026-03-04 09:31:13 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801147506969 not found in Shopify
+2026-03-04 09:31:13 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801147506969 (SKU EB-157401501053)
+2026-03-04 09:31:14 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800528716057.json
+2026-03-04 09:31:14 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800528716057 not found in Shopify
+2026-03-04 09:31:14 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800528716057 (SKU 157482368095)
+2026-03-04 09:31:14 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800528748825.json
+2026-03-04 09:31:14 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800528748825 not found in Shopify
+2026-03-04 09:31:14 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800528748825 (SKU 157482376237)
+2026-03-04 09:31:15 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800528781593.json
+2026-03-04 09:31:15 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800528781593 not found in Shopify
+2026-03-04 09:31:15 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800528781593 (SKU 157482386211)
+2026-03-04 09:31:15 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800528978201.json
+2026-03-04 09:31:15 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800528978201 not found in Shopify
+2026-03-04 09:31:15 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800528978201 (SKU 157482424855)
+2026-03-04 09:31:16 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800297210137.json
+2026-03-04 09:31:16 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800297210137 not found in Shopify
+2026-03-04 09:31:16 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800297210137 (SKU 156467738822)
+2026-03-04 09:31:16 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800297242905.json
+2026-03-04 09:31:16 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800297242905 not found in Shopify
+2026-03-04 09:31:16 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800297242905 (SKU 156467768289)
+2026-03-04 09:31:17 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800667062553.json
+2026-03-04 09:31:17 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800667062553 not found in Shopify
+2026-03-04 09:31:17 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800667062553 (SKU EB-157334772646)
+2026-03-04 09:31:17 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800667717913.json
+2026-03-04 09:31:17 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800667717913 not found in Shopify
+2026-03-04 09:31:17 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800667717913 (SKU EB-157334778541)
+2026-03-04 09:31:19 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801147867417.json
+2026-03-04 09:31:19 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801147867417 not found in Shopify
+2026-03-04 09:31:19 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801147867417 (SKU EB-157406220561)
+2026-03-04 09:31:19 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800395153689.json
+2026-03-04 09:31:19 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800395153689 not found in Shopify
+2026-03-04 09:31:19 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800395153689 (SKU 156647450299)
+2026-03-04 09:31:19 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801147801881.json
+2026-03-04 09:31:19 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801147801881 not found in Shopify
+2026-03-04 09:31:19 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801147801881 (SKU EB-157406199537)
+2026-03-04 09:31:19 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800490672409.json
+2026-03-04 09:31:19 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800490672409 not found in Shopify
+2026-03-04 09:31:19 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800490672409 (SKU 157119590949)
+2026-03-04 09:31:20 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800657494297.json
+2026-03-04 09:31:20 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800657494297 not found in Shopify
+2026-03-04 09:31:20 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800657494297 (SKU EB-157259482367)
+2026-03-04 09:31:20 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800291148057.json
+2026-03-04 09:31:20 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800291148057 not found in Shopify
+2026-03-04 09:31:20 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800291148057 (SKU 156422664938)
+2026-03-04 09:31:21 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800509448473.json
+2026-03-04 09:31:21 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800509448473 not found in Shopify
+2026-03-04 09:31:21 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800509448473 (SKU 157337006846)
+2026-03-04 09:31:21 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800670273817.json
+2026-03-04 09:31:21 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800670273817 not found in Shopify
+2026-03-04 09:31:21 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800670273817 (SKU EB-157337007100)
+2026-03-04 09:31:22 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800438571289.json
+2026-03-04 09:31:22 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800438571289 not found in Shopify
+2026-03-04 09:31:22 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800438571289 (SKU 157009249610)
+2026-03-04 09:31:22 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800282530073.json
+2026-03-04 09:31:22 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800282530073 not found in Shopify
+2026-03-04 09:31:22 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800282530073 (SKU 156314222550)
+2026-03-04 09:31:23 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800297308441.json
+2026-03-04 09:31:23 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800297308441 not found in Shopify
+2026-03-04 09:31:23 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800297308441 (SKU 156470700542)
+2026-03-04 09:31:24 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800275845401.json
+2026-03-04 09:31:24 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800275845401 not found in Shopify
+2026-03-04 09:31:24 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800275845401 (SKU 156177527934)
+2026-03-04 09:31:25 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800283185433.json
+2026-03-04 09:31:25 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800283185433 not found in Shopify
+2026-03-04 09:31:25 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800283185433 (SKU 156367807323)
+2026-03-04 09:31:25 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800529600793.json
+2026-03-04 09:31:25 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800529600793 not found in Shopify
+2026-03-04 09:31:25 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800529600793 (SKU 157489239159)
+2026-03-04 09:31:25 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800529469721.json
+2026-03-04 09:31:25 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800529469721 not found in Shopify
+2026-03-04 09:31:25 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800529469721 (SKU 157489216498)
+2026-03-04 09:31:25 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800529502489.json
+2026-03-04 09:31:25 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800529502489 not found in Shopify
+2026-03-04 09:31:25 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800529502489 (SKU 157489231988)
+2026-03-04 09:31:26 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800658149657.json
+2026-03-04 09:31:26 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800658149657 not found in Shopify
+2026-03-04 09:31:26 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800658149657 (SKU EB-157261835994)
+2026-03-04 09:31:26 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800291213593.json
+2026-03-04 09:31:26 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800291213593 not found in Shopify
+2026-03-04 09:31:26 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800291213593 (SKU 156422834724)
+2026-03-04 09:31:27 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800488673561.json
+2026-03-04 09:31:27 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800488673561 not found in Shopify
+2026-03-04 09:31:27 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800488673561 (SKU 157119530349)
+2026-03-04 09:31:27 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800530026777.json
+2026-03-04 09:31:27 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800530026777 not found in Shopify
+2026-03-04 09:31:27 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800530026777 (SKU 157489270930)
+2026-03-04 09:31:28 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800530092313.json
+2026-03-04 09:31:28 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800530092313 not found in Shopify
+2026-03-04 09:31:28 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800530092313 (SKU 157489282086)
+2026-03-04 09:31:28 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800490279193.json
+2026-03-04 09:31:28 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800490279193 not found in Shopify
+2026-03-04 09:31:28 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800490279193 (SKU 157119573581)
+2026-03-04 09:31:29 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800401477913.json
+2026-03-04 09:31:29 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800401477913 not found in Shopify
+2026-03-04 09:31:29 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800401477913 (SKU 156724972326)
+2026-03-04 09:31:29 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800258314521.json
+2026-03-04 09:31:29 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800258314521 not found in Shopify
+2026-03-04 09:31:29 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800258314521 (SKU 156022590617)
+2026-03-04 09:31:30 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800658247961.json
+2026-03-04 09:31:30 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800658247961 not found in Shopify
+2026-03-04 09:31:30 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800658247961 (SKU EB-157264419555)
+2026-03-04 09:31:31 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800292065561.json
+2026-03-04 09:31:31 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800292065561 not found in Shopify
+2026-03-04 09:31:31 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800292065561 (SKU 156423755216)
+2026-03-04 09:31:31 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800309760281.json
+2026-03-04 09:31:31 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800309760281 not found in Shopify
+2026-03-04 09:31:31 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800309760281 (SKU 156538357670)
+2026-03-04 09:31:32 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800439882009.json
+2026-03-04 09:31:32 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800439882009 not found in Shopify
+2026-03-04 09:31:32 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800439882009 (SKU 157019025817)
+2026-03-04 09:31:32 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800282366233.json
+2026-03-04 09:31:32 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800282366233 not found in Shopify
+2026-03-04 09:31:32 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800282366233 (SKU 156270440427)
+2026-03-04 09:31:32 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800674730265.json
+2026-03-04 09:31:32 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800674730265 not found in Shopify
+2026-03-04 09:31:32 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800674730265 (SKU EB-157343755551)
+2026-03-04 09:31:33 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800532451609.json
+2026-03-04 09:31:33 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800532451609 not found in Shopify
+2026-03-04 09:31:33 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800532451609 (SKU 157495501023)
+2026-03-04 09:31:33 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800276893977.json
+2026-03-04 09:31:33 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800276893977 not found in Shopify
+2026-03-04 09:31:33 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800276893977 (SKU 156180408314)
+2026-03-04 09:31:34 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800283644185.json
+2026-03-04 09:31:34 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800283644185 not found in Shopify
+2026-03-04 09:31:34 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800283644185 (SKU 156371262738)
+2026-03-04 09:31:34 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800310350105.json
+2026-03-04 09:31:34 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800310350105 not found in Shopify
+2026-03-04 09:31:34 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800310350105 (SKU 156541734584)
+2026-03-04 09:31:35 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800554864921.json
+2026-03-04 09:31:35 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800554864921 not found in Shopify
+2026-03-04 09:31:35 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800554864921 (SKU EB-156654233396)
+2026-03-04 09:31:35 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800313331993.json
+2026-03-04 09:31:35 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800313331993 not found in Shopify
+2026-03-04 09:31:35 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800313331993 (SKU 156541805850)
+2026-03-04 09:31:36 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800517542169.json
+2026-03-04 09:31:36 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800517542169 not found in Shopify
+2026-03-04 09:31:36 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800517542169 (SKU 157416539580)
+2026-03-04 09:31:36 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800518000921.json
+2026-03-04 09:31:36 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800518000921 not found in Shopify
+2026-03-04 09:31:36 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800518000921 (SKU 157416601797)
+2026-03-04 09:31:38 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800635375897.json
+2026-03-04 09:31:38 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800635375897 not found in Shopify
+2026-03-04 09:31:38 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800635375897 (SKU EB-157104655845)
+2026-03-04 09:31:38 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800675647769.json
+2026-03-04 09:31:38 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800567513369.json
+2026-03-04 09:31:38 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800675647769 not found in Shopify
+2026-03-04 09:31:38 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800675647769 (SKU EB-157348575188)
+2026-03-04 09:31:38 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800567513369 not found in Shopify
+2026-03-04 09:31:38 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800567513369 (SKU EB-156831555595)
+2026-03-04 09:31:38 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800283742489.json
+2026-03-04 09:31:38 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800283742489 not found in Shopify
+2026-03-04 09:31:38 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800283742489 (SKU 156374608692)
+2026-03-04 09:31:39 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800631607577.json
+2026-03-04 09:31:39 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800631607577 not found in Shopify
+2026-03-04 09:31:39 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800631607577 (SKU EB-157026501080)
+2026-03-04 09:31:39 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800504729881.json
+2026-03-04 09:31:39 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800504729881 not found in Shopify
+2026-03-04 09:31:39 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800504729881 (SKU 157272165241)
+2026-03-04 09:31:40 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800518426905.json
+2026-03-04 09:31:40 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800518426905 not found in Shopify
+2026-03-04 09:31:40 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800518426905 (SKU 157418891117)
+2026-03-04 09:31:40 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800518689049.json
+2026-03-04 09:31:40 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800518689049 not found in Shopify
+2026-03-04 09:31:40 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800518689049 (SKU 157418900206)
+2026-03-04 09:31:41 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800519442713.json
+2026-03-04 09:31:41 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800519442713 not found in Shopify
+2026-03-04 09:31:41 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800519442713 (SKU 157418941163)
+2026-03-04 09:31:41 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800248451353.json
+2026-03-04 09:31:41 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800248451353 not found in Shopify
+2026-03-04 09:31:41 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800248451353 (SKU 155972004627)
+2026-03-04 09:31:42 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800547033369.json
+2026-03-04 09:31:42 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800547033369 not found in Shopify
+2026-03-04 09:31:42 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800547033369 (SKU EB-155972025034)
+2026-03-04 09:31:42 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800511971609.json
+2026-03-04 09:31:42 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800511971609 not found in Shopify
+2026-03-04 09:31:42 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800511971609 (SKU 157355174034)
+2026-03-04 09:31:43 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800547066137.json
+2026-03-04 09:31:43 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800547066137 not found in Shopify
+2026-03-04 09:31:43 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800547066137 (SKU EB-155972026885)
+2026-03-04 09:31:44 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800533139737.json
+2026-03-04 09:31:44 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800533139737 not found in Shopify
+2026-03-04 09:31:44 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800533139737 (SKU 157502078899)
+2026-03-04 09:31:44 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800565350681.json
+2026-03-04 09:31:44 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800565350681 not found in Shopify
+2026-03-04 09:31:44 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800565350681 (SKU EB-156740318062)
+2026-03-04 09:31:44 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800520950041.json
+2026-03-04 09:31:44 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800520950041 not found in Shopify
+2026-03-04 09:31:44 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800520950041 (SKU 157421097304)
+2026-03-04 09:31:45 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800512594201.json
+2026-03-04 09:31:45 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800512594201 not found in Shopify
+2026-03-04 09:31:45 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800512594201 (SKU 157355276772)
+2026-03-04 09:31:45 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800282497305.json
+2026-03-04 09:31:45 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800282497305 not found in Shopify
+2026-03-04 09:31:45 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800282497305 (SKU 156275573002)
+2026-03-04 09:31:46 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800521048345.json
+2026-03-04 09:31:46 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800521048345 not found in Shopify
+2026-03-04 09:31:46 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800521048345 (SKU 157422471734)
+2026-03-04 09:31:46 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800533434649.json
+2026-03-04 09:31:46 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800533434649 not found in Shopify
+2026-03-04 09:31:46 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800533434649 (SKU 157505181764)
+2026-03-04 09:31:47 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800522490137.json
+2026-03-04 09:31:47 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800522490137 not found in Shopify
+2026-03-04 09:31:47 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800522490137 (SKU 157423251580)
+2026-03-04 09:31:47 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800555028761.json
+2026-03-04 09:31:47 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800555028761 not found in Shopify
+2026-03-04 09:31:47 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800555028761 (SKU EB-156659265120)
+2026-03-04 09:31:48 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800534614297.json
+2026-03-04 09:31:48 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800534614297 not found in Shopify
+2026-03-04 09:31:48 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800534614297 (SKU 157505279552)
+2026-03-04 09:31:48 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800522686745.json
+2026-03-04 09:31:48 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800522686745 not found in Shopify
+2026-03-04 09:31:48 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800522686745 (SKU 157423287595)
+2026-03-04 09:31:49 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800534810905.json
+2026-03-04 09:31:49 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800534810905 not found in Shopify
+2026-03-04 09:31:49 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800534810905 (SKU 157505285386)
+2026-03-04 09:31:49 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800534941977.json
+2026-03-04 09:31:49 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800534941977 not found in Shopify
+2026-03-04 09:31:49 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800534941977 (SKU 157505319232)
+2026-03-04 09:31:51 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801140166937.json
+2026-03-04 09:31:51 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800506040601.json
+2026-03-04 09:31:51 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801140166937 not found in Shopify
+2026-03-04 09:31:51 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801140166937 (SKU EB-157353149694)
+2026-03-04 09:31:51 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800506040601 not found in Shopify
+2026-03-04 09:31:51 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800506040601 (SKU 157277461630)
+2026-03-04 09:31:51 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800552603929.json
+2026-03-04 09:31:51 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800552603929 not found in Shopify
+2026-03-04 09:31:51 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800552603929 (SKU EB-156547879183)
+2026-03-04 09:31:51 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800572264729.json
+2026-03-04 09:31:51 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800572264729 not found in Shopify
+2026-03-04 09:31:51 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800572264729 (SKU EB-156841689276)
+2026-03-04 09:31:52 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800513184025.json
+2026-03-04 09:31:52 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800513184025 not found in Shopify
+2026-03-04 09:31:52 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800513184025 (SKU 157358923989)
+2026-03-04 09:31:52 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800253235481.json
+2026-03-04 09:31:52 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800253235481 not found in Shopify
+2026-03-04 09:31:52 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800253235481 (SKU 155974882406)
+2026-03-04 09:31:53 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801140199705.json
+2026-03-04 09:31:53 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801140199705 not found in Shopify
+2026-03-04 09:31:53 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801140199705 (SKU EB-157353154574)
+2026-03-04 09:31:53 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800316510489.json
+2026-03-04 09:31:53 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800316510489 not found in Shopify
+2026-03-04 09:31:53 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800316510489 (SKU 156547959111)
+2026-03-04 09:31:54 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800277123353.json
+2026-03-04 09:31:54 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800277123353 not found in Shopify
+2026-03-04 09:31:54 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800277123353 (SKU 156190748504)
+2026-03-04 09:31:54 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800397742361.json
+2026-03-04 09:31:54 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800397742361 not found in Shopify
+2026-03-04 09:31:54 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800397742361 (SKU 156660881524)
+2026-03-04 09:31:55 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801140429081.json
+2026-03-04 09:31:55 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801140429081 not found in Shopify
+2026-03-04 09:31:55 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801140429081 (SKU EB-157355232515)
+2026-03-04 09:31:55 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800414224665.json
+2026-03-04 09:31:55 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800414224665 not found in Shopify
+2026-03-04 09:31:55 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800414224665 (SKU 156938132840)
+2026-03-04 09:31:56 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800562630937.json
+2026-03-04 09:31:56 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800562630937 not found in Shopify
+2026-03-04 09:31:56 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800562630937 (SKU EB-156660939784)
+2026-03-04 09:31:57 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800506138905.json
+2026-03-04 09:31:57 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800506138905 not found in Shopify
+2026-03-04 09:31:57 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800506138905 (SKU 157280003397)
+2026-03-04 09:31:57 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800415830297.json
+2026-03-04 09:31:57 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800415830297 not found in Shopify
+2026-03-04 09:31:57 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800415830297 (SKU 156938208466)
+2026-03-04 09:31:57 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800547459353.json
+2026-03-04 09:31:57 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800547459353 not found in Shopify
+2026-03-04 09:31:57 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800547459353 (SKU EB-156032374269)
+2026-03-04 09:31:58 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800572100889.json
+2026-03-04 09:31:58 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800572100889 not found in Shopify
+2026-03-04 09:31:58 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800572100889 (SKU EB-156837916225)
+2026-03-04 09:31:58 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800522817817.json
+2026-03-04 09:31:58 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800522817817 not found in Shopify
+2026-03-04 09:31:58 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800522817817 (SKU 157427776076)
+2026-03-04 09:31:59 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800418255129.json
+2026-03-04 09:31:59 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800418255129 not found in Shopify
+2026-03-04 09:31:59 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800418255129 (SKU 156941116106)
+2026-03-04 09:31:59 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800388862233.json
+2026-03-04 09:31:59 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800388862233 not found in Shopify
+2026-03-04 09:31:59 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800388862233 (SKU 156609961733)
+2026-03-04 09:32:00 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800631804185.json
+2026-03-04 09:32:00 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800631804185 not found in Shopify
+2026-03-04 09:32:00 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800631804185 (SKU EB-157044588207)
+2026-03-04 09:32:00 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801140560153.json
+2026-03-04 09:32:00 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801140560153 not found in Shopify
+2026-03-04 09:32:00 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801140560153 (SKU EB-157358879116)
+2026-03-04 09:32:01 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800286822681.json
+2026-03-04 09:32:01 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800286822681 not found in Shopify
+2026-03-04 09:32:01 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800286822681 (SKU 156390129465)
+2026-03-04 09:32:01 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801140658457.json
+2026-03-04 09:32:01 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801140658457 not found in Shopify
+2026-03-04 09:32:01 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801140658457 (SKU EB-157358888622)
+2026-03-04 09:32:02 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800562860313.json
+2026-03-04 09:32:02 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800562860313 not found in Shopify
+2026-03-04 09:32:02 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800562860313 (SKU EB-156664300960)
+2026-03-04 09:32:04 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800523899161.json
+2026-03-04 09:32:04 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800523899161 not found in Shopify
+2026-03-04 09:32:04 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800523899161 (SKU 157430143219)
+2026-03-04 09:32:04 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800553685273.json
+2026-03-04 09:32:04 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800553685273 not found in Shopify
+2026-03-04 09:32:04 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800553685273 (SKU EB-156611469182)
+2026-03-04 09:32:04 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800632656153.json
+2026-03-04 09:32:04 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800632656153 not found in Shopify
+2026-03-04 09:32:04 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800632656153 (SKU EB-157048451485)
+2026-03-04 09:32:04 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800455086361.json
+2026-03-04 09:32:04 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800455086361 not found in Shopify
+2026-03-04 09:32:04 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800455086361 (SKU 157048512501)
+2026-03-04 09:32:04 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800538611993.json
+2026-03-04 09:32:04 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800538611993 not found in Shopify
+2026-03-04 09:32:04 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800538611993 (SKU 157520403701)
+2026-03-04 09:32:05 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800299536665.json
+2026-03-04 09:32:05 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800299536665 not found in Shopify
+2026-03-04 09:32:05 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800299536665 (SKU 156489584067)
+2026-03-04 09:32:05 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800524390681.json
+2026-03-04 09:32:05 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800524390681 not found in Shopify
+2026-03-04 09:32:05 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800524390681 (SKU 157434399697)
+2026-03-04 09:32:06 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800524488985.json
+2026-03-04 09:32:06 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800524488985 not found in Shopify
+2026-03-04 09:32:06 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800524488985 (SKU 157434455817)
+2026-03-04 09:32:06 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800535695641.json
+2026-03-04 09:32:06 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800535695641 not found in Shopify
+2026-03-04 09:32:06 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800535695641 (SKU 157517739682)
+2026-03-04 09:32:07 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800536121625.json
+2026-03-04 09:32:07 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800536121625 not found in Shopify
+2026-03-04 09:32:07 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800536121625 (SKU 157517765292)
+2026-03-04 09:32:07 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801140822297.json
+2026-03-04 09:32:07 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801140822297 not found in Shopify
+2026-03-04 09:32:07 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801140822297 (SKU EB-157362932192)
+2026-03-04 09:32:08 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800404754713.json
+2026-03-04 09:32:08 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800404754713 not found in Shopify
+2026-03-04 09:32:08 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800404754713 (SKU 156848696974)
+2026-03-04 09:32:08 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800524980505.json
+2026-03-04 09:32:08 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800524980505 not found in Shopify
+2026-03-04 09:32:08 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800524980505 (SKU 157436731739)
+2026-03-04 09:32:10 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801140887833.json
+2026-03-04 09:32:10 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801140887833 not found in Shopify
+2026-03-04 09:32:10 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801140887833 (SKU EB-157362978553)
+2026-03-04 09:32:10 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800286789913.json
+2026-03-04 09:32:10 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800286789913 not found in Shopify
+2026-03-04 09:32:10 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800286789913 (SKU 156387568436)
+2026-03-04 09:32:10 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800525734169.json
+2026-03-04 09:32:10 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800525734169 not found in Shopify
+2026-03-04 09:32:10 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800525734169 (SKU 157436760945)
+2026-03-04 09:32:10 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800625840409.json
+2026-03-04 09:32:10 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800625840409 not found in Shopify
+2026-03-04 09:32:10 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800625840409 (SKU EB-156950509341)
+2026-03-04 09:32:11 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800300552473.json
+2026-03-04 09:32:11 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800300552473 not found in Shopify
+2026-03-04 09:32:11 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800300552473 (SKU 156491494260)
+2026-03-04 09:32:11 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800525766937.json
+2026-03-04 09:32:11 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800525766937 not found in Shopify
+2026-03-04 09:32:11 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800525766937 (SKU 157439082975)
+2026-03-04 09:32:12 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800526127385.json
+2026-03-04 09:32:12 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800526127385 not found in Shopify
+2026-03-04 09:32:12 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800526127385 (SKU 157439092704)
+2026-03-04 09:32:12 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800538284313.json
+2026-03-04 09:32:12 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800538284313 not found in Shopify
+2026-03-04 09:32:12 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800538284313 (SKU 157520385112)
+2026-03-04 09:32:13 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800527077657.json
+2026-03-04 09:32:13 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800527077657 not found in Shopify
+2026-03-04 09:32:13 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800527077657 (SKU 157439132727)
+2026-03-04 09:32:13 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800659165465.json
+2026-03-04 09:32:13 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800659165465 not found in Shopify
+2026-03-04 09:32:13 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800659165465 (SKU EB-157295107536)
+2026-03-04 09:32:14 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800527143193.json
+2026-03-04 09:32:14 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800527143193 not found in Shopify
+2026-03-04 09:32:14 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800527143193 (SKU 157439136938)
+2026-03-04 09:32:14 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800538710297.json
+2026-03-04 09:32:14 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800538710297 not found in Shopify
+2026-03-04 09:32:14 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800538710297 (SKU 157520452890)
+2026-03-04 09:32:15 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800538743065.json
+2026-03-04 09:32:15 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800538743065 not found in Shopify
+2026-03-04 09:32:15 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800538743065 (SKU 157522758032)
+2026-03-04 09:32:16 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800539365657.json
+2026-03-04 09:32:16 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800539365657 not found in Shopify
+2026-03-04 09:32:16 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800539365657 (SKU 157522811770)
+2026-03-04 09:32:16 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800552407321.json
+2026-03-04 09:32:16 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800552407321 not found in Shopify
+2026-03-04 09:32:16 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800552407321 (SKU EB-156495312431)
+2026-03-04 09:32:16 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800513610009.json
+2026-03-04 09:32:16 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800513610009 not found in Shopify
+2026-03-04 09:32:16 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800513610009 (SKU 157367468762)
+2026-03-04 09:32:17 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800539693337.json
+2026-03-04 09:32:17 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800539693337 not found in Shopify
+2026-03-04 09:32:17 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800539693337 (SKU 157522824406)
+2026-03-04 09:32:17 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800513904921.json
+2026-03-04 09:32:17 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800513904921 not found in Shopify
+2026-03-04 09:32:17 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800513904921 (SKU 157367523603)
+2026-03-04 09:32:18 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800300683545.json
+2026-03-04 09:32:18 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800300683545 not found in Shopify
+2026-03-04 09:32:18 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800300683545 (SKU 156497244229)
+2026-03-04 09:32:18 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800650318105.json
+2026-03-04 09:32:18 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800650318105 not found in Shopify
+2026-03-04 09:32:18 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800650318105 (SKU EB-157222981321)
+2026-03-04 09:32:19 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800300781849.json
+2026-03-04 09:32:19 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800300781849 not found in Shopify
+2026-03-04 09:32:19 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800300781849 (SKU 156497256290)
+2026-03-04 09:32:19 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800419205401.json
+2026-03-04 09:32:19 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800419205401 not found in Shopify
+2026-03-04 09:32:19 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800419205401 (SKU 156960388001)
+2026-03-04 09:32:20 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800279777561.json
+2026-03-04 09:32:20 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800279777561 not found in Shopify
+2026-03-04 09:32:20 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800279777561 (SKU 156244301101)
+2026-03-04 09:32:20 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800540053785.json
+2026-03-04 09:32:20 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800540053785 not found in Shopify
+2026-03-04 09:32:20 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800540053785 (SKU 157525155769)
+2026-03-04 09:32:21 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800540217625.json
+2026-03-04 09:32:21 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800540217625 not found in Shopify
+2026-03-04 09:32:21 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800540217625 (SKU 157525185483)
+2026-03-04 09:32:21 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800405442841.json
+2026-03-04 09:32:21 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800405442841 not found in Shopify
+2026-03-04 09:32:21 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800405442841 (SKU 156862761953)
+2026-03-04 09:32:23 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800553816345.json
+2026-03-04 09:32:23 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800553816345 not found in Shopify
+2026-03-04 09:32:23 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800553816345 (SKU EB-156623099352)
+2026-03-04 09:32:23 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800390369561.json
+2026-03-04 09:32:23 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800390369561 not found in Shopify
+2026-03-04 09:32:23 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800390369561 (SKU 156623128510)
+2026-03-04 09:32:23 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800540315929.json
+2026-03-04 09:32:23 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800540315929 not found in Shopify
+2026-03-04 09:32:23 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800540315929 (SKU 157525330274)
+2026-03-04 09:32:23 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800496374041.json
+2026-03-04 09:32:23 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800496374041 not found in Shopify
+2026-03-04 09:32:23 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800496374041 (SKU 157228164674)
+2026-03-04 09:32:24 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800653660441.json
+2026-03-04 09:32:24 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800653660441 not found in Shopify
+2026-03-04 09:32:24 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800653660441 (SKU EB-157225481656)
+2026-03-04 09:32:24 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800514035993.json
+2026-03-04 09:32:24 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800514035993 not found in Shopify
+2026-03-04 09:32:24 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800514035993 (SKU 157371782777)
+2026-03-04 09:32:25 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801141051673.json
+2026-03-04 09:32:25 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801141051673 not found in Shopify
+2026-03-04 09:32:25 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801141051673 (SKU EB-157371790170)
+2026-03-04 09:32:25 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800409473305.json
+2026-03-04 09:32:25 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800409473305 not found in Shopify
+2026-03-04 09:32:25 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800409473305 (SKU 156867600841)
+2026-03-04 09:32:26 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801141117209.json
+2026-03-04 09:32:26 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801141117209 not found in Shopify
+2026-03-04 09:32:26 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801141117209 (SKU EB-157371833992)
+2026-03-04 09:32:26 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800487067929.json
+2026-03-04 09:32:26 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800487067929 not found in Shopify
+2026-03-04 09:32:26 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800487067929 (SKU 157073326584)
+2026-03-04 09:32:27 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801141379353.json
+2026-03-04 09:32:27 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801141379353 not found in Shopify
+2026-03-04 09:32:27 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801141379353 (SKU EB-157371874381)
+2026-03-04 09:32:27 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800553292057.json
+2026-03-04 09:32:27 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800553292057 not found in Shopify
+2026-03-04 09:32:27 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800553292057 (SKU EB-156566856608)
+2026-03-04 09:32:29 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800386502937.json
+2026-03-04 09:32:29 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800386502937 not found in Shopify
+2026-03-04 09:32:29 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800386502937 (SKU 156566872239)
+2026-03-04 09:32:29 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800634458393.json
+2026-03-04 09:32:29 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800634458393 not found in Shopify
+2026-03-04 09:32:29 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800634458393 (SKU EB-157070023795)
+2026-03-04 09:32:29 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800386535705.json
+2026-03-04 09:32:29 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800386535705 not found in Shopify
+2026-03-04 09:32:29 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800386535705 (SKU 156566877730)
+2026-03-04 09:32:29 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800294687001.json
+2026-03-04 09:32:29 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800294687001 not found in Shopify
+2026-03-04 09:32:29 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800294687001 (SKU 156451001609)
+2026-03-04 09:32:30 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800527733017.json
+2026-03-04 09:32:30 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800527733017 not found in Shopify
+2026-03-04 09:32:30 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800527733017 (SKU 157446520038)
+2026-03-04 09:32:30 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800294523161.json
+2026-03-04 09:32:30 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800294523161 not found in Shopify
+2026-03-04 09:32:30 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800294523161 (SKU 156447587804)
+2026-03-04 09:32:31 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800553914649.json
+2026-03-04 09:32:31 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800553914649 not found in Shopify
+2026-03-04 09:32:31 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800553914649 (SKU EB-156625237176)
+2026-03-04 09:32:31 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800540578073.json
+2026-03-04 09:32:31 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800540578073 not found in Shopify
+2026-03-04 09:32:31 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800540578073 (SKU 157529636338)
+2026-03-04 09:32:32 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51801148621081.json
+2026-03-04 09:32:32 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51801148621081 not found in Shopify
+2026-03-04 09:32:32 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51801148621081 (SKU EB-157529674905)
+2026-03-04 09:32:32 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800420122905.json
+2026-03-04 09:32:32 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800420122905 not found in Shopify
+2026-03-04 09:32:32 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800420122905 (SKU 156966907054)
+2026-03-04 09:32:33 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800541069593.json
+2026-03-04 09:32:33 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800541069593 not found in Shopify
+2026-03-04 09:32:33 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800541069593 (SKU 157529702904)
+2026-03-04 09:32:33 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800386568473.json
+2026-03-04 09:32:33 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800386568473 not found in Shopify
+2026-03-04 09:32:33 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800386568473 (SKU 156568674054)
+2026-03-04 09:32:34 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800496701721.json
+2026-03-04 09:32:34 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800496701721 not found in Shopify
+2026-03-04 09:32:34 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800496701721 (SKU 157228235120)
+2026-03-04 09:32:36 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800272961817.json
+2026-03-04 09:32:36 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800541331737.json
+2026-03-04 09:32:36 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800272961817 not found in Shopify
+2026-03-04 09:32:36 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800272961817 (SKU 156159076588)
+2026-03-04 09:32:36 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800541331737 not found in Shopify
+2026-03-04 09:32:36 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800541331737 (SKU 157532097067)
+2026-03-04 09:32:36 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800515641625.json
+2026-03-04 09:32:36 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800515641625 not found in Shopify
+2026-03-04 09:32:36 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800515641625 (SKU 157376957622)
+2026-03-04 09:32:36 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800552472857.json
+2026-03-04 09:32:36 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800552472857 not found in Shopify
+2026-03-04 09:32:36 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800552472857 (SKU EB-156504277292)
+2026-03-04 09:32:36 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800552505625.json
+2026-03-04 09:32:36 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800552505625 not found in Shopify
+2026-03-04 09:32:36 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800552505625 (SKU EB-156504279011)
+2026-03-04 09:32:37 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800548180249.json
+2026-03-04 09:32:37 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800548180249 not found in Shopify
+2026-03-04 09:32:37 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800548180249 (SKU EB-156107994976)
+2026-03-04 09:32:37 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800552538393.json
+2026-03-04 09:32:37 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800552538393 not found in Shopify
+2026-03-04 09:32:37 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800552538393 (SKU EB-156504330110)
+2026-03-04 09:32:38 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800487461145.json
+2026-03-04 09:32:38 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800487461145 not found in Shopify
+2026-03-04 09:32:38 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800487461145 (SKU 157079782394)
+2026-03-04 09:32:38 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800423268633.json
+2026-03-04 09:32:38 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800423268633 not found in Shopify
+2026-03-04 09:32:38 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800423268633 (SKU 156973207744)
+2026-03-04 09:32:39 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800662409497.json
+2026-03-04 09:32:39 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800662409497 not found in Shopify
+2026-03-04 09:32:39 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800662409497 (SKU EB-157312142140)
+2026-03-04 09:32:39 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800507089177.json
+2026-03-04 09:32:39 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800507089177 not found in Shopify
+2026-03-04 09:32:39 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800507089177 (SKU 157312147538)
+2026-03-04 09:32:40 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800663982361.json
+2026-03-04 09:32:40 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800663982361 not found in Shopify
+2026-03-04 09:32:40 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800663982361 (SKU EB-157312190196)
+2026-03-04 09:32:40 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800516460825.json
+2026-03-04 09:32:40 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800516460825 not found in Shopify
+2026-03-04 09:32:40 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800516460825 (SKU 157381946553)
+2026-03-04 09:32:43 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800262902041.json
+2026-03-04 09:32:43 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800262902041 not found in Shopify
+2026-03-04 09:32:43 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800262902041 (SKU 156057983345)
+2026-03-04 09:32:43 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800541888793.json
+2026-03-04 09:32:43 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800541888793 not found in Shopify
+2026-03-04 09:32:43 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800541888793 (SKU 157538947388)
+2026-03-04 09:32:43 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800541593881.json
+2026-03-04 09:32:43 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800541593881 not found in Shopify
+2026-03-04 09:32:43 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800541593881 (SKU 157538918600)
+2026-03-04 09:32:43 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800541954329.json
+2026-03-04 09:32:43 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800541954329 not found in Shopify
+2026-03-04 09:32:43 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800541954329 (SKU 157538967027)
+2026-03-04 09:32:43 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800541921561.json
+2026-03-04 09:32:43 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800541921561 not found in Shopify
+2026-03-04 09:32:43 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800541921561 (SKU 157538950808)
+2026-03-04 09:32:43 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800655757593.json
+2026-03-04 09:32:43 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800655757593 not found in Shopify
+2026-03-04 09:32:43 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800655757593 (SKU EB-157237429208)
+2026-03-04 09:32:44 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800546279705.json
+2026-03-04 09:32:44 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800546279705 not found in Shopify
+2026-03-04 09:32:44 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800546279705 (SKU 157562629821)
+2026-03-04 09:32:44 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800541987097.json
+2026-03-04 09:32:44 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800541987097 not found in Shopify
+2026-03-04 09:32:44 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800541987097 (SKU 157538969706)
+2026-03-04 09:32:45 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800546345241.json
+2026-03-04 09:32:45 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800546345241 not found in Shopify
+2026-03-04 09:32:45 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800546345241 (SKU 157562649136)
+2026-03-04 09:32:45 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800542118169.json
+2026-03-04 09:32:45 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800542118169 not found in Shopify
+2026-03-04 09:32:45 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800542118169 (SKU 157538987113)
+2026-03-04 09:32:46 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800273486105.json
+2026-03-04 09:32:46 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800273486105 not found in Shopify
+2026-03-04 09:32:46 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800273486105 (SKU 156164349683)
+2026-03-04 09:32:46 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800554373401.json
+2026-03-04 09:32:46 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800554373401 not found in Shopify
+2026-03-04 09:32:46 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800554373401 (SKU EB-156633994179)
+2026-03-04 09:32:47 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800542347545.json
+2026-03-04 09:32:47 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800542347545 not found in Shopify
+2026-03-04 09:32:47 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800542347545 (SKU 157541182083)
+2026-03-04 09:32:48 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800542904601.json
+2026-03-04 09:32:48 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800542904601 not found in Shopify
+2026-03-04 09:32:48 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800542904601 (SKU 157541204034)
+2026-03-04 09:32:48 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800543133977.json
+2026-03-04 09:32:48 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800543133977 not found in Shopify
+2026-03-04 09:32:48 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800543133977 (SKU 157544171665)
+2026-03-04 09:32:48 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800543297817.json
+2026-03-04 09:32:48 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800543297817 not found in Shopify
+2026-03-04 09:32:48 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800543297817 (SKU 157544210882)
+2026-03-04 09:32:49 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800544968985.json
+2026-03-04 09:32:49 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800544968985 not found in Shopify
+2026-03-04 09:32:49 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800544968985 (SKU 157550719660)
+2026-03-04 09:32:49 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800545132825.json
+2026-03-04 09:32:49 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800545132825 not found in Shopify
+2026-03-04 09:32:49 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800545132825 (SKU 157550756150)
+2026-03-04 09:32:50 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800545657113.json
+2026-03-04 09:32:50 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800545657113 not found in Shopify
+2026-03-04 09:32:50 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800545657113 (SKU 157551327204)
+2026-03-04 09:32:50 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800545689881.json
+2026-03-04 09:32:50 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800545689881 not found in Shopify
+2026-03-04 09:32:50 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800545689881 (SKU 157558245074)
+2026-03-04 09:32:51 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800545722649.json
+2026-03-04 09:32:51 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800545722649 not found in Shopify
+2026-03-04 09:32:51 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800545722649 (SKU 157559158168)
+2026-03-04 09:32:51 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800545755417.json
+2026-03-04 09:32:51 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800545755417 not found in Shopify
+2026-03-04 09:32:51 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800545755417 (SKU 157559311915)
+2026-03-04 09:32:52 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838765826329.json
+2026-03-04 09:32:52 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838765826329 not found in Shopify
+2026-03-04 09:32:52 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838765826329 (SKU 156504330110)
+2026-03-04 09:32:52 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800545820953.json
+2026-03-04 09:32:52 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800545820953 not found in Shopify
+2026-03-04 09:32:52 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800545820953 (SKU 157559775300)
+2026-03-04 09:32:53 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800546050329.json
+2026-03-04 09:32:53 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800546050329 not found in Shopify
+2026-03-04 09:32:53 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800546050329 (SKU 157559821512)
+2026-03-04 09:32:53 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800546378009.json
+2026-03-04 09:32:53 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800546378009 not found in Shopify
+2026-03-04 09:32:53 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800546378009 (SKU 157562653400)
+2026-03-04 09:32:56 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800546443545.json
+2026-03-04 09:32:56 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800546443545 not found in Shopify
+2026-03-04 09:32:56 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800546443545 (SKU 157562672702)
+2026-03-04 09:32:56 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800546410777.json
+2026-03-04 09:32:56 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800546410777 not found in Shopify
+2026-03-04 09:32:56 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800546410777 (SKU 157562656566)
+2026-03-04 09:32:56 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800546967833.json
+2026-03-04 09:32:56 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800546967833 not found in Shopify
+2026-03-04 09:32:56 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51800546967833 (SKU 157562733885)
+2026-03-04 09:32:56 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838773788953.json
+2026-03-04 09:32:56 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838773788953 not found in Shopify
+2026-03-04 09:32:56 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838773788953 (SKU 157571697710)
+2026-03-04 09:32:56 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51853204226329.json
+2026-03-04 09:32:56 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51853204226329 not found in Shopify
+2026-03-04 09:32:56 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51853204226329 (SKU 157401501053)
+2026-03-04 09:32:56 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838773952793.json
+2026-03-04 09:32:56 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838773952793 not found in Shopify
+2026-03-04 09:32:56 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838773952793 (SKU 157571702749)
+2026-03-04 09:32:57 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838774313241.json
+2026-03-04 09:32:57 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838774313241 not found in Shopify
+2026-03-04 09:32:57 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838774313241 (SKU 157571706589)
+2026-03-04 09:32:57 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838774411545.json
+2026-03-04 09:32:57 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838774411545 not found in Shopify
+2026-03-04 09:32:57 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838774411545 (SKU 157571710162)
+2026-03-04 09:32:58 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838781620505.json
+2026-03-04 09:32:58 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838781620505 not found in Shopify
+2026-03-04 09:32:58 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838781620505 (SKU 157578176399)
+2026-03-04 09:32:58 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838774477081.json
+2026-03-04 09:32:58 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838774477081 not found in Shopify
+2026-03-04 09:32:58 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838774477081 (SKU 157571727186)
+2026-03-04 09:32:59 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838774903065.json
+2026-03-04 09:32:59 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838774903065 not found in Shopify
+2026-03-04 09:32:59 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838774903065 (SKU 157571767207)
+2026-03-04 09:32:59 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838776213785.json
+2026-03-04 09:32:59 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838776213785 not found in Shopify
+2026-03-04 09:32:59 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838776213785 (SKU 157573960276)
+2026-03-04 09:33:01 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838776344857.json
+2026-03-04 09:33:01 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838776344857 not found in Shopify
+2026-03-04 09:33:01 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838776344857 (SKU 157573962249)
+2026-03-04 09:33:01 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838776443161.json
+2026-03-04 09:33:01 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838776443161 not found in Shopify
+2026-03-04 09:33:01 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838776443161 (SKU 157573966223)
+2026-03-04 09:33:01 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838776508697.json
+2026-03-04 09:33:01 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838776508697 not found in Shopify
+2026-03-04 09:33:01 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838776508697 (SKU 157573980674)
+2026-03-04 09:33:01 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838790861081.json
+2026-03-04 09:33:01 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838790861081 not found in Shopify
+2026-03-04 09:33:01 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838790861081 (SKU 157589792829)
+2026-03-04 09:33:02 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838776574233.json
+2026-03-04 09:33:02 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838776574233 not found in Shopify
+2026-03-04 09:33:02 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838776574233 (SKU 157573984267)
+2026-03-04 09:33:02 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838776607001.json
+2026-03-04 09:33:02 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838776607001 not found in Shopify
+2026-03-04 09:33:02 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838776607001 (SKU 157573997482)
+2026-03-04 09:33:03 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838776639769.json
+2026-03-04 09:33:03 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838776639769 not found in Shopify
+2026-03-04 09:33:03 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838776639769 (SKU 157574004663)
+2026-03-04 09:33:04 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838776738073.json
+2026-03-04 09:33:04 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838776738073 not found in Shopify
+2026-03-04 09:33:04 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838776738073 (SKU 157574011170)
+2026-03-04 09:33:04 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51853218513177.json
+2026-03-04 09:33:04 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51853218513177 not found in Shopify
+2026-03-04 09:33:04 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51853218513177 (SKU 157574008852)
+2026-03-04 09:33:04 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838776770841.json
+2026-03-04 09:33:04 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838776770841 not found in Shopify
+2026-03-04 09:33:04 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838776770841 (SKU 157574023303)
+2026-03-04 09:33:05 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838777032985.json
+2026-03-04 09:33:05 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838777032985 not found in Shopify
+2026-03-04 09:33:05 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838777032985 (SKU 157576098733)
+2026-03-04 09:33:05 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838777262361.json
+2026-03-04 09:33:05 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838777262361 not found in Shopify
+2026-03-04 09:33:05 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838777262361 (SKU 157576103094)
+2026-03-04 09:33:06 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838777393433.json
+2026-03-04 09:33:06 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838777393433 not found in Shopify
+2026-03-04 09:33:06 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838777393433 (SKU 157576107315)
+2026-03-04 09:33:07 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838777524505.json
+2026-03-04 09:33:07 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838777524505 not found in Shopify
+2026-03-04 09:33:07 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838777524505 (SKU 157576127064)
+2026-03-04 09:33:09 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838777590041.json
+2026-03-04 09:33:09 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838777590041 not found in Shopify
+2026-03-04 09:33:09 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838777590041 (SKU 157576128681)
+2026-03-04 09:33:09 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838777622809.json
+2026-03-04 09:33:09 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838777622809 not found in Shopify
+2026-03-04 09:33:09 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838777622809 (SKU 157576814922)
+2026-03-04 09:33:09 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838781587737.json
+2026-03-04 09:33:09 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838781587737 not found in Shopify
+2026-03-04 09:33:09 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838781587737 (SKU 157578173397)
+2026-03-04 09:33:09 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838781653273.json
+2026-03-04 09:33:09 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838781653273 not found in Shopify
+2026-03-04 09:33:09 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838781653273 (SKU 157578183130)
+2026-03-04 09:33:09 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838781718809.json
+2026-03-04 09:33:09 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838781718809 not found in Shopify
+2026-03-04 09:33:09 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838781718809 (SKU 157578196805)
+2026-03-04 09:33:09 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838791221529.json
+2026-03-04 09:33:09 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838791221529 not found in Shopify
+2026-03-04 09:33:09 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838791221529 (SKU 157589838920)
+2026-03-04 09:33:10 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838788567321.json
+2026-03-04 09:33:10 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838788567321 not found in Shopify
+2026-03-04 09:33:10 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838788567321 (SKU 157581715882)
+2026-03-04 09:33:10 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838790828313.json
+2026-03-04 09:33:10 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838790828313 not found in Shopify
+2026-03-04 09:33:10 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838790828313 (SKU 157589791206)
+2026-03-04 09:33:11 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838791024921.json
+2026-03-04 09:33:11 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838791024921 not found in Shopify
+2026-03-04 09:33:11 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838791024921 (SKU 157589803917)
+2026-03-04 09:33:11 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838791155993.json
+2026-03-04 09:33:11 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838791155993 not found in Shopify
+2026-03-04 09:33:11 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838791155993 (SKU 157589826723)
+2026-03-04 09:33:12 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838791680281.json
+2026-03-04 09:33:12 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838791680281 not found in Shopify
+2026-03-04 09:33:12 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838791680281 (SKU 157591997491)
+2026-03-04 09:33:12 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838797611289.json
+2026-03-04 09:33:12 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838797611289 not found in Shopify
+2026-03-04 09:33:12 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838797611289 (SKU 157592043558)
+2026-03-04 09:33:14 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838808686873.json
+2026-03-04 09:33:14 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838808686873 not found in Shopify
+2026-03-04 09:33:14 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838808686873 (SKU 157597042990)
+2026-03-04 09:33:14 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838811767065.json
+2026-03-04 09:33:14 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838811767065 not found in Shopify
+2026-03-04 09:33:14 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838811767065 (SKU 157597063973)
+2026-03-04 09:33:14 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838810784025.json
+2026-03-04 09:33:14 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838810784025 not found in Shopify
+2026-03-04 09:33:14 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838810784025 (SKU 157597050889)
+2026-03-04 09:33:14 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838813995289.json
+2026-03-04 09:33:14 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838813995289 not found in Shopify
+2026-03-04 09:33:14 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838813995289 (SKU 157597077849)
+2026-03-04 09:33:15 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51838814028057.json
+2026-03-04 09:33:15 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51838814028057 not found in Shopify
+2026-03-04 09:33:15 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51838814028057 (SKU 157597081998)
+2026-03-04 09:33:15 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51853221822745.json
+2026-03-04 09:33:15 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51853221822745 not found in Shopify
+2026-03-04 09:33:15 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51853221822745 (SKU 157600784227)
+2026-03-04 09:33:16 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51853222150425.json
+2026-03-04 09:33:16 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51853222150425 not found in Shopify
+2026-03-04 09:33:16 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51853222150425 (SKU 157601438818)
+2026-03-04 09:33:16 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51853222379801.json
+2026-03-04 09:33:16 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51853222379801 not found in Shopify
+2026-03-04 09:33:16 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51853222379801 (SKU 157601583389)
+2026-03-04 09:33:17 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51853222412569.json
+2026-03-04 09:33:17 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51853222412569 not found in Shopify
+2026-03-04 09:33:17 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51853222412569 (SKU 157601586883)
+2026-03-04 09:33:17 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51853222773017.json
+2026-03-04 09:33:17 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51853222773017 not found in Shopify
+2026-03-04 09:33:17 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51853222773017 (SKU 157601598396)
+2026-03-04 09:33:18 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923248054553.json
+2026-03-04 09:33:18 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923248054553 not found in Shopify
+2026-03-04 09:33:18 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923248054553 (SKU 157638134605)
+2026-03-04 09:33:18 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51853222969625.json
+2026-03-04 09:33:18 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51853222969625 not found in Shopify
+2026-03-04 09:33:18 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51853222969625 (SKU 157601604629)
+2026-03-04 09:33:19 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923248415001.json
+2026-03-04 09:33:19 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923248415001 not found in Shopify
+2026-03-04 09:33:19 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923248415001 (SKU 157638208504)
+2026-03-04 09:33:21 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51865329139993.json
+2026-03-04 09:33:21 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51865329139993 not found in Shopify
+2026-03-04 09:33:21 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51865329139993 (SKU 157610370001)
+2026-03-04 09:33:21 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51865324421401.json
+2026-03-04 09:33:21 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51865348276505.json
+2026-03-04 09:33:21 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51865324421401 not found in Shopify
+2026-03-04 09:33:21 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51865324421401 (SKU 157610354729)
+2026-03-04 09:33:21 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51865348276505 not found in Shopify
+2026-03-04 09:33:21 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51865348276505 (SKU 157610388078)
+2026-03-04 09:33:22 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51865356763417.json
+2026-03-04 09:33:22 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51865356763417 not found in Shopify
+2026-03-04 09:33:22 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51865356763417 (SKU 157614854080)
+2026-03-04 09:33:22 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51865366757657.json
+2026-03-04 09:33:22 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51865366757657 not found in Shopify
+2026-03-04 09:33:22 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51865366757657 (SKU 157614892073)
+2026-03-04 09:33:22 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923238355225.json
+2026-03-04 09:33:22 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923238355225 not found in Shopify
+2026-03-04 09:33:22 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923238355225 (SKU 157620779647)
+2026-03-04 09:33:22 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923240059161.json
+2026-03-04 09:33:22 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923240059161 not found in Shopify
+2026-03-04 09:33:22 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923240059161 (SKU 157620787477)
+2026-03-04 09:33:23 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923244712217.json
+2026-03-04 09:33:23 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923244712217 not found in Shopify
+2026-03-04 09:33:23 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923244712217 (SKU 157620801524)
+2026-03-04 09:33:24 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923245334809.json
+2026-03-04 09:33:24 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923245334809 not found in Shopify
+2026-03-04 09:33:24 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923245334809 (SKU 157624522924)
+2026-03-04 09:33:24 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923244908825.json
+2026-03-04 09:33:24 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923244908825 not found in Shopify
+2026-03-04 09:33:24 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923244908825 (SKU 157620876127)
+2026-03-04 09:33:24 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923245433113.json
+2026-03-04 09:33:24 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923245433113 not found in Shopify
+2026-03-04 09:33:24 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923245433113 (SKU 157631439370)
+2026-03-04 09:33:25 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923245826329.json
+2026-03-04 09:33:25 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923245826329 not found in Shopify
+2026-03-04 09:33:25 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923245826329 (SKU 157631466763)
+2026-03-04 09:33:25 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923245793561.json
+2026-03-04 09:33:25 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923245793561 not found in Shopify
+2026-03-04 09:33:25 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923245793561 (SKU 157631469523)
+2026-03-04 09:33:27 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923246219545.json
+2026-03-04 09:33:27 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923246219545 not found in Shopify
+2026-03-04 09:33:27 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923246219545 (SKU 157631489799)
+2026-03-04 09:33:27 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923247333657.json
+2026-03-04 09:33:27 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923247333657 not found in Shopify
+2026-03-04 09:33:27 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923247333657 (SKU 157635914626)
+2026-03-04 09:33:27 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923246285081.json
+2026-03-04 09:33:27 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923246285081 not found in Shopify
+2026-03-04 09:33:27 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923246285081 (SKU 157632699117)
+2026-03-04 09:33:27 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923247366425.json
+2026-03-04 09:33:27 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923247366425 not found in Shopify
+2026-03-04 09:33:27 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923247366425 (SKU 157635917697)
+2026-03-04 09:33:28 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923247792409.json
+2026-03-04 09:33:28 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923247792409 not found in Shopify
+2026-03-04 09:33:28 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923247792409 (SKU 157638130479)
+2026-03-04 09:33:28 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923247857945.json
+2026-03-04 09:33:28 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923247857945 not found in Shopify
+2026-03-04 09:33:28 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923247857945 (SKU 157638152394)
+2026-03-04 09:33:29 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923248349465.json
+2026-03-04 09:33:29 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923248349465 not found in Shopify
+2026-03-04 09:33:29 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923248349465 (SKU 157638984995)
+2026-03-04 09:33:29 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51923248808217.json
+2026-03-04 09:33:29 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51923248808217 not found in Shopify
+2026-03-04 09:33:29 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51923248808217 (SKU 157642050573)
+2026-03-04 09:33:30 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51936200261913.json
+2026-03-04 09:33:30 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51936200261913 not found in Shopify
+2026-03-04 09:33:30 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51936200261913 (SKU 157649381510)
+2026-03-04 09:33:30 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51936201113881.json
+2026-03-04 09:33:30 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51936201113881 not found in Shopify
+2026-03-04 09:33:30 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51936201113881 (SKU 157651521827)
+2026-03-04 09:33:31 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51936200491289.json
+2026-03-04 09:33:31 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51936200491289 not found in Shopify
+2026-03-04 09:33:31 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51936200491289 (SKU 157649366588)
+2026-03-04 09:33:31 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51936201638169.json
+2026-03-04 09:33:31 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51936201638169 not found in Shopify
+2026-03-04 09:33:31 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51936201638169 (SKU 157651573829)
+2026-03-04 09:33:33 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51963108950297.json
+2026-03-04 09:33:33 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51963108950297 not found in Shopify
+2026-03-04 09:33:33 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51963108950297 (SKU 157656129368)
+2026-03-04 09:33:34 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51963109769497.json
+2026-03-04 09:33:34 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51963109802265.json
+2026-03-04 09:33:34 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51963109769497 not found in Shopify
+2026-03-04 09:33:34 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51963109769497 (SKU 157660615380)
+2026-03-04 09:33:34 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51963109802265 not found in Shopify
+2026-03-04 09:33:34 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51963109802265 (SKU 157656245382)
+2026-03-04 09:33:34 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51963109736729.json
+2026-03-04 09:33:34 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51963109736729 not found in Shopify
+2026-03-04 09:33:34 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51963109736729 (SKU 157660620855)
+2026-03-04 09:33:34 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51963109114137.json
+2026-03-04 09:33:34 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51963109114137 not found in Shopify
+2026-03-04 09:33:34 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51963109114137 (SKU 157656182145)
+2026-03-04 09:33:34 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51963109146905.json
+2026-03-04 09:33:34 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51963109146905 not found in Shopify
+2026-03-04 09:33:34 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51963109146905 (SKU 157656180247)
+2026-03-04 09:33:35 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51963111112985.json
+2026-03-04 09:33:35 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51963111112985 not found in Shopify
+2026-03-04 09:33:35 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51963111112985 (SKU 157665338502)
+2026-03-04 09:33:35 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51963111145753.json
+2026-03-04 09:33:35 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51963111145753 not found in Shopify
+2026-03-04 09:33:35 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51963111145753 (SKU 157665350253)
+2026-03-04 09:33:36 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51977237692697.json
+2026-03-04 09:33:36 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51977237692697 not found in Shopify
+2026-03-04 09:33:36 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51977237692697 (SKU 157673943810)
+2026-03-04 09:33:36 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51985035165977.json
+2026-03-04 09:33:36 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51985035165977 not found in Shopify
+2026-03-04 09:33:36 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51985035165977 (SKU 157676766769)
+2026-03-04 09:33:37 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51985035395353.json
+2026-03-04 09:33:37 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51985035395353 not found in Shopify
+2026-03-04 09:33:37 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51985035395353 (SKU 157679085680)
+2026-03-04 09:33:37 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51985034510617.json
+2026-03-04 09:33:37 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51985034510617 not found in Shopify
+2026-03-04 09:33:37 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 51985034510617 (SKU 157676733136)
+2026-03-04 09:33:38 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/52043885674777.json
+2026-03-04 09:33:38 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 52043885674777 not found in Shopify
+2026-03-04 09:33:38 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 52043885674777 (SKU 157685265300)
+2026-03-04 09:33:38 - app.shopify.client - ERROR - [client.py:40] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/52043891507481.json
+2026-03-04 09:33:38 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 52043891507481 not found in Shopify
+2026-03-04 09:33:38 - scripts.update_shopify_inventory_only - ERROR - [update_shopify_inventory_only.py:122] - Failed to set Shopify inventory for variant 52043891507481 (SKU 157699063896)
+2026-03-04 11:45:12 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected character: 'Dust' at line 1 column 1."]}} | Endpoint: metafields.json
+2026-03-04 11:50:54 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:52:31 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:55:52 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:56:37 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:56:44 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:56:55 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:57:01 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: metafields.json
+2026-03-04 11:57:04 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:57:08 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:57:10 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:57:15 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:57:23 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 11:57:38 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 12:01:05 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 12:01:25 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token 'Illustrated' at line 1 column 1."]}} | Endpoint: metafields.json
+2026-03-04 12:01:37 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token 'Illustrated' at line 1 column 1."]}} | Endpoint: metafields.json
+2026-03-04 12:01:46 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: metafields.json
+2026-03-04 12:01:58 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: metafields.json
+2026-03-04 12:02:00 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token 'Illustrated' at line 1 column 1."]}} | Endpoint: metafields.json
+2026-03-04 12:02:02 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected character: 'Dust' at line 1 column 1."]}} | Endpoint: metafields.json
+2026-03-04 12:02:09 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: metafields.json
+2026-03-04 12:04:02 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 12:14:58 - app.shopify.client - ERROR - [client.py:71] - Shopify PUT Error 404: {"errors":"Not Found"} | Endpoint: products/10225274552601.json
+2026-03-04 12:15:03 - app.shopify.client - ERROR - [client.py:71] - Shopify PUT Error 404: {"errors":"Not Found"} | Endpoint: variants/51800391254297.json
+2026-03-04 12:15:11 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: metafields.json
+2026-03-04 12:15:13 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 404: {"errors":"Not Found"} | Endpoint: metafields.json
+2026-03-04 12:15:18 - app.shopify.client - ERROR - [client.py:71] - Shopify GET Error 404: {"errors":"Not Found"} | Endpoint: variants/51800391254297.json
+2026-03-04 12:15:18 - app.shopify.update_inventory - WARNING - [update_inventory.py:104] - Variant 51800391254297 not found in Shopify
+2026-03-04 12:24:18 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: metafields.json
+2026-03-04 12:30:31 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token 'Illustrated' at line 1 column 1."]}} | Endpoint: metafields.json
+2026-03-04 12:30:45 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: metafields.json
+2026-03-04 12:35:29 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token at end of stream 'st' at line 1 column 2."]}} | Endpoint: metafields.json
+2026-03-04 12:37:29 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token 'Illustrated' at line 1 column 1."]}} | Endpoint: metafields.json
+2026-03-04 12:37:29 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"value":["is invalid JSON: unexpected token 'Illustrated' at line 1 column 1."]}} | Endpoint: metafields.json
+2026-03-04 13:22:28 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: products.json
+2026-03-04 13:25:26 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: products.json
+2026-03-04 13:25:36 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: products.json
+2026-03-04 13:26:20 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: metafields.json
+2026-03-04 13:27:28 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: products.json
+2026-03-04 13:28:06 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: products.json
+2026-03-04 13:28:10 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: metafields.json
+2026-03-04 13:48:16 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: products.json
+2026-03-04 13:48:37 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: products.json
+2026-03-04 14:01:24 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'single_line_text_field' must be consistent with the definition's type: 'list.single_line_text_field'."]}} | Endpoint: metafields.json

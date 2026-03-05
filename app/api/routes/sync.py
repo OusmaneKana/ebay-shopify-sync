@@ -5,10 +5,11 @@ from fastapi import APIRouter
 from app.services.sync_manager import full_sync
 from app.services.product_service import sync_ebay_raw_to_mongo
 from app.services.normalizer_service import normalize_from_raw
-from app.services.shopify_sync import sync_to_shopify
+from app.services.shopify_sync import sync_to_shopify, sync_new_products_to_shopify
 from app.shopify.purge_all_shopify_products import purge_all_shopify_products
 from app.shopify.client import ShopifyClient
 from app.config import settings
+from scripts.update_shopify_inventory_only import update_shopify_inventory_only
 
 router = APIRouter()
 
@@ -46,6 +47,38 @@ async def sync_shopify_dev():
     elapsed = time.perf_counter() - start
     return {
         "message": "Shopify sync completed (DEV)",
+        "result": result,
+        "elapsed_seconds": elapsed,
+    }
+
+
+@dev_router.post("/sync-shopify-new")
+async def sync_shopify_new_dev(limit: int | None = None):
+    """Dev: create Shopify products only for normalized docs without shopify_id."""
+    start = time.perf_counter()
+    client = ShopifyClient()
+    result = await sync_new_products_to_shopify(client, limit=limit)
+    elapsed = time.perf_counter() - start
+    return {
+        "message": "Shopify NEW-products sync completed (DEV)",
+        "result": result,
+        "elapsed_seconds": elapsed,
+    }
+
+
+@dev_router.post("/sync-shopify-inventory")
+async def sync_shopify_inventory_dev(only_zero: bool = False, limit: int | None = None, dry_run: bool = False):
+    """Dev: force Shopify inventory to match product_normalized.quantity only."""
+    start = time.perf_counter()
+    result = await update_shopify_inventory_only(
+        limit=limit,
+        env="dev",
+        only_zero=only_zero,
+        dry_run=dry_run,
+    )
+    elapsed = time.perf_counter() - start
+    return {
+        "message": "Shopify inventory-only sync completed (DEV)",
         "result": result,
         "elapsed_seconds": elapsed,
     }
@@ -120,6 +153,42 @@ async def sync_shopify_prod():
     elapsed = time.perf_counter() - start
     return {
         "message": "Shopify sync completed (PROD)",
+        "result": result,
+        "elapsed_seconds": elapsed,
+    }
+
+
+@prod_router.post("/sync-shopify-new")
+async def sync_shopify_new_prod(limit: int | None = None):
+    """Prod: create Shopify products only for normalized docs without shopify_id."""
+    start = time.perf_counter()
+    client = ShopifyClient(
+        api_key=settings.SHOPIFY_API_KEY_PROD,
+        password=settings.SHOPIFY_PASSWORD_PROD,
+        store_url=settings.SHOPIFY_STORE_URL_PROD,
+    )
+    result = await sync_new_products_to_shopify(client, limit=limit)
+    elapsed = time.perf_counter() - start
+    return {
+        "message": "Shopify NEW-products sync completed (PROD)",
+        "result": result,
+        "elapsed_seconds": elapsed,
+    }
+
+
+@prod_router.post("/sync-shopify-inventory")
+async def sync_shopify_inventory_prod(only_zero: bool = False, limit: int | None = None, dry_run: bool = False):
+    """Prod: force Shopify inventory to match product_normalized.quantity only."""
+    start = time.perf_counter()
+    result = await update_shopify_inventory_only(
+        limit=limit,
+        env="prod",
+        only_zero=only_zero,
+        dry_run=dry_run,
+    )
+    elapsed = time.perf_counter() - start
+    return {
+        "message": "Shopify inventory-only sync completed (PROD)",
         "result": result,
         "elapsed_seconds": elapsed,
     }

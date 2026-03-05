@@ -5,50 +5,458 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>eBay → Shopify Sync Admin</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .section { border: 1px solid #ccc; padding: 20px; margin: 20px 0; }
-        .section h2 { margin-top: 0; }
-        button { padding: 10px 20px; margin: 5px; font-size: 16px; }
-        #output { margin-top: 20px; white-space: pre-wrap; background: #f5f5f5; padding: 10px; }
+        :root {
+            --bg: #0f172a;
+            --bg-alt: #020617;
+            --card-bg: #020617;
+            --border: #1e293b;
+            --accent: #38bdf8;
+            --accent-soft: rgba(56, 189, 248, 0.1);
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --danger: #f97373;
+            --danger-soft: rgba(248, 113, 113, 0.1);
+            --success: #4ade80;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 24px;
+            background: radial-gradient(circle at top, #1e293b 0, #020617 40%, #000 100%);
+            color: var(--text);
+        }
+
+        h1 { margin: 0 0 4px; font-size: 28px; }
+        .subheading { margin: 0 0 24px; color: var(--muted); font-size: 14px; }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        .section {
+            background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px 20px 16px;
+            box-shadow: 0 18px 45px rgba(15,23,42,0.9);
+        }
+
+        .section + .section { margin-top: 12px; }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .section h2 { margin: 0; font-size: 18px; }
+        .section small { color: var(--muted); }
+
+        .env-badge {
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--border);
+            background: radial-gradient(circle at top, rgba(56,189,248,0.18), transparent 60%);
+        }
+
+        .env-badge.prod {
+            background: radial-gradient(circle at top, rgba(248,113,113,0.18), transparent 60%);
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        button {
+            padding: 7px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: radial-gradient(circle at top left, rgba(15,23,42,1), rgba(15,23,42,0.96));
+            color: var(--text);
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: border-color 0.15s ease, background 0.15s ease, transform 0.08s ease;
+        }
+
+        button span.label { white-space: nowrap; }
+
+        button.primary {
+            border-color: var(--accent);
+            background: radial-gradient(circle at top left, rgba(56,189,248,0.16), rgba(15,23,42,0.96));
+        }
+
+        button.danger {
+            border-color: var(--danger);
+            background: radial-gradient(circle at top left, var(--danger-soft), rgba(15,23,42,0.96));
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        button:not(:disabled):hover {
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        button.danger:not(:disabled):hover {
+            border-color: var(--danger);
+        }
+
+        .hint { color: var(--muted); font-size: 11px; margin-top: 6px; }
+
+        .field-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+            align-items: center;
+        }
+
+        label { font-size: 12px; color: var(--muted); }
+
+        input[type="number"], input[type="text"], textarea, select {
+            background: #020617;
+            color: var(--text);
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            font-size: 12px;
+            min-width: 60px;
+        }
+
+        textarea {
+            border-radius: 10px;
+            width: 100%;
+            min-height: 80px;
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--accent);
+        }
+
+        #output-card {
+            position: sticky;
+            top: 16px;
+        }
+
+        #output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        #output-meta {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        #output {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            background: #020617;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            max-height: 480px;
+            overflow: auto;
+        }
+
+        .status-pill {
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            border: 1px solid var(--border);
+        }
+
+        .status-pill.ok { border-color: var(--success); color: var(--success); }
+        .status-pill.error { border-color: var(--danger); color: var(--danger); }
+
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: minmax(0, 1fr); }
+            #output-card { position: static; }
+        }
     </style>
 </head>
 <body>
-    <h1>eBay → Shopify Sync Admin Panel</h1>
+    <h1>eBay → Shopify Sync Admin</h1>
+    <p class="subheading">Trigger sync jobs and maintenance scripts for dev and prod environments.</p>
 
-    <div class="section">
-        <h2>DEV Environment</h2>
-        <button onclick="callAPI('/sync/dev/sync-ebay-raw')">Sync eBay Raw</button>
-        <button onclick="callAPI('/sync/dev/normalize-raw')">Normalize Raw</button>
-        <button onclick="callAPI('/sync/dev/sync-shopify')">Sync Shopify</button>
-        <button onclick="callAPI('/sync/dev/purge-shopify')">Purge All Shopify Products</button>
-        <button onclick="callAPI('/sync/dev/shopify-health')">Check Shopify Connection</button>
+    <div class="layout">
+        <div>
+            <div class="section">
+                <div class="section-header">
+                    <div>
+                        <h2>Dev Sync Flows</h2>
+                        <small>Use against your development Shopify store.</small>
+                    </div>
+                    <span class="env-badge">DEV</span>
+                </div>
+                <div class="button-row">
+                    <button class="primary" onclick="callApi('/sync/dev/sync-ebay-raw')">
+                        <span class="label">Sync eBay Raw</span>
+                    </button>
+                    <button onclick="callApi('/sync/dev/normalize-raw')">
+                        <span class="label">Normalize Raw</span>
+                    </button>
+                    <button onclick="callApi('/sync/dev/sync-shopify')">
+                        <span class="label">Sync Shopify (full)</span>
+                    </button>
+                    <button class="danger" onclick="confirmAndCall('/sync/dev/purge-shopify', 'Purge ALL Shopify products in DEV?')">
+                        <span class="label">Purge All Products</span>
+                    </button>
+                    <button onclick="callApi('/sync/dev/sync-shopify-new')">
+                        <span class="label">Create Missing Shopify Products</span>
+                    </button>
+                    <button onclick="callApi('/sync/dev/shopify-health')">
+                        <span class="label">Shopify Health</span>
+                    </button>
+                </div>
+                <p class="hint">Typical flow: Sync eBay Raw → Normalize Raw → Sync Shopify.</p>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div>
+                        <h2>Prod Sync Flows</h2>
+                        <small>Careful: live Shopify storefront.</small>
+                    </div>
+                    <span class="env-badge prod">PROD</span>
+                </div>
+                <div class="button-row">
+                    <button class="primary" onclick="callApi('/sync/prod/sync-ebay-raw')">
+                        <span class="label">Sync eBay Raw</span>
+                    </button>
+                    <button onclick="callApi('/sync/prod/normalize-raw')">
+                        <span class="label">Normalize Raw</span>
+                    </button>
+                    <button onclick="callApi('/sync/prod/sync-shopify')">
+                        <span class="label">Sync Shopify (full)</span>
+                    </button>
+                    <button class="danger" onclick="confirmAndCall('/sync/prod/purge-shopify', 'Purge ALL Shopify products in PROD?')">
+                        <span class="label">Purge All Products</span>
+                    </button>
+                    <button onclick="callApi('/sync/prod/sync-shopify-new')">
+                        <span class="label">Create Missing Shopify Products</span>
+                    </button>
+                    <button onclick="callApi('/sync/prod/shopify-health')">
+                        <span class="label">Shopify Health</span>
+                    </button>
+                </div>
+                <p class="hint">Use sparingly and verify inputs before running in prod.</p>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div>
+                        <h2>Inventory-Only Sync</h2>
+                        <small>Align Shopify stock with normalized quantities.</small>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <label>
+                        Environment
+                        <select id="inv-env">
+                            <option value="dev">DEV</option>
+                            <option value="prod">PROD</option>
+                        </select>
+                    </label>
+                    <label>
+                        Limit
+                        <input id="inv-limit" type="number" min="1" placeholder="all" />
+                    </label>
+                    <label>
+                        <input id="inv-only-zero" type="checkbox" /> Only zero-qty items
+                    </label>
+                    <label>
+                        <input id="inv-dry-run" type="checkbox" checked /> Dry run
+                    </label>
+                </div>
+                <div class="button-row" style="margin-top: 10px;">
+                    <button class="primary" onclick="runInventorySync()">
+                        <span class="label">Run Inventory Sync</span>
+                    </button>
+                </div>
+                <p class="hint">Calls /sync/&lt;env&gt;/sync-shopify-inventory with the options above.</p>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div>
+                        <h2>Generic Script Runner</h2>
+                        <small>Call any FastAPI endpoint backing your maintenance scripts.</small>
+                    </div>
+                </div>
+                <div class="field-row">
+                    <label style="flex: 0 0 80px;">
+                        Method
+                        <select id="gen-method">
+                            <option value="POST">POST</option>
+                            <option value="GET">GET</option>
+                        </select>
+                    </label>
+                    <label style="flex: 1 1 auto;">
+                        Endpoint path
+                        <input id="gen-endpoint" type="text" placeholder="/sync/prod/sync-shopify-inventory" style="width: 100%;" />
+                    </label>
+                </div>
+                <label style="display:block; margin-top: 10px;">
+                    JSON body (optional)
+                    <textarea id="gen-body" placeholder='{"limit": 100}'></textarea>
+                </label>
+                <div class="button-row" style="margin-top: 10px;">
+                    <button class="primary" onclick="runGeneric()">
+                        <span class="label">Run Endpoint</span>
+                    </button>
+                </div>
+                <p class="hint">Use this for new script-backed routes (e.g., price/tag updates) without changing the UI.</p>
+            </div>
+        </div>
+
+        <div id="output-card" class="section">
+            <div id="output-header">
+                <div>
+                    <h2>Result</h2>
+                    <div id="output-meta">Idle</div>
+                </div>
+                <button onclick="clearOutput()">
+                    <span class="label">Clear</span>
+                </button>
+            </div>
+            <div id="output">Ready.</div>
+        </div>
     </div>
-
-    <div class="section">
-        <h2>PROD Environment</h2>
-        <button onclick="callAPI('/sync/prod/sync-ebay-raw')">Sync eBay Raw</button>
-        <button onclick="callAPI('/sync/prod/normalize-raw')">Normalize Raw</button>
-        <button onclick="callAPI('/sync/prod/sync-shopify')">Sync Shopify</button>
-        <button onclick="callAPI('/sync/prod/purge-shopify')">Purge All Shopify Products</button>
-        <button onclick="callAPI('/sync/prod/shopify-health')">Check Shopify Connection</button>
-    </div>
-
-    <div id="output"></div>
 
     <script>
-        async function callAPI(endpoint) {
-            const output = document.getElementById('output');
-            output.textContent = 'Processing...';
-            try {
-                const response = await fetch(endpoint, { method: 'POST' });
-                const data = await response.json();
-                output.textContent = JSON.stringify(data, null, 2);
-            } catch (error) {
-                output.textContent = 'Error: ' + error.message;
+        let currentAbort = null;
+
+        function setStatus(text, ok = null) {
+            const meta = document.getElementById('output-meta');
+            if (ok === true) {
+                meta.innerHTML = `<span class="status-pill ok">OK</span> ${text}`;
+            } else if (ok === false) {
+                meta.innerHTML = `<span class="status-pill error">Error</span> ${text}`;
+            } else {
+                meta.textContent = text;
             }
         }
 
-        // All sync actions now operate on the full dataset; no per-request limit.
+        function clearOutput() {
+            const out = document.getElementById('output');
+            out.textContent = 'Ready.';
+            setStatus('Idle');
+        }
+
+        async function callApi(endpoint, options = {}) {
+            const out = document.getElementById('output');
+            if (currentAbort) {
+                currentAbort.abort();
+            }
+            const controller = new AbortController();
+            currentAbort = controller;
+
+            const { method = 'POST', body = null } = options;
+            setStatus(`${method} ${endpoint} …`);
+            out.textContent = 'Processing…';
+
+            try {
+                const fetchOptions = {
+                    method,
+                    signal: controller.signal,
+                    headers: {},
+                };
+                if (body != null) {
+                    fetchOptions.headers['Content-Type'] = 'application/json';
+                    fetchOptions.body = JSON.stringify(body);
+                }
+                const response = await fetch(endpoint, fetchOptions);
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch {
+                    data = text;
+                }
+                out.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+                setStatus(`${method} ${endpoint} → ${response.status}`, response.ok);
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    setStatus('Request aborted', false);
+                    out.textContent = 'Request aborted.';
+                } else {
+                    setStatus('Request failed', false);
+                    out.textContent = 'Error: ' + error.message;
+                }
+            } finally {
+                currentAbort = null;
+            }
+        }
+
+        function confirmAndCall(endpoint, message) {
+            if (confirm(message)) {
+                callApi(endpoint);
+            }
+        }
+
+        function runInventorySync() {
+            const env = document.getElementById('inv-env').value;
+            const limitVal = document.getElementById('inv-limit').value;
+            const onlyZero = document.getElementById('inv-only-zero').checked;
+            const dryRun = document.getElementById('inv-dry-run').checked;
+
+            const params = new URLSearchParams();
+            if (limitVal) params.set('limit', limitVal);
+            if (onlyZero) params.set('only_zero', 'true');
+            if (dryRun) params.set('dry_run', 'true');
+
+            const qs = params.toString();
+            const endpoint = `/sync/${env}/sync-shopify-inventory` + (qs ? `?${qs}` : '');
+            callApi(endpoint);
+        }
+
+        function runGeneric() {
+            const method = document.getElementById('gen-method').value || 'POST';
+            const endpoint = document.getElementById('gen-endpoint').value.trim();
+            const bodyRaw = document.getElementById('gen-body').value.trim();
+
+            if (!endpoint) {
+                alert('Please enter an endpoint path.');
+                return;
+            }
+
+            let body = null;
+            if (bodyRaw) {
+                try {
+                    body = JSON.parse(bodyRaw);
+                } catch (e) {
+                    alert('Invalid JSON body: ' + e.message);
+                    return;
+                }
+            }
+
+            callApi(endpoint, { method, body });
+        }
     </script>
 </body>
 </html>
