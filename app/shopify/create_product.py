@@ -1,7 +1,10 @@
 import re
+import logging
 from app.shopify.client import ShopifyClient
+from app.shopify.inventory_manager import set_inventory_quantity_by_item_id, get_primary_location
 from app.database.mongo import db
 
+logger = logging.getLogger(__name__)
 client = ShopifyClient()
 
 # ----------------------------------------------------------------------
@@ -190,20 +193,31 @@ def process_structured_metafields_to_shopify_payload(metafields_struct: dict) ->
         for k, v in kv.items():
             key = _sanitize_key(k)
             # If your normalizer stored types separately, adapt here.
-            # Right now we infer type from python value:
-            inferred_type = None
-            if isinstance(v, bool):
-                inferred_type = "boolean"
-            elif isinstance(v, int) and not isinstance(v, bool):
-                inferred_type = "number_integer"
-            elif isinstance(v, float):
-                inferred_type = "number_decimal"
-            elif isinstance(v, list):
-                inferred_type = "single_line_text_field"
-            elif isinstance(v, (dict,)):
-                inferred_type = "json"
+            # Right now we infer type from python value, with a special-case
+            # for collectible.special_attributes which is defined in Shopify
+            # as a list of text values.
+
+            # Special-case: ensure collectible.special_attributes is always a list type
+            if ns == "collectible" and k == "special_attributes":
+                if v is None:
+                    continue
+                if not isinstance(v, list):
+                    v = [v]
+                inferred_type = "list.single_line_text_field"
             else:
-                inferred_type = "single_line_text_field"
+                inferred_type = None
+                if isinstance(v, bool):
+                    inferred_type = "boolean"
+                elif isinstance(v, int) and not isinstance(v, bool):
+                    inferred_type = "number_integer"
+                elif isinstance(v, float):
+                    inferred_type = "number_decimal"
+                elif isinstance(v, list):
+                    inferred_type = "list.single_line_text_field"
+                elif isinstance(v, (dict,)):
+                    inferred_type = "json"
+                else:
+                    inferred_type = "single_line_text_field"
 
             mf_type, mf_value = _normalize_metafield_type_and_value(v, inferred_type)
             if not mf_type or mf_value is None:
@@ -297,11 +311,12 @@ async def create_shopify_product(doc, shopify_client=None):
     # Derive variant weight from normalized package data, if available
     weight_value, weight_unit = extract_weight_for_shopify_variant(doc)
 
+    # STEP A: Create variant WITHOUT inventory_quantity (will be set via inventory_levels/set.json)
     variant_payload = {
         "sku": doc.get("sku", ""),
         "price": price_str,
         "inventory_management": "shopify",
-        "inventory_quantity": int(doc.get("quantity", 0) or 0),
+        # NOTE: inventory_quantity is NOT included here - will be set via inventory_levels API
     }
 
     if weight_value is not None and weight_unit:
@@ -319,23 +334,139 @@ async def create_shopify_product(doc, shopify_client=None):
         }
     }
 
+    # Log metafields at DEBUG so we can inspect type/value per key when debugging 4xx errors
+    if metafields_payload:
+        try:
+            preview = []
+            for m in metafields_payload:
+                val = m.get("value")
+                if isinstance(val, str) and len(val) > 120:
+                    val_preview = val[:120] + "..."
+                else:
+                    val_preview = val
+                preview.append(
+                    {
+                        "namespace": m.get("namespace"),
+                        "key": m.get("key"),
+                        "type": m.get("type"),
+                        "value": val_preview,
+                    }
+                )
+            logger.debug(
+                "Shopify create metafields for SKU=%s: %s",
+                doc.get("_id"),
+                preview,
+            )
+        except Exception:
+            # Best-effort debug logging only
+            pass
+
     res = await shopify_client.post("products.json", payload)
     product = (res or {}).get("product")
     if not product:
-        print(f"❌ Shopify creation failed for SKU={doc.get('_id')} title={doc.get('title')!r}:", res)
+        errors = None
+        if isinstance(res, dict):
+            errors = res.get("errors", res)
+
+        logger.error(
+            "Shopify creation failed for SKU=%s title=%r | errors=%r",
+            doc.get("_id"),
+            doc.get("title"),
+            errors,
+        )
+
+        if metafields_payload:
+            try:
+                logger.error(
+                    "Metafields payload for failed SKU=%s: %s",
+                    doc.get("_id"),
+                    [
+                        {
+                            "namespace": m.get("namespace"),
+                            "key": m.get("key"),
+                            "type": m.get("type"),
+                            "value": m.get("value"),
+                        }
+                        for m in metafields_payload
+                    ],
+                )
+            except Exception:
+                pass
+
+        # Preserve existing console signal for quick spotting in logs
+        print(
+            f"❌ Shopify creation failed for SKU={doc.get('_id')} title={doc.get('title')!r}:",
+            res,
+        )
         return None
 
     pid = product["id"]
     vid = product["variants"][0]["id"]
-
+    
+    # STEP B: Extract inventory_item_id from variant response
+    variant_data = product["variants"][0]
+    inventory_item_id = variant_data.get("inventory_item_id")
+    
+    if not inventory_item_id:
+        logger.error(
+            "[CREATE] Variant missing inventory_item_id in response | sku=%s | product_id=%s | variant_id=%s",
+            doc.get("_id"),
+            pid,
+            vid,
+        )
+    
+    location_id = None
+    
+    # STEP C: Get primary location and STEP D: Set inventory via inventory_levels/set.json
+    if inventory_item_id:
+        location_data = await get_primary_location(shopify_client)
+        if location_data:
+            location_id = location_data.get("id")
+            quantity = int(doc.get("quantity", 0) or 0)
+            
+            logger.info(
+                "[CREATE] Setting initial inventory | sku=%s | inventory_item=%s | location=%s | qty=%s",
+                doc.get("_id"),
+                inventory_item_id,
+                location_id,
+                quantity,
+            )
+            
+            success = await set_inventory_quantity_by_item_id(
+                inventory_item_id,
+                location_id,
+                quantity,
+                shopify_client,
+            )
+            
+            if not success:
+                logger.warning(
+                    "[CREATE] Failed to set initial inventory | sku=%s | inventory_item=%s",
+                    doc.get("_id"),
+                    inventory_item_id,
+                )
+        else:
+            logger.error(
+                "[CREATE] Could not retrieve primary location for SKU=%s",
+                doc.get("_id"),
+            )
+    
+    # Store all IDs in MongoDB for future inventory operations
+    update_data = {
+        "shopify_id": pid,
+        "shopify_variant_id": vid,
+        "last_synced_hash": doc.get("hash"),
+    }
+    
+    if inventory_item_id:
+        update_data["inventory_item_id"] = inventory_item_id
+    if location_id:
+        update_data["location_id"] = location_id
+    
     await db.product_normalized.update_one(
         {"_id": doc["_id"]},
-        {"$set": {
-            "shopify_id": pid,
-            "shopify_variant_id": vid,
-            "last_synced_hash": doc.get("hash"),
-        }}
+        {"$set": update_data}
     )
 
-    print(f"✔ Created Shopify product {doc['_id']} -> {pid}")
+    print(f"✔ Created Shopify product {doc['_id']} -> {pid} (variant={vid}, item={inventory_item_id})")
     return product

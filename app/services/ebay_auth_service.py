@@ -13,14 +13,19 @@ logger = logging.getLogger(__name__)
 EBAY_AUTH_URL = "https://auth.ebay.com/oauth2/authorize"
 EBAY_TOKEN_URL = "https://api.ebay.com/identity/v1/oauth2/token"
 
-# Scopes needed for Trading API (GetMyeBaySelling, GetItem) + Sell APIs
-# offline_access is required to receive a refresh token
+# Scopes needed for Trading API (GetMyeBaySelling, GetItem).
+# Keep this list aligned with the scopes actually granted to your
+# eBay application in the developer portal; requesting scopes that
+# are not enabled for the app will cause "invalid_scope" errors on
+# token exchange/refresh.
+#
+# For this service we need the generic API scope. If your eBay
+# application does not support "offline_access", requesting it will
+# trigger "invalid_scope". Start with the base scope only; once
+# confirmed working you can add "offline_access" back *only if* it is
+# enabled for your app in the eBay developer portal.
 EBAY_SCOPES = [
     "https://api.ebay.com/oauth/api_scope",
-    "https://api.ebay.com/oauth/api_scope/sell.inventory.readonly",
-    "https://api.ebay.com/oauth/api_scope/sell.account.readonly",
-    "https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly",
-    "offline_access",
 ]
 
 TOKEN_COLLECTION = "ebay_oauth_tokens"
@@ -93,6 +98,11 @@ async def refresh_access_token() -> str:
         )
 
     async with httpx.AsyncClient() as client:
+        # Per OAuth 2.0 and eBay docs, the scope parameter is optional on
+        # refresh and, if omitted, the refresh token's original scopes are
+        # reused. Passing a mismatched scope string can trigger
+        # "invalid_scope" even when the refresh token itself is valid, so
+        # we deliberately do NOT send scope here.
         response = await client.post(
             EBAY_TOKEN_URL,
             headers={
@@ -102,7 +112,6 @@ async def refresh_access_token() -> str:
             data={
                 "grant_type": "refresh_token",
                 "refresh_token": doc["refresh_token"],
-                "scope": " ".join(EBAY_SCOPES),
             },
         )
 

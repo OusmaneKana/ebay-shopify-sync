@@ -1,11 +1,11 @@
 import time
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Body
 
 from app.services.sync_manager import full_sync
 from app.services.product_service import sync_ebay_raw_to_mongo
 from app.services.normalizer_service import normalize_from_raw
-from app.services.shopify_sync import sync_to_shopify, sync_new_products_to_shopify
+from app.services.shopify_sync import sync_to_shopify, sync_new_products_to_shopify, full_shopify_sync
 from app.shopify.purge_all_shopify_products import purge_all_shopify_products
 from app.shopify.client import ShopifyClient
 from app.config import settings
@@ -39,11 +39,30 @@ async def normalize_raw_dev():
     }
 
 @dev_router.post("/sync-shopify")
-async def sync_shopify_dev():
-    # Use dev Shopify client
+async def sync_shopify_dev(
+    options: dict | None = Body(None),
+):
+    """Dev: configurable full Shopify sync.
+
+    Body (all optional, default True):
+      {"new_products": bool, "zero_inventory": bool, "other_updates": bool}
+    """
+
     start = time.perf_counter()
     client = ShopifyClient()
-    result = await sync_to_shopify(client)
+
+    opts = options or {}
+    do_new = bool(opts.get("new_products", True))
+    do_zero = bool(opts.get("zero_inventory", True))
+    do_other = bool(opts.get("other_updates", True))
+
+    result = await full_shopify_sync(
+        env="dev",
+        shopify_client=client,
+        do_new_products=do_new,
+        do_zero_inventory=do_zero,
+        do_other_updates=do_other,
+    )
     elapsed = time.perf_counter() - start
     return {
         "message": "Shopify sync completed (DEV)",
@@ -53,7 +72,7 @@ async def sync_shopify_dev():
 
 
 @dev_router.post("/sync-shopify-new")
-async def sync_shopify_new_dev(limit: int | None = None):
+async def sync_shopify_new_dev( limit: int | None = None):
     """Dev: create Shopify products only for normalized docs without shopify_id."""
     start = time.perf_counter()
     client = ShopifyClient()
@@ -141,15 +160,34 @@ async def normalize_raw_prod():
     }
 
 @prod_router.post("/sync-shopify")
-async def sync_shopify_prod():
-    # Use prod Shopify client
+async def sync_shopify_prod(
+    options: dict | None = Body(None),
+):
+    """Prod: configurable full Shopify sync.
+
+    Body (all optional, default True):
+      {"new_products": bool, "zero_inventory": bool, "other_updates": bool}
+    """
+
     start = time.perf_counter()
     client = ShopifyClient(
         api_key=settings.SHOPIFY_API_KEY_PROD,
         password=settings.SHOPIFY_PASSWORD_PROD,
         store_url=settings.SHOPIFY_STORE_URL_PROD
     )
-    result = await sync_to_shopify(client)
+
+    opts = options or {}
+    do_new = bool(opts.get("new_products", True))
+    do_zero = bool(opts.get("zero_inventory", True))
+    do_other = bool(opts.get("other_updates", True))
+
+    result = await full_shopify_sync(
+        env="prod",
+        shopify_client=client,
+        do_new_products=do_new,
+        do_zero_inventory=do_zero,
+        do_other_updates=do_other,
+    )
     elapsed = time.perf_counter() - start
     return {
         "message": "Shopify sync completed (PROD)",

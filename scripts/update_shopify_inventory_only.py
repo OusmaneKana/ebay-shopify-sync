@@ -13,7 +13,8 @@ if ROOT not in sys.path:
 from app.config import settings
 from app.database.mongo import db
 from app.shopify.client import ShopifyClient
-from app.shopify.update_inventory import set_inventory_quantity_by_variant
+from app.shopify.update_inventory import set_inventory_quantity_by_variant, set_inventory_from_mongo
+from app.shopify.inventory_manager import set_inventory_quantity_by_item_id
 
 
 logger = logging.getLogger(__name__)
@@ -61,6 +62,8 @@ async def update_shopify_inventory_only(
         "quantity": 1,
         "shopify_variant_id": 1,
         "shopify_id": 1,
+        "inventory_item_id": 1,
+        "location_id": 1,
     }
 
     cursor = db.product_normalized.find(query, projection)
@@ -88,48 +91,86 @@ async def update_shopify_inventory_only(
         sku = doc.get("_id")
         variant_id = doc.get("shopify_variant_id")
         raw_qty = doc.get("quantity")
+        inventory_item_id = doc.get("inventory_item_id")
+        location_id = doc.get("location_id")
 
         if not variant_id:
             skipped_invalid += 1
-            logger.warning("SKU %s has no shopify_variant_id; skipping", sku)
+            logger.warning("[INVENTORY] Skipped - no variant_id | sku=%s", sku)
             return
 
         try:
             qty = int(raw_qty) if raw_qty is not None else 0
         except (TypeError, ValueError):
             skipped_invalid += 1
-            logger.warning("SKU %s has invalid quantity %r; skipping", sku, raw_qty)
+            logger.warning("[INVENTORY] Skipped - invalid quantity | sku=%s | qty=%r", sku, raw_qty)
             return
 
         attempted += 1
+        shopify_id = doc.get("shopify_id")
         logger.info(
-            "Syncing inventory for SKU %s (variant %s) -> quantity %s",
+            "[INVENTORY] Processing | sku=%s | shopify_id=%s | variant_id=%s | target_qty=%s",
             sku,
+            shopify_id,
             variant_id,
             qty,
         )
 
         if dry_run:
+            logger.info("[INVENTORY] [DRY-RUN] Skipped | sku=%s | shopify_id=%s | variant_id=%s", sku, shopify_id, variant_id)
             return
 
         async with sem:
             try:
-                ok = await set_inventory_quantity_by_variant(int(variant_id), qty, shopify_client)
+                # PREFERRED: Use inventory_item_id + location_id (no variant fetch)
+                if inventory_item_id and location_id:
+                    logger.debug(
+                        "[INVENTORY] Using optimized method | sku=%s | inventory_item=%s | location=%s",
+                        sku,
+                        inventory_item_id,
+                        location_id,
+                    )
+                    ok = await set_inventory_quantity_by_item_id(
+                        int(inventory_item_id),
+                        int(location_id),
+                        qty,
+                        shopify_client,
+                    )
+                else:
+                    # FALLBACK: Use variant method (requires variant fetch)
+                    logger.debug(
+                        "[INVENTORY] Using fallback method | sku=%s | variant_id=%s (no inventory_item_id)",
+                        sku,
+                        variant_id,
+                    )
+                    ok = await set_inventory_quantity_by_variant(int(variant_id), qty, shopify_client)
+                
                 if ok:
                     updated_ok += 1
+                    logger.info(
+                        "[INVENTORY] ✓ Updated | sku=%s | shopify_id=%s | variant_id=%s | qty=%s",
+                        sku,
+                        shopify_id,
+                        variant_id,
+                        qty,
+                    )
                 else:
                     errors += 1
                     logger.error(
-                        "Failed to set Shopify inventory for variant %s (SKU %s)",
-                        variant_id,
+                        "[INVENTORY] ✗ Failed to set inventory | sku=%s | shopify_id=%s | variant_id=%s | target_qty=%s",
                         sku,
+                        shopify_id,
+                        variant_id,
+                        qty,
                     )
             except Exception as e:  # pragma: no cover - defensive
                 errors += 1
                 logger.error(
-                    "Exception while setting Shopify inventory for variant %s (SKU %s): %s",
-                    variant_id,
+                    "[INVENTORY] ✗ Exception | sku=%s | shopify_id=%s | variant_id=%s | target_qty=%s | error=%s",
                     sku,
+                    shopify_id,
+                    variant_id,
+                    qty,
                     e,
                 )
 
@@ -138,19 +179,37 @@ async def update_shopify_inventory_only(
     if tasks:
         await asyncio.gather(*tasks)
 
+    success_rate = (updated_ok / attempted * 100) if attempted > 0 else 0.0
     summary: Dict[str, Any] = {
         "total_docs": total_docs,
         "attempted": attempted,
         "updated_ok": updated_ok,
         "skipped_invalid": skipped_invalid,
         "errors": errors,
+        "success_rate": f"{success_rate:.1f}%",
         "dry_run": dry_run,
         "env": env,
         "only_zero": only_zero,
         "max_concurrency": max_concurrency,
     }
 
-    logger.info("Inventory-only update finished. Summary: %s", summary)
+    if errors > 0:
+        logger.warning(
+            "[INVENTORY] ✗ COMPLETED WITH ERRORS | attempted=%s | ok=%s | errors=%s | skipped=%s | success=%s",
+            attempted,
+            updated_ok,
+            errors,
+            skipped_invalid,
+            f"{success_rate:.1f}%",
+        )
+    else:
+        logger.info(
+            "[INVENTORY] ✓ Completed successfully | attempted=%s | ok=%s | skipped=%s",
+            attempted,
+            updated_ok,
+            skipped_invalid,
+        )
+
     return summary
 
 

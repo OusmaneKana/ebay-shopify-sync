@@ -219,7 +219,7 @@
                     <button onclick="callApi('/sync/dev/normalize-raw')">
                         <span class="label">Normalize Raw</span>
                     </button>
-                    <button onclick="callApi('/sync/dev/sync-shopify')">
+                    <button onclick="runFullShopify('dev')">
                         <span class="label">Sync Shopify (full)</span>
                     </button>
                     <button class="danger" onclick="confirmAndCall('/sync/dev/purge-shopify', 'Purge ALL Shopify products in DEV?')">
@@ -232,7 +232,12 @@
                         <span class="label">Shopify Health</span>
                     </button>
                 </div>
-                <p class="hint">Typical flow: Sync eBay Raw → Normalize Raw → Sync Shopify.</p>
+                <div class="field-row" style="margin-top: 6px; font-size: 11px; color: var(--muted);">
+                    <label><input id="dev-full-new" type="checkbox" checked /> New products</label>
+                    <label><input id="dev-full-zero" type="checkbox" checked /> 0 inventories</label>
+                    <label><input id="dev-full-other" type="checkbox" checked /> Other updates</label>
+                </div>
+                <p class="hint">Typical flow: Sync eBay Raw → Normalize Raw → Sync Shopify (choose phases above).</p>
             </div>
 
             <div class="section">
@@ -250,7 +255,7 @@
                     <button onclick="callApi('/sync/prod/normalize-raw')">
                         <span class="label">Normalize Raw</span>
                     </button>
-                    <button onclick="callApi('/sync/prod/sync-shopify')">
+                    <button onclick="runFullShopify('prod')">
                         <span class="label">Sync Shopify (full)</span>
                     </button>
                     <button class="danger" onclick="confirmAndCall('/sync/prod/purge-shopify', 'Purge ALL Shopify products in PROD?')">
@@ -263,7 +268,12 @@
                         <span class="label">Shopify Health</span>
                     </button>
                 </div>
-                <p class="hint">Use sparingly and verify inputs before running in prod.</p>
+                <div class="field-row" style="margin-top: 6px; font-size: 11px; color: var(--muted);">
+                    <label><input id="prod-full-new" type="checkbox" checked /> New products</label>
+                    <label><input id="prod-full-zero" type="checkbox" checked /> 0 inventories</label>
+                    <label><input id="prod-full-other" type="checkbox" checked /> Other updates</label>
+                </div>
+                <p class="hint">Use sparingly and choose phases carefully before running in prod.</p>
             </div>
 
             <div class="section">
@@ -398,7 +408,23 @@
                 } catch {
                     data = text;
                 }
-                out.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+
+                // Prefer a nicer summary for typical sync responses
+                if (data && typeof data === 'object' && 'message' in data) {
+                    const lines = [];
+                    lines.push(String(data.message));
+                    if (typeof data.elapsed_seconds === 'number') {
+                        lines.push(`Elapsed: ${data.elapsed_seconds.toFixed(2)}s`);
+                    }
+                    if ('result' in data) {
+                        lines.push('Result:');
+                        lines.push(JSON.stringify(data.result, null, 2));
+                    }
+                    out.textContent = lines.join('\n');
+                } else {
+                    out.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+                }
+
                 setStatus(`${method} ${endpoint} → ${response.status}`, response.ok);
             } catch (error) {
                 if (error.name === 'AbortError') {
@@ -410,6 +436,11 @@
                 }
             } finally {
                 currentAbort = null;
+                // Safety: if we somehow never overwrote the placeholder text,
+                // ensure the UI doesn't remain stuck on "Processing…".
+                if (out.textContent === 'Processing…') {
+                    out.textContent = 'Done.';
+                }
             }
         }
 
@@ -456,6 +487,21 @@
             }
 
             callApi(endpoint, { method, body });
+        }
+
+        function runFullShopify(env) {
+            const prefix = env === 'prod' ? 'prod' : 'dev';
+            const newEl = document.getElementById(prefix + '-full-new');
+            const zeroEl = document.getElementById(prefix + '-full-zero');
+            const otherEl = document.getElementById(prefix + '-full-other');
+
+            const body = {
+                new_products: newEl ? newEl.checked : true,
+                zero_inventory: zeroEl ? zeroEl.checked : true,
+                other_updates: otherEl ? otherEl.checked : true,
+            };
+
+            callApi(`/sync/${env}/sync-shopify`, { method: 'POST', body });
         }
     </script>
 </body>
