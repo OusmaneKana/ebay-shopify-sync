@@ -219,5 +219,3 @@ Planned additions:
 - Etsy integration will use official Etsy APIs + OAuth and will only operate on accounts that have explicitly authorized access.
 
 ## License
-
-No license file is currently included. Add a `LICENSE` if you plan to open-source this repo.
