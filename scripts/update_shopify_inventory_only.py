@@ -15,6 +15,8 @@ from app.database.mongo import db
 from app.shopify.client import ShopifyClient
 from app.shopify.update_inventory import set_inventory_quantity_by_variant, set_inventory_from_mongo
 from app.shopify.inventory_manager import set_inventory_quantity_by_item_id
+from app.services.shopify_exclusions import BLOCKED_SHOPIFY_TAGS, has_blocked_shopify_tag
+from app.services.inventory_zero_guard import was_already_zeroed, mark_zeroed
 
 
 logger = logging.getLogger(__name__)
@@ -52,6 +54,8 @@ async def update_shopify_inventory_only(
     query: Dict[str, Any] = {
         "shopify_variant_id": {"$exists": True, "$ne": None},
         "quantity": {"$exists": True},
+        # Never touch excluded items.
+        "tags": {"$nin": list(BLOCKED_SHOPIFY_TAGS)},
     }
     if only_zero:
         # Hard override for only zero-quantity items
@@ -59,6 +63,7 @@ async def update_shopify_inventory_only(
 
     projection = {
         "_id": 1,
+        "tags": 1,
         "quantity": 1,
         "shopify_variant_id": 1,
         "shopify_id": 1,
@@ -79,6 +84,7 @@ async def update_shopify_inventory_only(
     attempted = 0
     updated_ok = 0
     skipped_invalid = 0
+    skipped_already_zeroed = 0
     errors = 0
 
     # Use bounded concurrency for Shopify calls; the ShopifyClient itself
@@ -86,9 +92,13 @@ async def update_shopify_inventory_only(
     sem = asyncio.Semaphore(max_concurrency)
 
     async def process_doc(doc: Dict[str, Any]) -> None:
-        nonlocal attempted, updated_ok, skipped_invalid, errors
+        nonlocal attempted, updated_ok, skipped_invalid, skipped_already_zeroed, errors
 
         sku = doc.get("_id")
+        if has_blocked_shopify_tag(doc.get("tags")):
+            skipped_invalid += 1
+            logger.info("[INVENTORY] Skipped excluded item | sku=%s | blocked_tags=%s", sku, sorted(BLOCKED_SHOPIFY_TAGS))
+            return
         variant_id = doc.get("shopify_variant_id")
         raw_qty = doc.get("quantity")
         inventory_item_id = doc.get("inventory_item_id")
@@ -115,6 +125,31 @@ async def update_shopify_inventory_only(
             variant_id,
             qty,
         )
+
+        # If this is a zero-qty target and we've already successfully applied
+        # the same zeroing operation before, skip the Shopify API call.
+        if qty == 0 and not dry_run:
+            try:
+                already = await was_already_zeroed(
+                    env=env,
+                    sku=str(sku) if sku is not None else None,
+                    variant_id=int(variant_id) if variant_id is not None else None,
+                    inventory_item_id=int(inventory_item_id) if inventory_item_id is not None else None,
+                    location_id=int(location_id) if location_id is not None else None,
+                )
+                if already:
+                    skipped_already_zeroed += 1
+                    logger.info(
+                        "[INVENTORY] Skipped (already zeroed) | sku=%s | variant_id=%s | item_id=%s | location_id=%s",
+                        sku,
+                        variant_id,
+                        inventory_item_id,
+                        location_id,
+                    )
+                    return
+            except Exception as e:  # pragma: no cover - defensive
+                # If the guard lookup fails, proceed with the update (safer).
+                logger.debug("[INVENTORY] Zero-guard lookup failed | sku=%s | error=%s", sku, e)
 
         if dry_run:
             logger.info("[INVENTORY] [DRY-RUN] Skipped | sku=%s | shopify_id=%s | variant_id=%s", sku, shopify_id, variant_id)
@@ -154,6 +189,19 @@ async def update_shopify_inventory_only(
                         variant_id,
                         qty,
                     )
+
+                    if qty == 0:
+                        try:
+                            await mark_zeroed(
+                                env=env,
+                                sku=str(sku) if sku is not None else None,
+                                variant_id=int(variant_id) if variant_id is not None else None,
+                                inventory_item_id=int(inventory_item_id) if inventory_item_id is not None else None,
+                                location_id=int(location_id) if location_id is not None else None,
+                                source="inventory_only",
+                            )
+                        except Exception as e:  # pragma: no cover - defensive
+                            logger.debug("[INVENTORY] Failed to mark zeroed | sku=%s | error=%s", sku, e)
                 else:
                     errors += 1
                     logger.error(
@@ -185,6 +233,7 @@ async def update_shopify_inventory_only(
         "attempted": attempted,
         "updated_ok": updated_ok,
         "skipped_invalid": skipped_invalid,
+        "skipped_already_zeroed": skipped_already_zeroed,
         "errors": errors,
         "success_rate": f"{success_rate:.1f}%",
         "dry_run": dry_run,

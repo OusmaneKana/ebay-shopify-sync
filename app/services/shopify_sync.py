@@ -5,6 +5,7 @@ from app.shopify.create_product import create_shopify_product
 from app.shopify.update_product import update_shopify_product
 from app.shopify.update_inventory import set_inventory_quantity_by_variant, set_inventory_from_mongo
 from scripts.update_shopify_inventory_only import update_shopify_inventory_only
+from app.services.shopify_exclusions import is_shopify_excluded_doc, BLOCKED_SHOPIFY_TAGS
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,17 @@ async def sync_to_shopify(shopify_client=None, *, allow_create: bool = True, adj
         nonlocal created, updated, skipped, total_processed
 
         async with sem:
+
+            # Hard exclusion: never create/update excluded items in Shopify.
+            if is_shopify_excluded_doc(doc):
+                skipped += 1
+                total_processed += 1
+                logger.info(
+                    "Skipped Shopify sync for excluded item %s (blocked tags=%s)",
+                    doc.get("_id", "unknown"),
+                    sorted(BLOCKED_SHOPIFY_TAGS),
+                )
+                return
 
             shopify_id = doc.get("shopify_id")
             # Prefer explicit content_hash if present; fall back to legacy 'hash'
@@ -168,7 +180,8 @@ async def sync_to_shopify(shopify_client=None, *, allow_create: bool = True, adj
                 total_processed += 1
 
     while True:
-        query = {}
+        # Exclude blocked-tag items at query-time to reduce work.
+        query = {"tags": {"$nin": list(BLOCKED_SHOPIFY_TAGS)}}
         if last_id is not None:
             query["_id"] = {"$gt": last_id}
 
@@ -216,6 +229,13 @@ async def sync_new_products_to_shopify(shopify_client=None, limit: int | None = 
         nonlocal created, total_processed
 
         async with sem:
+            if is_shopify_excluded_doc(doc):
+                logger.info(
+                    "Skipped Shopify create for excluded item %s (blocked tags=%s)",
+                    doc.get("_id", "unknown"),
+                    sorted(BLOCKED_SHOPIFY_TAGS),
+                )
+                return
             try:
                 await create_shopify_product(doc, shopify_client)
                 created += 1
@@ -229,7 +249,11 @@ async def sync_new_products_to_shopify(shopify_client=None, limit: int | None = 
             finally:
                 total_processed += 1
 
-    query = {"shopify_id": {"$exists": False}}
+    # Only create products for docs that are not excluded and don't yet have shopify_id.
+    query = {
+        "shopify_id": {"$exists": False},
+        "tags": {"$nin": list(BLOCKED_SHOPIFY_TAGS)},
+    }
     cursor = db.product_normalized.find(query).sort("_id", 1)
     if limit is not None:
         cursor = cursor.limit(limit)
