@@ -1,6 +1,6 @@
 import time
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Depends, Request
 
 from app.services.sync_manager import full_sync
 from app.services.product_service import sync_ebay_raw_to_mongo
@@ -10,11 +10,12 @@ from app.shopify.purge_all_shopify_products import purge_all_shopify_products
 from app.shopify.client import ShopifyClient
 from app.config import settings
 from scripts.update_shopify_inventory_only import update_shopify_inventory_only
+from app.security.passkey import require_authorized
 
 router = APIRouter()
 
 # Dev environment routes
-dev_router = APIRouter()
+dev_router = APIRouter(dependencies=[Depends(require_authorized)])
 
 @dev_router.post("/sync-ebay-raw")
 async def sync_ebay_raw_dev():
@@ -135,7 +136,7 @@ async def shopify_health_dev():
         return {"ok": False, "error": str(e), "elapsed_seconds": elapsed}
 
 # Prod environment routes
-prod_router = APIRouter()
+prod_router = APIRouter(dependencies=[Depends(require_authorized)])
 
 @prod_router.post("/sync-ebay-raw")
 async def sync_ebay_raw_prod():

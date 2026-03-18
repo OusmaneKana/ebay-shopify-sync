@@ -1,5 +1,26 @@
 from app.database.mongo import db
 from app.ebay.fetch_products import fetch_all_ebay_products
+from datetime import datetime, timezone
+
+
+def _parse_ebay_datetime(value: object) -> datetime | None:
+    if not value:
+        return None
+    if isinstance(value, datetime):
+        return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
+    if not isinstance(value, str):
+        return None
+    s = value.strip()
+    if not s:
+        return None
+    # eBay commonly returns ISO 8601 timestamps ending with 'Z'
+    try:
+        if s.endswith("Z"):
+            return datetime.fromisoformat(s[:-1] + "+00:00")
+        dt = datetime.fromisoformat(s)
+        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    except Exception:
+        return None
 
 
 async def sync_ebay_raw_to_mongo():
@@ -30,12 +51,15 @@ async def sync_ebay_raw_to_mongo():
         # if your fetch_products already puts the full ebay item in item["raw"]
         raw_doc = item.get("raw", item)
 
+        posted_at = _parse_ebay_datetime(raw_doc.get("ListingStartTime"))
+
         await db.product_raw.update_one(
             {"_id": sku},
             {
                 "$set": {
                     "sku": sku,
                     "raw": raw_doc,
+                    "ebay_posted_at": posted_at,
                 }
             },
             upsert=True,

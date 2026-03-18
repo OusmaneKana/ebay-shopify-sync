@@ -182,6 +182,54 @@
             overflow: auto;
         }
 
+        .table-wrap {
+            margin-top: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: auto;
+            background: #020617;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            background: #020617;
+            color: var(--muted);
+            text-align: left;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        tr:hover td {
+            background: rgba(56, 189, 248, 0.06);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--muted);
+            background: rgba(15, 23, 42, 0.6);
+            white-space: nowrap;
+        }
+
+        .nowrap { white-space: nowrap; }
+
         .status-pill {
             padding: 2px 8px;
             border-radius: 999px;
@@ -201,6 +249,12 @@
 <body>
     <h1>eBay → Shopify Sync Admin</h1>
     <p class="subheading">Trigger sync jobs and maintenance scripts for dev and prod environments.</p>
+
+    <div class="button-row" style="margin: 0 0 18px;">
+        <a href="/" style="text-decoration:none;"><button><span class="label">Home</span></button></a>
+        <a href="/reporting" style="text-decoration:none;"><button class="primary"><span class="label">Reporting</span></button></a>
+        <button onclick="logout()"><span class="label">Logout</span></button>
+    </div>
 
     <div class="layout">
         <div>
@@ -442,6 +496,11 @@
                     out.textContent = 'Done.';
                 }
             }
+        }
+
+        async function logout() {
+            await fetch('/auth/passkey/logout', { method: 'POST' }).catch(() => null);
+            window.location.href = '/login?next=/admin';
         }
 
         function confirmAndCall(endpoint, message) {

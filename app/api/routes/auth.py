@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 
+from app.config import settings
+from app.security.passkey import COOKIE_NAME, passkey_enabled
+
 from app.services.ebay_auth_service import (
     exchange_code_for_tokens,
     get_authorization_url,
@@ -8,6 +11,46 @@ from app.services.ebay_auth_service import (
 )
 
 router = APIRouter()
+
+
+@router.get("/passkey/status")
+async def passkey_status(request: Request):
+    """Lightweight status endpoint for the UI."""
+    if not passkey_enabled():
+        return {"enabled": False, "authorized": True}
+    cookie_val = request.cookies.get(COOKIE_NAME)
+    return {
+        "enabled": True,
+        "authorized": bool(cookie_val) and cookie_val == str(settings.ADMIN_PASSKEY),
+    }
+
+
+@router.post("/passkey/login")
+async def passkey_login(payload: dict, request: Request):
+    if not passkey_enabled():
+        return {"ok": True, "message": "Passkey disabled"}
+
+    provided = (payload or {}).get("passkey")
+    if not provided or str(provided) != str(settings.ADMIN_PASSKEY):
+        return JSONResponse({"ok": False, "error": "Invalid passkey"}, status_code=401)
+
+    resp = JSONResponse({"ok": True})
+    # Minimal: cookie value == passkey. HttpOnly keeps it out of JS.
+    resp.set_cookie(
+        key=COOKIE_NAME,
+        value=str(provided),
+        httponly=True,
+        samesite="lax",
+        max_age=60 * 60 * 24 * 30,
+    )
+    return resp
+
+
+@router.post("/passkey/logout")
+async def passkey_logout():
+    resp = JSONResponse({"ok": True})
+    resp.delete_cookie(COOKIE_NAME)
+    return resp
 
 
 @router.get("/ebay/login")

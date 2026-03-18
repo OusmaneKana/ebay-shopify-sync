@@ -1,11 +1,13 @@
 import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from app.api.router import api_router
 from app.services.scheduler import start_scheduler
+from app.security.passkey import is_authorized, passkey_enabled
+from app.database.mongo import close_mongo_client
 
 # Create logs directory if it doesn't exist
 logs_dir = Path("logs")
@@ -62,14 +64,31 @@ app.include_router(api_router)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/")
-def root():
-    return {"status": "running", "message": "eBay → Shopify Sync Middleware"}
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    close_mongo_client()
+
+@app.get("/", response_class=FileResponse)
+async def root():
+    return FileResponse("static/home.html")
 
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
 
 @app.get("/admin", response_class=FileResponse)
-async def admin_panel():
+async def admin_panel(request: Request):
+    if passkey_enabled() and not is_authorized(request):
+        return RedirectResponse(url="/login?next=/admin")
     return FileResponse("static/index.html")
+
+
+@app.get("/reporting", response_class=FileResponse)
+async def reporting_page(request: Request):
+    return FileResponse("static/reporting.html")
+
+
+@app.get("/login", response_class=FileResponse)
+async def login_page():
+    return FileResponse("static/login.html")

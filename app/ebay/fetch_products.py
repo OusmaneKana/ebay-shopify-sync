@@ -114,6 +114,12 @@ async def fetch_all_ebay_products():
             title = item.findtext("e:Title", default="", namespaces=ns)
             category_id = item.findtext("e:PrimaryCategory/e:CategoryID", default=None, namespaces=ns)
 
+            # eBay listing/posting date (Trading API)
+            listing_start_time = (
+                item.findtext("e:ListingDetails/e:StartTime", default=None, namespaces=ns)
+                or item.findtext("e:StartTime", default=None, namespaces=ns)
+            )
+
             picture_urls = item.findall("e:PictureDetails/e:PictureURL", namespaces=ns)
             images: list[str] = []
             for p in picture_urls:
@@ -148,6 +154,7 @@ async def fetch_all_ebay_products():
                     "sku": sku,
                     "title": title,
                     "category_id": category_id,
+                    "listing_start_time": listing_start_time,
                     "images": images,
                     "quantity_total": quantity_total,
                     "quantity_sold": quantity_sold,
@@ -206,6 +213,8 @@ async def fetch_all_ebay_products():
                 "PrimaryCategoryID": details["category_id"],
                 "PrimaryCategoryName": details["category_name"],
                 "Shipping": details.get("shipping"),
+                # Prefer GetItem listing details when available.
+                "ListingStartTime": details.get("listing_start_time") or meta.get("listing_start_time"),
                 "LastSyncAt": datetime.now(timezone.utc).isoformat(),
             }
 
@@ -280,6 +289,13 @@ def get_item_details(item_id: str):
 
     # Description
     desc = root.findtext(".//e:Description", default="", namespaces=ns)
+
+    # Listing start time (posting date)
+    listing_start_time = root.findtext(
+        ".//e:Item/e:ListingDetails/e:StartTime",
+        default=None,
+        namespaces=ns,
+    )
 
     # Images - normalize to full-resolution variant (_32.JPG)
     pics = []
@@ -398,6 +414,7 @@ def get_item_details(item_id: str):
         "category_id": category_id,
         "category_name": category_name,
         "shipping": shipping,
+        "listing_start_time": listing_start_time,
         "quantity_total": quantity_total,
         "quantity_sold": quantity_sold,
         "quantity_available": quantity_available,

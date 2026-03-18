@@ -22,6 +22,10 @@ class Settings(BaseSettings):
 
     OPENAI_API_KEY: str | None = None
 
+    # Minimal UI/API protection for non-public deployments.
+    # When set, /admin, /reporting and related APIs require a passkey.
+    ADMIN_PASSKEY: str | None = None
+
     class Config:
         env_file = ".env"
 

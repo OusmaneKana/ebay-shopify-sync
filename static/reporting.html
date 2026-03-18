@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reporting</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-alt: #020617;
+      --card-bg: #020617;
+      --border: #1e293b;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.1);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --success: #4ade80;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 40%, #000 100%);
+      color: var(--text);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    h1 { margin: 0; font-size: 26px; }
+    .sub { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+
+    .nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button, a.btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top left, rgba(15,23,42,1), rgba(15,23,42,0.96));
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 0.15s ease, transform 0.08s ease;
+      text-decoration: none;
+    }
+
+    button.primary, a.btn.primary {
+      border-color: var(--accent);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.16), rgba(15,23,42,0.96));
+    }
+
+    button:hover, a.btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px 14px;
+      box-shadow: 0 18px 45px rgba(15,23,42,0.9);
+    }
+
+    .card h2 { margin: 0 0 8px; font-size: 16px; }
+
+    label { font-size: 12px; color: var(--muted); }
+
+    input[type="number"], input[type="text"], input[type="date"], select, textarea {
+      background: #020617;
+      color: var(--text);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      font-size: 12px;
+      min-width: 80px;
+    }
+
+    textarea {
+      border-radius: 10px;
+      width: 100%;
+      min-height: 110px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.6);
+      white-space: nowrap;
+    }
+
+    .table-wrap {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: auto;
+      background: #020617;
+      max-height: 520px;
+    }
+
+    .results-cards {
+      display: none;
+      margin-top: 12px;
+      gap: 10px;
+    }
+
+    .result-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(2, 6, 23, 0.6);
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    .result-card .thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+    }
+
+    .result-title {
+      font-weight: 650;
+      font-size: 13px;
+      line-height: 1.25;
+      margin: 0;
+    }
+
+    .result-meta {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+      align-items: center;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .pill.ok { border-color: var(--success); color: var(--success); }
+    .pill.bad { border-color: var(--danger); color: var(--danger); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #020617;
+      color: var(--muted);
+      text-align: left;
+      font-weight: 600;
+      z-index: 1;
+    }
+
+    tr:hover td {
+      background: rgba(56, 189, 248, 0.06);
+    }
+
+    .thumb {
+      width: 42px;
+      height: 42px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(2,6,23,0.6);
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      background: #020617;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      max-height: 640px;
+      overflow: auto;
+    }
+
+    .product {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .carousel {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #020617;
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .carousel img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #020617;
+    }
+
+    .carousel .navbtn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .carousel .navbtn:hover { border-color: var(--accent); }
+    .carousel .navbtn.left { left: 10px; }
+    .carousel .navbtn.right { right: 10px; }
+
+    .dots {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,0.6);
+      cursor: pointer;
+    }
+
+    .dot.active {
+      border-color: var(--accent);
+      background: rgba(56,189,248,0.25);
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .field {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(2, 6, 23, 0.6);
+    }
+
+    .field .k {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .field .v {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .desc {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    .hint { color: var(--muted); font-size: 11px; margin-top: 10px; }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+
+      /* Prefer a card list over the table on mobile */
+      .table-wrap { display: none; }
+      .results-cards { display: grid; }
+
+      button, a.btn {
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+
+      input[type="number"], input[type="text"], input[type="date"], select {
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+
+      .kv { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Reporting</h1>
+      <div class="sub">Search and filter items. View Raw + Normalized JSON.</div>
+    </div>
+    <div class="nav">
+      <a class="btn" href="/">Home</a>
+      <a class="btn" href="/admin">Admin</a>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <h2>Filters</h2>
+
+      <div class="row">
+        <label style="flex: 1 1 240px;">Search
+          <input id="q" type="text" placeholder="SKU, title, item id…" style="width: 100%;" />
+        </label>
+        <label style="flex: 0 0 180px;">Size
+          <input id="size" type="text" placeholder="e.g. Large" style="width: 100%;" />
+        </label>
+        <label style="flex: 0 0 110px;">Limit
+          <input id="limit" type="number" min="1" max="200" value="50" />
+        </label>
+      </div>
+
+      <div class="row">
+        <label>Posted after
+          <input id="after" type="date" />
+        </label>
+        <label>Posted before
+          <input id="before" type="date" />
+        </label>
+        <label>Min weight
+          <input id="minWeight" type="number" step="0.01" placeholder="major" />
+        </label>
+        <label>Max weight
+          <input id="maxWeight" type="number" step="0.01" placeholder="major" />
+        </label>
+        <label style="display:flex; align-items:center; gap:8px;">
+          <input id="onlyAvailable" type="checkbox" />
+          <span class="small">Available</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px;">
+          <input id="onlySoldout" type="checkbox" />
+          <span class="small">Sold out</span>
+        </label>
+      </div>
+
+      <div class="row">
+        <label>Min L <input id="minL" type="number" step="0.01" /></label>
+        <label>Max L <input id="maxL" type="number" step="0.01" /></label>
+        <label>Min W <input id="minW" type="number" step="0.01" /></label>
+        <label>Max W <input id="maxW" type="number" step="0.01" /></label>
+        <label>Min H <input id="minH" type="number" step="0.01" /></label>
+        <label>Max H <input id="maxH" type="number" step="0.01" /></label>
+      </div>
+
+      <div class="row" style="margin-top: 10px;">
+        <button class="primary" onclick="run(true)">Run</button>
+        <button onclick="run(false, 'prev')">Prev</button>
+        <button onclick="run(false, 'next')">Next</button>
+        <span id="meta" class="pill">Idle</span>
+      </div>
+
+      <div class="results-cards" id="cards"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Img</th>
+              <th>SKU</th>
+              <th>Title</th>
+              <th>Posted</th>
+              <th>Status</th>
+              <th>View</th>
+            </tr>
+          </thead>
+          <tbody id="rows">
+            <tr><td colspan="6" style="color: var(--muted);">Run to see results.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="hint">Image is the first available product photo (normalized, then raw).</div>
+    </div>
+
+    <div class="card" id="detailsCard">
+      <h2>Details</h2>
+      <div class="row" style="margin-top: 0;">
+        <span class="pill" id="sel">No selection</span>
+      </div>
+
+      <div id="card" class="product">
+        <div class="carousel" id="carousel">
+          <div style="color: var(--muted); font-size: 12px;">Select an item to preview</div>
+        </div>
+        <div class="dots" id="dots"></div>
+
+        <div>
+          <p id="p-title" class="title">—</p>
+          <p id="p-sub" class="desc">—</p>
+        </div>
+
+        <div class="kv">
+          <div class="field"><div class="k">SKU</div><div id="f-sku" class="v">—</div></div>
+          <div class="field"><div class="k">Posted</div><div id="f-posted" class="v">—</div></div>
+          <div class="field"><div class="k">Category</div><div id="f-category" class="v">—</div></div>
+          <div class="field"><div class="k">Price</div><div id="f-price" class="v">—</div></div>
+          <div class="field"><div class="k">Quantity</div><div id="f-qty" class="v">—</div></div>
+          <div class="field"><div class="k">Size</div><div id="f-size" class="v">—</div></div>
+          <div class="field"><div class="k">Weight</div><div id="f-weight" class="v">—</div></div>
+          <div class="field"><div class="k">Dimensions</div><div id="f-dims" class="v">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = { skip: 0, limit: 50, total: 0, items: [], selected: null, imgIndex: 0, touchStartX: null };
+
+    function isMobile() {
+      try {
+        return window.matchMedia && window.matchMedia('(max-width: 980px)').matches;
+      } catch {
+        return false;
+      }
+    }
+
+    function v(id) {
+      const el = document.getElementById(id);
+      return el ? el.value : '';
+    }
+
+    function n(id) {
+      const s = v(id);
+      if (!s) return null;
+      const num = Number(s);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    function isoStart(dateStr) { return dateStr ? `${dateStr}T00:00:00Z` : null; }
+    function isoEnd(dateStr) { return dateStr ? `${dateStr}T23:59:59Z` : null; }
+
+    function setMeta(text, ok = null) {
+      const el = document.getElementById('meta');
+      el.textContent = text;
+      if (ok === true) {
+        el.style.borderColor = 'var(--success)';
+        el.style.color = 'var(--success)';
+      } else if (ok === false) {
+        el.style.borderColor = 'var(--danger)';
+        el.style.color = 'var(--danger)';
+      } else {
+        el.style.borderColor = 'var(--border)';
+        el.style.color = 'var(--muted)';
+      }
+    }
+
+    function fmtPosted(x) {
+      if (!x) return '';
+      try {
+        const d = new Date(x);
+        if (Number.isNaN(d.getTime())) return String(x);
+        return d.toISOString().slice(0, 10);
+      } catch { return String(x); }
+    }
+
+    function titleOf(item) {
+      return (item?.normalized?.title) || (item?.raw?.Title) || '';
+    }
+
+    function categoryOf(item) {
+      return (item?.normalized?.category) || (item?.normalized?.ebay_category?.leaf) || (item?.raw?.PrimaryCategoryName) || '';
+    }
+
+    function priceOf(item) {
+      const p = item?.normalized?.price;
+      if (typeof p === 'number') return `$${p.toFixed(2)}`;
+      const rp = item?.raw?.Price;
+      if (rp == null) return '';
+      const s = String(rp).trim();
+      return s ? (s.startsWith('$') ? s : `$${s}`) : '';
+    }
+
+    function qtyOf(item) {
+      const q = item?.normalized?.quantity;
+      if (typeof q === 'number') return String(q);
+      const rq = item?.raw?.QuantityAvailable;
+      return rq == null ? '' : String(rq);
+    }
+
+    function qtyNum(item) {
+      const q = item?.normalized?.quantity;
+      if (typeof q === 'number') return q;
+      const rq = item?.raw?.QuantityAvailable;
+      const n = Number(rq);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function statusPill(item) {
+      const q = qtyNum(item);
+      if (q > 0) return '<span class="pill ok">Available</span>';
+      return '<span class="pill bad">Sold out</span>';
+    }
+
+    function sizeOf(item) {
+      const a = item?.normalized?.attributes || {};
+      const r = item?.raw?.ItemSpecifics || {};
+      return a.Size || r.Size || item?.normalized?.metafields?.art?.size || '';
+    }
+
+    function weightOf(item) {
+      const major = item?.normalized?.package?.weight?.major;
+      if (!major || major.value == null) return '';
+      return `${major.value}${major.unit ? ' ' + major.unit : ''}`;
+    }
+
+    function dimsOf(item) {
+      const d = item?.normalized?.package?.dimensions || {};
+      const l = d?.length?.value;
+      const w = d?.width?.value;
+      const h = d?.height?.value;
+      if (l == null && w == null && h == null) return '';
+      const unit = (d?.length?.unit || d?.width?.unit || d?.height?.unit) ? ` ${(d?.length?.unit || d?.width?.unit || d?.height?.unit)}` : '';
+      return `${l ?? '—'}×${w ?? '—'}×${h ?? '—'}${unit}`;
+    }
+
+    function imagesOf(item) {
+      const arr = item?.image_urls;
+      if (Array.isArray(arr) && arr.length) return arr.filter(Boolean);
+      // fallbacks
+      const nimg = item?.normalized?.images;
+      if (Array.isArray(nimg) && nimg.length) return nimg.filter(Boolean);
+      const rimg = item?.raw?.Images;
+      if (Array.isArray(rimg) && rimg.length) return rimg.filter(Boolean);
+      return item?.image_url ? [item.image_url] : [];
+    }
+
+    function setText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text || '—';
+    }
+
+    function renderCard(item) {
+      const carousel = document.getElementById('carousel');
+      const dots = document.getElementById('dots');
+      const imgs = imagesOf(item);
+
+      state.imgIndex = Math.max(0, Math.min(state.imgIndex, Math.max(imgs.length - 1, 0)));
+
+      // Title + subtitle
+      setText('p-title', titleOf(item) || '—');
+      const sub = [
+        item?.normalized?.sku ? `Normalized` : '',
+        item?.normalized?.tags?.length ? `${item.normalized.tags.length} tags` : ''
+      ].filter(Boolean).join(' • ');
+      setText('p-sub', sub || '—');
+
+      // Fields
+      setText('f-sku', item?.sku || '');
+      setText('f-posted', fmtPosted(item?.ebay_posted_at));
+      setText('f-category', categoryOf(item));
+      setText('f-price', priceOf(item));
+      setText('f-qty', qtyOf(item));
+      setText('f-size', sizeOf(item));
+      setText('f-weight', weightOf(item));
+      setText('f-dims', dimsOf(item));
+
+      // Carousel
+      carousel.innerHTML = '';
+      dots.innerHTML = '';
+
+      if (!imgs.length) {
+        const empty = document.createElement('div');
+        empty.style.color = 'var(--muted)';
+        empty.style.fontSize = '12px';
+        empty.textContent = 'No images';
+        carousel.appendChild(empty);
+        return;
+      }
+
+      const img = document.createElement('img');
+      img.src = imgs[state.imgIndex];
+      img.alt = '';
+      carousel.appendChild(img);
+
+      if (imgs.length > 1) {
+        const left = document.createElement('div');
+        left.className = 'navbtn left';
+        left.textContent = '‹';
+        left.onclick = () => { state.imgIndex = (state.imgIndex - 1 + imgs.length) % imgs.length; renderCard(item); };
+        const right = document.createElement('div');
+        right.className = 'navbtn right';
+        right.textContent = '›';
+        right.onclick = () => { state.imgIndex = (state.imgIndex + 1) % imgs.length; renderCard(item); };
+        carousel.appendChild(left);
+        carousel.appendChild(right);
+      }
+
+      // Swipe support (touch)
+      carousel.ontouchstart = (e) => {
+        const t = e.changedTouches && e.changedTouches[0];
+        state.touchStartX = t ? t.clientX : null;
+      };
+      carousel.ontouchend = (e) => {
+        const t = e.changedTouches && e.changedTouches[0];
+        if (state.touchStartX == null || !t) return;
+        const dx = t.clientX - state.touchStartX;
+        state.touchStartX = null;
+        if (Math.abs(dx) < 35) return;
+        if (dx < 0) state.imgIndex = (state.imgIndex + 1) % imgs.length;
+        else state.imgIndex = (state.imgIndex - 1 + imgs.length) % imgs.length;
+        renderCard(item);
+      };
+
+      // Dots
+      imgs.slice(0, 12).forEach((_u, i) => {
+        const d = document.createElement('div');
+        d.className = 'dot' + (i === state.imgIndex ? ' active' : '');
+        d.onclick = () => { state.imgIndex = i; renderCard(item); };
+        dots.appendChild(d);
+      });
+    }
+
+    function render() {
+      const tbody = document.getElementById('rows');
+      const cards = document.getElementById('cards');
+      tbody.innerHTML = '';
+      if (cards) cards.innerHTML = '';
+      if (!state.items.length) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="6" style="color: var(--muted);">No results.</td>`;
+        tbody.appendChild(tr);
+
+        if (cards) {
+          const div = document.createElement('div');
+          div.className = 'small';
+          div.textContent = 'No results.';
+          cards.appendChild(div);
+        }
+        return;
+      }
+
+      state.items.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        const img = item.image_url ? `<img class="thumb" src="${item.image_url}" alt="" />` : `<div class="thumb"></div>`;
+        tr.innerHTML = `
+          <td>${img}</td>
+          <td><span class="pill">${item.sku || ''}</span></td>
+          <td>${titleOf(item)}</td>
+          <td>${fmtPosted(item.ebay_posted_at)}</td>
+          <td>${statusPill(item)}</td>
+          <td>
+            <button onclick="selectRow(${idx})">Open</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+
+        if (cards) {
+          const div = document.createElement('div');
+          div.className = 'result-card';
+          div.innerHTML = `
+            ${item.image_url ? `<img class="thumb" src="${item.image_url}" alt="" />` : `<div class="thumb"></div>`}
+            <div>
+              <p class="result-title">${titleOf(item) || ''}</p>
+              <div class="result-meta">
+                <span class="pill">${item.sku || ''}</span>
+                <span class="pill">${fmtPosted(item.ebay_posted_at)}</span>
+                ${statusPill(item)}
+              </div>
+              <div class="result-meta" style="margin-top: 10px;">
+                <button class="primary" onclick="selectRow(${idx})">Open</button>
+              </div>
+            </div>
+          `;
+          cards.appendChild(div);
+        }
+      });
+    }
+
+    function selectRow(idx) {
+      state.selected = idx;
+      state.imgIndex = 0;
+      const item = state.items[idx];
+      document.getElementById('sel').textContent = `Selected: ${item?.sku || ''}`;
+      renderCard(item);
+
+      // On mobile, jump straight to the Details card so users don't
+      // have to manually scroll past a long results list.
+      if (isMobile()) {
+        const details = document.getElementById('detailsCard');
+        if (details && details.scrollIntoView) {
+          details.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+
+    async function run(reset = true, direction = null) {
+      if (reset) state.skip = 0;
+      else {
+        if (direction === 'next') state.skip = Math.max(0, state.skip + state.limit);
+        if (direction === 'prev') state.skip = Math.max(0, state.skip - state.limit);
+      }
+
+      const limit = n('limit') ?? 50;
+      state.limit = Math.min(Math.max(limit, 1), 200);
+
+      const params = new URLSearchParams();
+      const q = v('q').trim();
+      const size = v('size').trim();
+      const after = isoStart(v('after'));
+      const before = isoEnd(v('before'));
+      if (q) params.set('q', q);
+      if (size) params.set('size', size);
+      if (after) params.set('posted_after', after);
+      if (before) params.set('posted_before', before);
+
+      const onlyAvail = document.getElementById('onlyAvailable')?.checked;
+      const onlySold = document.getElementById('onlySoldout')?.checked;
+      // If both are selected (or neither), treat as no filter.
+      if (onlyAvail && !onlySold) params.set('available_only', 'true');
+      if (onlySold && !onlyAvail) params.set('soldout_only', 'true');
+
+      const setNum = (key, id) => {
+        const value = n(id);
+        if (value != null) params.set(key, String(value));
+      };
+
+      setNum('min_weight', 'minWeight');
+      setNum('max_weight', 'maxWeight');
+      setNum('min_length', 'minL');
+      setNum('max_length', 'maxL');
+      setNum('min_width', 'minW');
+      setNum('max_width', 'maxW');
+      setNum('min_height', 'minH');
+      setNum('max_height', 'maxH');
+
+      params.set('skip', String(state.skip));
+      params.set('limit', String(state.limit));
+
+      const endpoint = `/reporting/items?${params.toString()}`;
+      setMeta('Loading…');
+
+      try {
+        const resp = await fetch(endpoint);
+        const data = await resp.json();
+        if (!resp.ok) {
+          setMeta(`Error ${resp.status}`, false);
+          setText('p-title', `Error ${resp.status}`);
+          setText('p-sub', (data && (data.detail || data.message)) ? String(data.detail || data.message) : 'Request failed');
+          return;
+        }
+
+        state.total = data.total || 0;
+        state.skip = data.skip || 0;
+        state.limit = data.limit || state.limit;
+        state.items = data.items || [];
+        state.selected = null;
+        document.getElementById('sel').textContent = 'No selection';
+        // reset details
+        document.getElementById('carousel').innerHTML = '<div style="color: var(--muted); font-size: 12px;">Select an item to preview</div>';
+        document.getElementById('dots').innerHTML = '';
+        setText('p-title', '—');
+        setText('p-sub', '—');
+        ['f-sku','f-posted','f-category','f-price','f-qty','f-size','f-weight','f-dims'].forEach((id) => setText(id, '—'));
+
+        render();
+        const end = state.skip + state.items.length;
+        setMeta(`${state.skip + 1}-${end} of ${state.total}`, true);
+      } catch (e) {
+        setMeta('Request failed', false);
+        // show error in title area
+        setText('p-title', 'Request failed');
+        setText('p-sub', e.message);
+      }
+    }
+
+    async function logout() {
+      await fetch('/auth/passkey/logout', { method: 'POST' }).catch(() => null);
+      window.location.href = '/login?next=/reporting';
+    }
+
+    // Mutually exclusive availability filters
+    (function initAvailabilityToggles() {
+      const a = document.getElementById('onlyAvailable');
+      const s = document.getElementById('onlySoldout');
+      if (!a || !s) return;
+      a.addEventListener('change', () => { if (a.checked) s.checked = false; });
+      s.addEventListener('change', () => { if (s.checked) a.checked = false; });
+    })();
+  </script>
+</body>
+</html>

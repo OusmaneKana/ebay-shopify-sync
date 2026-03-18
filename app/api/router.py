@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from app.api.routes import health, sync, products, auth
 from app.api.routes import webhooks
+from app.api.routes import reporting
 
 api_router = APIRouter()
 
@@ -9,5 +10,6 @@ api_router.include_router(sync.router, prefix="/sync", tags=["Sync"])
 api_router.include_router(sync.dev_router, prefix="/sync/dev", tags=["Sync Dev"])
 api_router.include_router(sync.prod_router, prefix="/sync/prod", tags=["Sync Prod"])
 api_router.include_router(products.router, prefix="/products", tags=["Products"])
+api_router.include_router(reporting.router, prefix="/reporting", tags=["Reporting"])
 api_router.include_router(webhooks.router, prefix="/webhooks", tags=["Webhooks"])
 api_router.include_router(auth.router, prefix="/auth", tags=["Auth"])
