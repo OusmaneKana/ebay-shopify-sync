@@ -7,11 +7,28 @@ from functools import lru_cache
 from openai import OpenAI
 from app.config import settings
 import asyncio
+from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
 
 
 logger = logging.getLogger(__name__)
 
 RECENT_DAYS = 7  # How many days count as "recent"
+
+
+def _money_2dp(value: object) -> float | None:
+    """Normalize money-like values to a 2-decimal float.
+
+    Important: using Decimal avoids binary float artifacts like 39.989999999999995.
+    """
+
+    if value is None:
+        return None
+    try:
+        d = Decimal(str(value).strip())
+        d = d.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return float(d)
+    except (InvalidOperation, ValueError, TypeError):
+        return None
 
 # ----------------------------
 # Metafield routing (NEW)
@@ -809,6 +826,12 @@ async def normalize_from_raw():
                 # NEW: build structured metafields from ItemSpecifics
                 structured_metafields, _leftovers = build_structured_metafields(mapped_category, item_specifics)
 
+                # Default AI workflow status for downstream content generation.
+                # Do NOT overwrite if it already exists (e.g., moved to in_progress/completed).
+                ai_ns = structured_metafields.setdefault("ai_", {})
+                if not ai_ns.get("content_status"):
+                    ai_ns["content_status"] = "pending"
+
                 # Preserve first_seen_at
                 existing_norm = existing_by_sku.get(sku)
 
@@ -977,6 +1000,10 @@ async def normalize_from_raw():
 
                     # Update all_tags with any new tags added
                     all_tags = sorted(attr_tags)
+
+                # Ensure money values are stable (2dp) for storage + downstream integrations.
+                # This prevents float artifacts like 39.989999999999995.
+                adjusted_price = _money_2dp(adjusted_price)
 
                 # Compute a stable "content hash" of the normalized business fields.
                 # This intentionally excludes transient fields like last_normalized_at

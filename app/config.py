@@ -4,6 +4,11 @@ class Settings(BaseSettings):
     MONGO_URI: str
     MONGO_DB: str
 
+    # Baserow (optional unless a script requires it)
+    BASEROW_API_TOKEN: str | None = None
+    BASEROW_BASE_URL: str | None = None
+    BASEROW_TABLE_ID: int | None = None
+
     EBAY_APP_ID: str
     EBAY_CERT_ID: str
     EBAY_DEV_ID: str

@@ -116,6 +116,41 @@ docker build -t ebay-shopify-sync .
 docker run --rm -p 8080:8080 --env-file .env ebay-shopify-sync
 ```
 
+## Deploy to GCP Cloud Run
+
+If you deploy to Cloud Run via Artifact Registry, the repo includes a helper so you don’t have to repeatedly type the build → push → deploy commands.
+
+### Prereqs
+
+- `gcloud auth login`
+- `gcloud auth configure-docker ${REGION}-docker.pkg.dev`
+- Artifact Registry repo exists (`$REPO`) and you have permission to push
+
+### One-command deploy
+
+```bash
+export PROJECT_ID=gallery1880
+export REGION=us-central1
+export REPO=my-repo
+export SERVICE=my-service
+
+# Recommended: unique tag per deploy
+TAG=$(git rev-parse --short HEAD) make deploy
+```
+
+Other options:
+
+```bash
+# Defaults TAG=latest
+make deploy
+
+# Preview without executing
+DRY_RUN=1 make deploy
+
+# Or run the script directly
+./scripts/deploy_cloud_run.sh
+```
+
 ## How to run a sync
 
 This service exposes **step-by-step** endpoints and also has a few helper scripts.
