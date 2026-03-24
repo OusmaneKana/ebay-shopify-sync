@@ -40,3 +40,6 @@ urllib3==2.6.1
 uvicorn==0.38.0
 yarl==1.22.0
 aiolimiter==1.1.0
+
+# Excel export script dependency
+openpyxl==3.1.5

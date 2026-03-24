@@ -9,6 +9,7 @@ BLOCKED_SHOPIFY_TAGS: set[str] = {
     "SC:knives-bayonets",
     "Swords & Blades",
     "Daggers",
+    "Category:bayonet",
 
 }
 

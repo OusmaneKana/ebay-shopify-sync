@@ -17,6 +17,76 @@ router = APIRouter()
 # Dev environment routes
 dev_router = APIRouter(dependencies=[Depends(require_authorized)])
 
+
+def _parse_shopify_sync_options(options: dict | None) -> tuple[bool, bool, bool]:
+    """Parse Shopify sync options payload.
+
+    Matches the existing /sync-shopify body contract:
+      {"new_products": bool, "zero_inventory": bool, "other_updates": bool}
+    """
+
+    opts = options or {}
+    do_new = bool(opts.get("new_products", True))
+    do_zero = bool(opts.get("zero_inventory", True))
+    do_other = bool(opts.get("other_updates", True))
+    return do_new, do_zero, do_other
+
+
+def _shopify_client_for_env(env: str) -> ShopifyClient:
+    if env == "prod":
+        return ShopifyClient(
+            api_key=settings.SHOPIFY_API_KEY_PROD,
+            password=settings.SHOPIFY_PASSWORD_PROD,
+            store_url=settings.SHOPIFY_STORE_URL_PROD,
+        )
+    return ShopifyClient()
+
+
+async def _run_all_steps(*, env: str, shopify_options: dict | None) -> dict:
+    """Run eBay sync -> normalization -> Shopify sync sequentially."""
+
+    t0 = time.perf_counter()
+
+    # Step 1: eBay → Mongo (raw)
+    t_ebay = time.perf_counter()
+    ebay_result = await sync_ebay_raw_to_mongo()
+    ebay_elapsed = time.perf_counter() - t_ebay
+
+    # Step 2: raw → normalized
+    t_norm = time.perf_counter()
+    norm_result = await normalize_from_raw()
+    norm_elapsed = time.perf_counter() - t_norm
+
+    # Step 3: normalized → Shopify
+    t_shopify = time.perf_counter()
+    client = _shopify_client_for_env(env)
+    do_new, do_zero, do_other = _parse_shopify_sync_options(shopify_options)
+    shopify_result = await full_shopify_sync(
+        env=env,
+        shopify_client=client,
+        do_new_products=do_new,
+        do_zero_inventory=do_zero,
+        do_other_updates=do_other,
+    )
+    shopify_elapsed = time.perf_counter() - t_shopify
+
+    total_elapsed = time.perf_counter() - t0
+
+    return {
+        "env": env,
+        "steps": {
+            "ebay_raw": ebay_result,
+            "normalize": norm_result,
+            "shopify": shopify_result,
+        },
+        "elapsed_seconds": {
+            "ebay_raw": ebay_elapsed,
+            "normalize": norm_elapsed,
+            "shopify": shopify_elapsed,
+            "total": total_elapsed,
+        },
+    }
+
 @dev_router.post("/sync-ebay-raw")
 async def sync_ebay_raw_dev():
     start = time.perf_counter()
@@ -69,6 +139,19 @@ async def sync_shopify_dev(
         "message": "Shopify sync completed (DEV)",
         "result": result,
         "elapsed_seconds": elapsed,
+    }
+
+
+@dev_router.post("/run-all")
+async def run_all_dev(
+    shopify_options: dict | None = Body(None),
+):
+    """Dev: run eBay sync, normalization, then Shopify sync in one call."""
+
+    result = await _run_all_steps(env="dev", shopify_options=shopify_options)
+    return {
+        "message": "Full pipeline completed (DEV)",
+        "result": result,
     }
 
 
@@ -194,6 +277,19 @@ async def sync_shopify_prod(
         "message": "Shopify sync completed (PROD)",
         "result": result,
         "elapsed_seconds": elapsed,
+    }
+
+
+@prod_router.post("/run-all")
+async def run_all_prod(
+    shopify_options: dict | None = Body(None),
+):
+    """Prod: run eBay sync, normalization, then Shopify sync in one call."""
+
+    result = await _run_all_steps(env="prod", shopify_options=shopify_options)
+    return {
+        "message": "Full pipeline completed (PROD)",
+        "result": result,
     }
 
 
