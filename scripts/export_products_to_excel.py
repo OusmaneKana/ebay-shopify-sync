@@ -50,6 +50,7 @@ HEADERS = [
     "Availability",
     "Concatinated Dimensions",
     "Weights",
+    "Date Posted"
 ]
 
 
@@ -93,6 +94,17 @@ def _shopify_admin_url(store_url: str | None, shopify_id: Any) -> str | None:
 def _availability(quantity: Any) -> str:
     q = _num(quantity)
     return "Available" if (q is not None and q > 0) else "Not Available"
+
+
+def _format_posted_at(posted_at: Any) -> str | None:
+    """Format eBay posted_at timestamp for display."""
+    if not posted_at:
+        return None
+    if isinstance(posted_at, str):
+        return posted_at
+    if hasattr(posted_at, "isoformat"):
+        return posted_at.isoformat()
+    return str(posted_at) if posted_at else None
 
 
 def _concat_dimensions(doc: dict[str, Any]) -> str | None:
@@ -199,6 +211,7 @@ def export_to_excel(
         "price": 1,
         "quantity": 1,
         "package": 1,
+        "ebay_posted_at": 1,
     }
 
     cursor = col.find(query or {}, projection)
@@ -214,6 +227,7 @@ def export_to_excel(
         availability = _availability(doc.get("quantity"))
         dims = _concat_dimensions(doc)
         weight = _weight_string(doc)
+        posted_at = _format_posted_at(doc.get("ebay_posted_at"))
 
         ws.append(
             [
@@ -224,6 +238,7 @@ def export_to_excel(
                 availability,
                 dims,
                 weight,
+                posted_at,
             ]
         )
         count += 1
@@ -237,6 +252,7 @@ def export_to_excel(
         14,  # Availability
         24,  # Dimensions
         18,  # Weight
+        25,  # Date Posted
     ]
     for idx, w in enumerate(widths, start=1):
         ws.column_dimensions[get_column_letter(idx)].width = w

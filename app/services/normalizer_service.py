@@ -1005,6 +1005,9 @@ async def normalize_from_raw():
                 # This prevents float artifacts like 39.989999999999995.
                 adjusted_price = _money_2dp(adjusted_price)
 
+                # Extract eBay posted date from raw document
+                ebay_posted_at = raw_doc.get("ebay_posted_at")
+
                 # Compute a stable "content hash" of the normalized business fields.
                 # This intentionally excludes transient fields like last_normalized_at
                 # so we can skip writing unchanged documents.
@@ -1074,6 +1077,7 @@ async def normalize_from_raw():
                     # store a more explicit 'content_hash' used by Shopify sync.
                     "hash": new_hash,
                     "content_hash": new_hash,
+                    "ebay_posted_at": ebay_posted_at,
 
                 }
 
