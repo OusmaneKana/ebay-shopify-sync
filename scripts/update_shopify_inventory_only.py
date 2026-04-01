@@ -16,7 +16,7 @@ from app.shopify.client import ShopifyClient
 from app.shopify.update_inventory import set_inventory_quantity_by_variant, set_inventory_from_mongo
 from app.shopify.inventory_manager import set_inventory_quantity_by_item_id
 from app.services.shopify_exclusions import BLOCKED_SHOPIFY_TAGS, has_blocked_shopify_tag
-from app.services.inventory_zero_guard import was_already_zeroed, mark_zeroed
+from app.services.inventory_zero_guard import was_already_zeroed, mark_zeroed, clear_zeroed
 
 
 logger = logging.getLogger(__name__)
@@ -39,6 +39,7 @@ async def update_shopify_inventory_only(
     limit: Optional[int] = None,
     env: str = "dev",
     only_zero: bool = False,
+    allow_zero_updates: bool = False,
     dry_run: bool = False,
     max_concurrency: int = 20,
 ) -> Dict[str, Any]:
@@ -85,6 +86,7 @@ async def update_shopify_inventory_only(
     updated_ok = 0
     skipped_invalid = 0
     skipped_already_zeroed = 0
+    skipped_zero_blocked = 0
     errors = 0
 
     # Use bounded concurrency for Shopify calls; the ShopifyClient itself
@@ -92,7 +94,7 @@ async def update_shopify_inventory_only(
     sem = asyncio.Semaphore(max_concurrency)
 
     async def process_doc(doc: Dict[str, Any]) -> None:
-        nonlocal attempted, updated_ok, skipped_invalid, skipped_already_zeroed, errors
+        nonlocal attempted, updated_ok, skipped_invalid, skipped_already_zeroed, skipped_zero_blocked, errors
 
         sku = doc.get("_id")
         if has_blocked_shopify_tag(doc.get("tags")):
@@ -114,6 +116,15 @@ async def update_shopify_inventory_only(
         except (TypeError, ValueError):
             skipped_invalid += 1
             logger.warning("[INVENTORY] Skipped - invalid quantity | sku=%s | qty=%r", sku, raw_qty)
+            return
+
+        if qty == 0 and not allow_zero_updates:
+            skipped_zero_blocked += 1
+            logger.warning(
+                "[INVENTORY] Blocked zero update (safety) | sku=%s | variant_id=%s | pass allow_zero_updates=True to permit",
+                sku,
+                variant_id,
+            )
             return
 
         attempted += 1
@@ -202,6 +213,18 @@ async def update_shopify_inventory_only(
                             )
                         except Exception as e:  # pragma: no cover - defensive
                             logger.debug("[INVENTORY] Failed to mark zeroed | sku=%s | error=%s", sku, e)
+                    else:
+                        try:
+                            await clear_zeroed(
+                                env=env,
+                                sku=str(sku) if sku is not None else None,
+                                variant_id=int(variant_id) if variant_id is not None else None,
+                                inventory_item_id=int(inventory_item_id) if inventory_item_id is not None else None,
+                                location_id=int(location_id) if location_id is not None else None,
+                                source="inventory_only_positive_restore",
+                            )
+                        except Exception as e:  # pragma: no cover - defensive
+                            logger.debug("[INVENTORY] Failed to clear zeroed guard | sku=%s | error=%s", sku, e)
                 else:
                     errors += 1
                     logger.error(
@@ -234,11 +257,13 @@ async def update_shopify_inventory_only(
         "updated_ok": updated_ok,
         "skipped_invalid": skipped_invalid,
         "skipped_already_zeroed": skipped_already_zeroed,
+        "skipped_zero_blocked": skipped_zero_blocked,
         "errors": errors,
         "success_rate": f"{success_rate:.1f}%",
         "dry_run": dry_run,
         "env": env,
         "only_zero": only_zero,
+        "allow_zero_updates": allow_zero_updates,
         "max_concurrency": max_concurrency,
     }
 
@@ -267,6 +292,7 @@ async def _async_main(args: argparse.Namespace) -> None:
         limit=args.limit,
         env=args.env,
         only_zero=args.only_zero,
+        allow_zero_updates=args.allow_zero_updates,
         dry_run=args.dry_run,
         max_concurrency=args.max_concurrency,
     )
@@ -298,6 +324,11 @@ def main() -> None:
         "--only-zero",
         action="store_true",
         help="Only update items where normalized.quantity == 0",
+    )
+    parser.add_argument(
+        "--allow-zero-updates",
+        action="store_true",
+        help="Allow setting inventory to 0 (disabled by default as a safety guard)",
     )
     parser.add_argument(
         "--dry-run",

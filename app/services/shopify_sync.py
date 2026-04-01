@@ -275,7 +275,8 @@ async def full_shopify_sync(
     shopify_client=None,
     *,
     do_new_products: bool = True,
-    do_zero_inventory: bool = True,
+    do_zero_inventory: bool = False,
+    allow_zero_inventory_updates: bool = False,
     do_other_updates: bool = True,
 ) -> dict:
     """Run a configurable full Shopify sync in prioritized phases.
@@ -303,6 +304,7 @@ async def full_shopify_sync(
             limit=None,
             env=env,
             only_zero=True,
+            allow_zero_updates=allow_zero_inventory_updates,
             dry_run=False,
         )
     else:

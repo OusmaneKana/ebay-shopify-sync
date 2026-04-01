@@ -18,18 +18,19 @@ router = APIRouter()
 dev_router = APIRouter(dependencies=[Depends(require_authorized)])
 
 
-def _parse_shopify_sync_options(options: dict | None) -> tuple[bool, bool, bool]:
+def _parse_shopify_sync_options(options: dict | None) -> tuple[bool, bool, bool, bool]:
     """Parse Shopify sync options payload.
 
     Matches the existing /sync-shopify body contract:
-      {"new_products": bool, "zero_inventory": bool, "other_updates": bool}
+            {"new_products": bool, "zero_inventory": bool, "allow_zero_inventory_updates": bool, "other_updates": bool}
     """
 
     opts = options or {}
     do_new = bool(opts.get("new_products", True))
-    do_zero = bool(opts.get("zero_inventory", True))
+    do_zero = bool(opts.get("zero_inventory", False))
+    allow_zero = bool(opts.get("allow_zero_inventory_updates", False))
     do_other = bool(opts.get("other_updates", True))
-    return do_new, do_zero, do_other
+    return do_new, do_zero, allow_zero, do_other
 
 
 def _shopify_client_for_env(env: str) -> ShopifyClient:
@@ -60,12 +61,13 @@ async def _run_all_steps(*, env: str, shopify_options: dict | None) -> dict:
     # Step 3: normalized → Shopify
     t_shopify = time.perf_counter()
     client = _shopify_client_for_env(env)
-    do_new, do_zero, do_other = _parse_shopify_sync_options(shopify_options)
+    do_new, do_zero, allow_zero, do_other = _parse_shopify_sync_options(shopify_options)
     shopify_result = await full_shopify_sync(
         env=env,
         shopify_client=client,
         do_new_products=do_new,
         do_zero_inventory=do_zero,
+        allow_zero_inventory_updates=allow_zero,
         do_other_updates=do_other,
     )
     shopify_elapsed = time.perf_counter() - t_shopify
@@ -115,8 +117,8 @@ async def sync_shopify_dev(
 ):
     """Dev: configurable full Shopify sync.
 
-    Body (all optional, default True):
-      {"new_products": bool, "zero_inventory": bool, "other_updates": bool}
+        Body (all optional):
+            {"new_products": true, "zero_inventory": false, "allow_zero_inventory_updates": false, "other_updates": true}
     """
 
     start = time.perf_counter()
@@ -124,7 +126,8 @@ async def sync_shopify_dev(
 
     opts = options or {}
     do_new = bool(opts.get("new_products", True))
-    do_zero = bool(opts.get("zero_inventory", True))
+    do_zero = bool(opts.get("zero_inventory", False))
+    allow_zero = bool(opts.get("allow_zero_inventory_updates", False))
     do_other = bool(opts.get("other_updates", True))
 
     result = await full_shopify_sync(
@@ -132,6 +135,7 @@ async def sync_shopify_dev(
         shopify_client=client,
         do_new_products=do_new,
         do_zero_inventory=do_zero,
+        allow_zero_inventory_updates=allow_zero,
         do_other_updates=do_other,
     )
     elapsed = time.perf_counter() - start
@@ -170,13 +174,19 @@ async def sync_shopify_new_dev( limit: int | None = None):
 
 
 @dev_router.post("/sync-shopify-inventory")
-async def sync_shopify_inventory_dev(only_zero: bool = False, limit: int | None = None, dry_run: bool = False):
+async def sync_shopify_inventory_dev(
+    only_zero: bool = False,
+    allow_zero_updates: bool = False,
+    limit: int | None = None,
+    dry_run: bool = False,
+):
     """Dev: force Shopify inventory to match product_normalized.quantity only."""
     start = time.perf_counter()
     result = await update_shopify_inventory_only(
         limit=limit,
         env="dev",
         only_zero=only_zero,
+        allow_zero_updates=allow_zero_updates,
         dry_run=dry_run,
     )
     elapsed = time.perf_counter() - start
@@ -249,8 +259,8 @@ async def sync_shopify_prod(
 ):
     """Prod: configurable full Shopify sync.
 
-    Body (all optional, default True):
-      {"new_products": bool, "zero_inventory": bool, "other_updates": bool}
+        Body (all optional):
+            {"new_products": true, "zero_inventory": false, "allow_zero_inventory_updates": false, "other_updates": true}
     """
 
     start = time.perf_counter()
@@ -262,7 +272,8 @@ async def sync_shopify_prod(
 
     opts = options or {}
     do_new = bool(opts.get("new_products", True))
-    do_zero = bool(opts.get("zero_inventory", True))
+    do_zero = bool(opts.get("zero_inventory", False))
+    allow_zero = bool(opts.get("allow_zero_inventory_updates", False))
     do_other = bool(opts.get("other_updates", True))
 
     result = await full_shopify_sync(
@@ -270,6 +281,7 @@ async def sync_shopify_prod(
         shopify_client=client,
         do_new_products=do_new,
         do_zero_inventory=do_zero,
+        allow_zero_inventory_updates=allow_zero,
         do_other_updates=do_other,
     )
     elapsed = time.perf_counter() - start
@@ -312,13 +324,19 @@ async def sync_shopify_new_prod(limit: int | None = None):
 
 
 @prod_router.post("/sync-shopify-inventory")
-async def sync_shopify_inventory_prod(only_zero: bool = False, limit: int | None = None, dry_run: bool = False):
+async def sync_shopify_inventory_prod(
+    only_zero: bool = False,
+    allow_zero_updates: bool = False,
+    limit: int | None = None,
+    dry_run: bool = False,
+):
     """Prod: force Shopify inventory to match product_normalized.quantity only."""
     start = time.perf_counter()
     result = await update_shopify_inventory_only(
         limit=limit,
         env="prod",
         only_zero=only_zero,
+        allow_zero_updates=allow_zero_updates,
         dry_run=dry_run,
     )
     elapsed = time.perf_counter() - start

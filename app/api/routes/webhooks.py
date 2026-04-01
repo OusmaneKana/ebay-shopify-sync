@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 
 from app.shopify.client import ShopifyClient
 from app.services.ebay_webhook_service import handle_ebay_order_webhook
+from app.services.etsy_webhook_service import handle_etsy_event, verify_etsy_signature
 
 router = APIRouter()
 
@@ -52,6 +53,45 @@ async def ebay_order_webhook(request: Request, make_unavailable: bool = True):
     return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
   return JSONResponse({"ok": True, "queued": True})
+
+
+@router.post("/etsy/events")
+async def etsy_events_webhook(request: Request):
+  """
+  Receive Etsy webhook events.
+
+  - Validates Etsy signature headers
+  - Parses JSON payload
+  - Persists event for downstream processing
+  """
+  raw_body = await request.body()
+  webhook_id = request.headers.get("webhook-id")
+  webhook_timestamp = request.headers.get("webhook-timestamp")
+  webhook_signature = request.headers.get("webhook-signature")
+
+  valid, reason = verify_etsy_signature(
+    raw_body=raw_body,
+    webhook_id=webhook_id,
+    webhook_timestamp=webhook_timestamp,
+    webhook_signature=webhook_signature,
+  )
+
+  if not valid:
+    return JSONResponse({"ok": False, "error": "invalid_signature", "reason": reason}, status_code=401)
+
+  try:
+    payload = await request.json()
+  except Exception:
+    return JSONResponse({"ok": False, "error": "invalid_json"}, status_code=400)
+
+  result = await handle_etsy_event(
+    payload=payload,
+    raw_body=raw_body.decode("utf-8", errors="replace"),
+    webhook_id=webhook_id,
+    webhook_timestamp=webhook_timestamp,
+  )
+
+  return JSONResponse(result, status_code=200)
 
 
 @router.get("/ebay/callback")

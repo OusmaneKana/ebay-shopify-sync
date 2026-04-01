@@ -122,6 +122,48 @@ async def mark_zeroed(
                 "hash": state_hash,
                 "updated_at": now,
                 "source": source,
+                "cleared": False,
+            },
+            "$setOnInsert": {"created_at": now},
+        },
+        upsert=True,
+    )
+
+
+async def clear_zeroed(
+    *,
+    env: str,
+    sku: Optional[str],
+    variant_id: Optional[int],
+    inventory_item_id: Optional[int],
+    location_id: Optional[int],
+    source: str,
+) -> None:
+    key = make_zero_guard_key(
+        env=env,
+        sku=sku,
+        variant_id=variant_id,
+        inventory_item_id=inventory_item_id,
+        location_id=location_id,
+    )
+
+    now = datetime.now(timezone.utc)
+
+    await db[COLLECTION_NAME].update_one(
+        {"_id": key},
+        {
+            "$set": {
+                "env": env,
+                "sku": sku,
+                "variant_id": int(variant_id) if variant_id is not None else None,
+                "inventory_item_id": int(inventory_item_id) if inventory_item_id is not None else None,
+                "location_id": int(location_id) if location_id is not None else None,
+                "target_qty": None,
+                "hash": None,
+                "updated_at": now,
+                "source": source,
+                "cleared": True,
+                "cleared_at": now,
             },
             "$setOnInsert": {"created_at": now},
         },
