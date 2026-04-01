@@ -1,5 +1,7 @@
 import logging
+import time
 import requests
+from requests.exceptions import ConnectionError, SSLError
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -35,7 +37,7 @@ class EbayClient:
 
         return response.json()
 
-    def trading_post(self, call_name: str, request_xml: str):
+    def trading_post(self, call_name: str, request_xml: str, max_retries: int = 4, backoff_base: float = 2.0):
         headers = {
             "X-EBAY-API-CALL-NAME": call_name,
             "X-EBAY-API-COMPATIBILITY-LEVEL": EBAY_COMPAT_LEVEL,
@@ -46,7 +48,19 @@ class EbayClient:
             "X-EBAY-API-IAF-TOKEN": self.token,
             "Content-Type": "text/xml",
         }
-        resp = requests.post(EBAY_TRADING_URL, headers=headers, data=request_xml)
-        resp.raise_for_status()
-        return resp.text
+        last_exc = None
+        for attempt in range(max_retries):
+            try:
+                resp = requests.post(EBAY_TRADING_URL, headers=headers, data=request_xml, timeout=30)
+                resp.raise_for_status()
+                return resp.text
+            except (ConnectionError, SSLError) as exc:
+                last_exc = exc
+                wait = backoff_base ** attempt
+                logger.warning(
+                    "Transient connection error on %s (attempt %d/%d), retrying in %.1fs: %s",
+                    call_name, attempt + 1, max_retries, wait, exc,
+                )
+                time.sleep(wait)
+        raise last_exc
 
