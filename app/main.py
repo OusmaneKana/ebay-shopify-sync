@@ -89,6 +89,16 @@ async def reporting_page(request: Request):
     return FileResponse("static/reporting.html")
 
 
+@app.get("/etsy-review", response_class=FileResponse)
+async def etsy_review_page(request: Request):
+    return FileResponse("static/etsy_match_review.html")
+
+
+@app.get("/channel-compare", response_class=FileResponse)
+async def channel_compare_page(request: Request):
+    return FileResponse("static/channel_compare.html")
+
+
 @app.get("/login", response_class=FileResponse)
 async def login_page():
     return FileResponse("static/login.html")

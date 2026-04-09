@@ -3,6 +3,8 @@ import logging
 from app.shopify.client import ShopifyClient
 from app.shopify.inventory_manager import set_inventory_quantity_by_item_id, get_primary_location
 from app.database.mongo import db
+from app.services.channel_utils import set_shopify_fields_set
+from app.services.shopify_sale_pricing import resolve_shopify_variant_pricing
 
 logger = logging.getLogger(__name__)
 client = ShopifyClient()
@@ -304,9 +306,7 @@ async def create_shopify_product(doc, shopify_client=None):
     # 3) Build payload
     images = [{"src": img} for img in (doc.get("images", []) or []) if img]
 
-    # Ensure price is a string Shopify accepts
-    price = doc.get("price")
-    price_str = str(price) if price not in (None, "") else "0"
+    pricing = resolve_shopify_variant_pricing(doc)
 
     # Derive variant weight from normalized package data, if available
     weight_value, weight_unit = extract_weight_for_shopify_variant(doc)
@@ -314,7 +314,8 @@ async def create_shopify_product(doc, shopify_client=None):
     # STEP A: Create variant WITHOUT inventory_quantity (will be set via inventory_levels/set.json)
     variant_payload = {
         "sku": doc.get("sku", ""),
-        "price": price_str,
+        "price": pricing["price"],
+        "compare_at_price": pricing["compare_at_price"],
         "inventory_management": "shopify",
         # NOTE: inventory_quantity is NOT included here - will be set via inventory_levels API
     }
@@ -455,7 +456,7 @@ async def create_shopify_product(doc, shopify_client=None):
     update_data = {
         "shopify_id": pid,
         "shopify_variant_id": vid,
-        "last_synced_hash": doc.get("hash"),
+        "last_synced_hash": doc.get("content_hash") or doc.get("hash"),
     }
     
     if inventory_item_id:
@@ -465,7 +466,7 @@ async def create_shopify_product(doc, shopify_client=None):
     
     await db.product_normalized.update_one(
         {"_id": doc["_id"]},
-        {"$set": update_data}
+        {"$set": set_shopify_fields_set(update_data)}
     )
 
     print(f"✔ Created Shopify product {doc['_id']} -> {pid} (variant={vid}, item={inventory_item_id})")

@@ -774,7 +774,14 @@ async def normalize_from_raw():
         if sku_list:
             cursor_norm = db.product_normalized.find(
                 {"_id": {"$in": sku_list}},
-                {"first_seen_at": 1, "collection_key": 1, "collection_key_fingerprint": 1, "hash": 1},
+                {
+                    "first_seen_at": 1,
+                    "collection_key": 1,
+                    "collection_key_fingerprint": 1,
+                    "hash": 1,
+                    "content_hash": 1,
+                    "channels": 1,
+                },
             )
             async for doc in cursor_norm:
                 existing_by_sku[doc["_id"]] = doc
@@ -1033,6 +1040,22 @@ async def normalize_from_raw():
                     logger.debug(f"SKU {sku}: normalized hash unchanged, skipping update")
                     return 0
 
+                channels = dict((existing_norm or {}).get("channels") or {})
+                channels_ebay = dict(channels.get("ebay") or {})
+                channels_ebay.update(
+                    {
+                        "posted_at": ebay_posted_at,
+                        "category": {
+                            "id": category_id,
+                            "path": category_path,
+                            "root": category_root,
+                            "leaf": category_leaf,
+                            "ancestors": category_ancestors,
+                        },
+                    }
+                )
+                channels["ebay"] = channels_ebay
+
                 normalized = {
                     "_id": sku,
                     "sku": sku,
@@ -1078,6 +1101,7 @@ async def normalize_from_raw():
                     "hash": new_hash,
                     "content_hash": new_hash,
                     "ebay_posted_at": ebay_posted_at,
+                    "channels": channels,
 
                 }
 

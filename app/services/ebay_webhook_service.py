@@ -5,6 +5,7 @@ from app.database.mongo import db
 from app.shopify.client import ShopifyClient
 from app.shopify.update_inventory import set_inventory_quantity_by_variant
 from app.services.inventory_zero_guard import was_already_zeroed, mark_zeroed
+from app.services.channel_utils import get_shopify_field
 
 logger = logging.getLogger(__name__)
 
@@ -40,16 +41,22 @@ async def handle_ebay_order_webhook(payload: dict[str, Any], shopify_client: Sho
 
         doc = await db.product_normalized.find_one(
             {"$or": [{"_id": sku}, {"sku": sku}]},
-            {"shopify_variant_id": 1, "shopify_id": 1, "inventory_item_id": 1, "location_id": 1},
+            {
+                "shopify_variant_id": 1,
+                "shopify_id": 1,
+                "inventory_item_id": 1,
+                "location_id": 1,
+                "channels.shopify": 1,
+            },
         )
         if not doc:
             processed.append({"sku": sku, "status": "no_product"})
             continue
 
-        vid = doc.get("shopify_variant_id")
-        pid = doc.get("shopify_id")
-        inventory_item_id = doc.get("inventory_item_id")
-        location_id = doc.get("location_id")
+        vid = get_shopify_field(doc, "shopify_variant_id")
+        pid = get_shopify_field(doc, "shopify_id")
+        inventory_item_id = get_shopify_field(doc, "inventory_item_id")
+        location_id = get_shopify_field(doc, "location_id")
 
         if not vid:
             processed.append({"sku": sku, "status": "no_variant"})

@@ -1,4 +1,6 @@
 {
+  "python.defaultInterpreterPath": "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv314/bin/python"
+}{
     "chat.tools.terminal.autoApprove": {
         "/^python -m compileall app >/dev/null$/": {
             "approve": true,

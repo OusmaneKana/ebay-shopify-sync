@@ -6,6 +6,7 @@ from app.shopify.update_product import update_shopify_product
 from app.shopify.update_inventory import set_inventory_quantity_by_variant, set_inventory_from_mongo
 from scripts.update_shopify_inventory_only import update_shopify_inventory_only
 from app.services.shopify_exclusions import is_shopify_excluded_doc, BLOCKED_SHOPIFY_TAGS
+from app.services.channel_utils import get_shopify_field, set_shopify_fields_set
 
 logger = logging.getLogger(__name__)
 
@@ -49,10 +50,10 @@ async def sync_to_shopify(shopify_client=None, *, allow_create: bool = True, adj
                 )
                 return
 
-            shopify_id = doc.get("shopify_id")
+            shopify_id = get_shopify_field(doc, "shopify_id")
             # Prefer explicit content_hash if present; fall back to legacy 'hash'
             hash_now = doc.get("content_hash") or doc.get("hash")
-            hash_prev = doc.get("last_synced_hash")
+            hash_prev = get_shopify_field(doc, "last_synced_hash")
 
             # Create new product if no Shopify ID yet (when allowed)
             if not shopify_id:
@@ -100,11 +101,11 @@ async def sync_to_shopify(shopify_client=None, *, allow_create: bool = True, adj
                     try:
                         quantity = doc.get("quantity")
                         sku = doc.get("_id")
-                        shopify_id = doc.get("shopify_id")
+                        shopify_id = get_shopify_field(doc, "shopify_id")
                         
                         # PREFERRED: Use inventory_item_id + location_id if available (no variant fetch needed)
-                        inventory_item_id = doc.get("inventory_item_id")
-                        location_id = doc.get("location_id")
+                        inventory_item_id = get_shopify_field(doc, "inventory_item_id")
+                        location_id = get_shopify_field(doc, "location_id")
                         
                         if inventory_item_id and location_id and quantity is not None:
                             logger.debug(
@@ -130,8 +131,8 @@ async def sync_to_shopify(shopify_client=None, *, allow_create: bool = True, adj
                                     inventory_item_id,
                                 )
                         # FALLBACK: Use variant_id method (requires variant fetch)
-                        elif doc.get("shopify_variant_id") and quantity is not None:
-                            variant_id = doc.get("shopify_variant_id")
+                        elif get_shopify_field(doc, "shopify_variant_id") and quantity is not None:
+                            variant_id = get_shopify_field(doc, "shopify_variant_id")
                             logger.debug(
                                 "[SYNC] Syncing inventory (fallback - no item_id) | sku=%s | shopify_id=%s | variant_id=%s | qty=%s",
                                 sku,
@@ -161,12 +162,12 @@ async def sync_to_shopify(shopify_client=None, *, allow_create: bool = True, adj
                         logger.error(
                             "[SYNC] ✗ Exception syncing inventory | sku=%s | shopify_id=%s | error=%s",
                             doc.get("_id"),
-                            doc.get("shopify_id"),
+                            get_shopify_field(doc, "shopify_id"),
                             e,
                         )
                 await db.product_normalized.update_one(
                     {"_id": doc["_id"]},
-                    {"$set": {"last_synced_hash": hash_now}},
+                    {"$set": set_shopify_fields_set({"last_synced_hash": hash_now})},
                 )
                 updated += 1
                 logger.info(
@@ -251,8 +252,21 @@ async def sync_new_products_to_shopify(shopify_client=None, limit: int | None = 
 
     # Only create products for docs that are not excluded and don't yet have shopify_id.
     query = {
-        "shopify_id": {"$exists": False},
-        "tags": {"$nin": list(BLOCKED_SHOPIFY_TAGS)},
+        "$and": [
+            {"tags": {"$nin": list(BLOCKED_SHOPIFY_TAGS)}},
+            {
+                "$or": [
+                    {"shopify_id": {"$exists": False}},
+                    {"shopify_id": None},
+                ]
+            },
+            {
+                "$or": [
+                    {"channels.shopify.shopify_id": {"$exists": False}},
+                    {"channels.shopify.shopify_id": None},
+                ]
+            },
+        ]
     }
     cursor = db.product_normalized.find(query).sort("_id", 1)
     if limit is not None:

@@ -1,9 +1,11 @@
 import logging
 from app.shopify.client import ShopifyClient
+from app.services.channel_utils import get_shopify_field
 from app.shopify.create_product import (
     process_structured_metafields_to_shopify_payload,
     extract_weight_for_shopify_variant,
 )
+from app.services.shopify_sale_pricing import resolve_shopify_variant_pricing
 
 logger = logging.getLogger(__name__)
 client = ShopifyClient()
@@ -13,8 +15,8 @@ async def update_shopify_product(old_doc, new_doc, shopify_client=None):
     if shopify_client is None:
         shopify_client = client
     
-    pid = old_doc.get("shopify_id")
-    vid = old_doc.get("shopify_variant_id")
+    pid = get_shopify_field(old_doc, "shopify_id")
+    vid = get_shopify_field(old_doc, "shopify_variant_id")
     doc_id = old_doc.get('_id')
     
     if not pid or not vid:
@@ -49,9 +51,12 @@ async def update_shopify_product(old_doc, new_doc, shopify_client=None):
         # Update variant price and weight
         weight_value, weight_unit = extract_weight_for_shopify_variant(new_doc)
 
+        pricing = resolve_shopify_variant_pricing(new_doc)
         variant_payload = {
             "id": vid,
-            "price": new_doc.get("price") or "0",
+            "price": pricing["price"],
+            # None clears compare-at price when sale is not effective.
+            "compare_at_price": pricing["compare_at_price"],
         }
 
         if weight_value is not None and weight_unit:

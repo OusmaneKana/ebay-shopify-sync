@@ -17,6 +17,7 @@ from app.shopify.update_inventory import set_inventory_quantity_by_variant, set_
 from app.shopify.inventory_manager import set_inventory_quantity_by_item_id
 from app.services.shopify_exclusions import BLOCKED_SHOPIFY_TAGS, has_blocked_shopify_tag
 from app.services.inventory_zero_guard import was_already_zeroed, mark_zeroed, clear_zeroed
+from app.services.channel_utils import get_shopify_field
 
 
 logger = logging.getLogger(__name__)
@@ -53,7 +54,10 @@ async def update_shopify_inventory_only(
     shopify_client = _make_shopify_client(env)
 
     query: Dict[str, Any] = {
-        "shopify_variant_id": {"$exists": True, "$ne": None},
+        "$or": [
+            {"shopify_variant_id": {"$exists": True, "$ne": None}},
+            {"channels.shopify.shopify_variant_id": {"$exists": True, "$ne": None}},
+        ],
         "quantity": {"$exists": True},
         # Never touch excluded items.
         "tags": {"$nin": list(BLOCKED_SHOPIFY_TAGS)},
@@ -70,6 +74,7 @@ async def update_shopify_inventory_only(
         "shopify_id": 1,
         "inventory_item_id": 1,
         "location_id": 1,
+        "channels.shopify": 1,
     }
 
     cursor = db.product_normalized.find(query, projection)
@@ -101,10 +106,10 @@ async def update_shopify_inventory_only(
             skipped_invalid += 1
             logger.info("[INVENTORY] Skipped excluded item | sku=%s | blocked_tags=%s", sku, sorted(BLOCKED_SHOPIFY_TAGS))
             return
-        variant_id = doc.get("shopify_variant_id")
+        variant_id = get_shopify_field(doc, "shopify_variant_id")
         raw_qty = doc.get("quantity")
-        inventory_item_id = doc.get("inventory_item_id")
-        location_id = doc.get("location_id")
+        inventory_item_id = get_shopify_field(doc, "inventory_item_id")
+        location_id = get_shopify_field(doc, "location_id")
 
         if not variant_id:
             skipped_invalid += 1
@@ -128,7 +133,7 @@ async def update_shopify_inventory_only(
             return
 
         attempted += 1
-        shopify_id = doc.get("shopify_id")
+        shopify_id = get_shopify_field(doc, "shopify_id")
         logger.info(
             "[INVENTORY] Processing | sku=%s | shopify_id=%s | variant_id=%s | target_qty=%s",
             sku,

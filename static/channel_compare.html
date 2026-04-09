@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Channel Compare</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-alt: #020617;
+      --card-bg: #020617;
+      --border: #1e293b;
+      --accent: #38bdf8;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --success: #4ade80;
+      --warn: #facc15;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 22px;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 40%, #000 100%);
+      color: var(--text);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    h1 { margin: 0; font-size: 26px; }
+    .sub { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+
+    .nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    a.btn, button {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top left, rgba(15,23,42,1), rgba(15,23,42,0.95));
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.15s ease, transform 0.08s ease;
+    }
+
+    a.btn.primary, button.primary {
+      border-color: var(--accent);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.14), rgba(15,23,42,0.95));
+    }
+
+    a.btn:hover, button:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 14px;
+      box-shadow: 0 12px 36px rgba(15,23,42,0.85);
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    input[type="text"] {
+      background: #020617;
+      color: var(--text);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      font-size: 13px;
+      width: 100%;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.6);
+      white-space: nowrap;
+    }
+
+    .pill.same { border-color: var(--success); color: var(--success); }
+    .pill.diff { border-color: var(--danger); color: var(--danger); }
+    .pill.missing { border-color: var(--warn); color: var(--warn); }
+
+    .table-wrap {
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: auto;
+      background: #020617;
+      max-height: 68vh;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #020617;
+      color: var(--muted);
+      text-align: left;
+      font-weight: 600;
+    }
+
+    tr:hover td { background: rgba(56, 189, 248, 0.06); }
+    tr.active td { background: rgba(56, 189, 248, 0.16); }
+
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .channel {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(2, 6, 23, 0.65);
+      min-height: 330px;
+    }
+
+    .channel h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr);
+      gap: 6px;
+      margin: 6px 0;
+      font-size: 12px;
+    }
+
+    .k { color: var(--muted); }
+    .v { color: var(--text); word-break: break-word; }
+
+    .image {
+      width: 100%;
+      max-height: 210px;
+      object-fit: contain;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #020617;
+      margin-bottom: 8px;
+    }
+
+    .comp-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .comp {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      background: rgba(2, 6, 23, 0.65);
+    }
+
+    .comp-title {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .stack { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .small { color: var(--muted); font-size: 12px; }
+
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      .channel-grid, .comp-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Channel Compare</h1>
+      <div class="sub">Select a SKU and compare Etsy vs Shopify listing snapshots.</div>
+    </div>
+    <div class="nav">
+      <a class="btn" href="/">Home</a>
+      <a class="btn" href="/reporting">Reporting</a>
+      <a class="btn" href="/etsy-review">Etsy Review</a>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <h2>Products</h2>
+      <div class="row">
+        <input id="q" type="text" placeholder="Search SKU or title" />
+      </div>
+      <div class="row" style="margin-top: 8px;">
+        <label class="small"><input id="driftOnly" type="checkbox" /> Drift only</label>
+        <button class="primary" onclick="loadList()">Refresh</button>
+      </div>
+      <div class="small" id="listMeta" style="margin-top: 8px;"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Match</th>
+              <th>Drift</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Compare</h2>
+      <div class="small" id="detailMeta">Pick a row to load details.</div>
+
+      <div class="channel-grid" style="margin-top: 10px;">
+        <div class="channel">
+          <h3>Etsy</h3>
+          <img id="etsyImage" class="image" alt="Etsy" style="display:none;" />
+          <div id="etsyFields"></div>
+        </div>
+
+        <div class="channel">
+          <h3>Shopify</h3>
+          <img id="shopifyImage" class="image" alt="Shopify" style="display:none;" />
+          <div id="shopifyFields"></div>
+        </div>
+      </div>
+
+      <div class="comp-grid">
+        <div class="comp">
+          <div class="comp-title">Title</div>
+          <div class="stack" id="cmpTitle"></div>
+        </div>
+        <div class="comp">
+          <div class="comp-title">Price</div>
+          <div class="stack" id="cmpPrice"></div>
+        </div>
+        <div class="comp">
+          <div class="comp-title">Quantity</div>
+          <div class="stack" id="cmpQty"></div>
+        </div>
+        <div class="comp">
+          <div class="comp-title">Status</div>
+          <div class="stack" id="cmpStatus"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedSku = null;
+
+    const esc = (v) => {
+      if (v === null || v === undefined) return '';
+      return String(v)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    };
+
+    const fmt = (v) => (v === null || v === undefined || v === '') ? '—' : String(v);
+
+    function badge(label, status) {
+      return `<span class="pill ${status}">${esc(label)}: ${esc(status)}</span>`;
+    }
+
+    function renderRows(items) {
+      const tbody = document.getElementById('rows');
+      if (!items.length) {
+        tbody.innerHTML = `<tr><td colspan="3" class="small">No rows.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = items.map((item) => `
+        <tr class="${selectedSku === item.sku ? 'active' : ''}" onclick="loadDetail('${esc(item.sku)}')">
+          <td>
+            <div>${esc(item.sku)}</div>
+            <div class="small">${esc(item.title || '')}</div>
+          </td>
+          <td><span class="pill">${esc(item.match_bucket || 'unknown')}</span></td>
+          <td>
+            ${item.drift_fields.length ? item.drift_fields.map((d) => `<span class="pill diff">${esc(d)}</span>`).join(' ') : '<span class="pill same">clean</span>'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadList() {
+      const q = document.getElementById('q').value.trim();
+      const driftOnly = document.getElementById('driftOnly').checked;
+      const params = new URLSearchParams();
+      if (q) params.set('q', q);
+      if (driftOnly) params.set('drift_only', 'true');
+      params.set('limit', '200');
+
+      const r = await fetch(`/reporting/channel-compare/list?${params.toString()}`);
+      const d = await r.json();
+      if (!r.ok) {
+        document.getElementById('listMeta').textContent = d.detail || 'Failed loading list';
+        return;
+      }
+
+      document.getElementById('listMeta').textContent = `${d.count} item(s)`;
+      renderRows(d.items || []);
+    }
+
+    function setImage(elId, src) {
+      const el = document.getElementById(elId);
+      if (src) {
+        el.src = src;
+        el.style.display = 'block';
+      } else {
+        el.removeAttribute('src');
+        el.style.display = 'none';
+      }
+    }
+
+    function renderFieldBlock(targetId, fields) {
+      document.getElementById(targetId).innerHTML = fields.map(([k, v]) => `
+        <div class="kv">
+          <div class="k">${esc(k)}</div>
+          <div class="v">${v}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderCompare(comparisons) {
+      const title = comparisons?.title || {};
+      const price = comparisons?.price || {};
+      const qty = comparisons?.quantity || {};
+      const status = comparisons?.status || {};
+
+      document.getElementById('cmpTitle').innerHTML = [
+        badge('etsy_vs_shopify', title.etsy_vs_shopify || 'missing'),
+        badge('normalized_vs_etsy', title.normalized_vs_etsy || 'missing'),
+        badge('normalized_vs_shopify', title.normalized_vs_shopify || 'missing'),
+      ].join('');
+
+      document.getElementById('cmpPrice').innerHTML = [
+        badge('etsy_vs_shopify', price.etsy_vs_shopify || 'missing'),
+        badge('normalized_vs_etsy', price.normalized_vs_etsy || 'missing'),
+        badge('normalized_vs_shopify', price.normalized_vs_shopify || 'missing'),
+      ].join('');
+
+      document.getElementById('cmpQty').innerHTML = [
+        badge('etsy_vs_shopify', qty.etsy_vs_shopify || 'missing'),
+        badge('normalized_vs_etsy', qty.normalized_vs_etsy || 'missing'),
+        badge('normalized_vs_shopify', qty.normalized_vs_shopify || 'missing'),
+      ].join('');
+
+      document.getElementById('cmpStatus').innerHTML = [
+        badge('etsy_vs_shopify', status.etsy_vs_shopify || 'missing'),
+      ].join('');
+    }
+
+    async function loadDetail(sku) {
+      selectedSku = sku;
+      await loadList();
+
+      const r = await fetch(`/reporting/channel-compare/${encodeURIComponent(sku)}`);
+      const d = await r.json();
+      if (!r.ok) {
+        document.getElementById('detailMeta').textContent = d.detail || 'Failed loading detail';
+        return;
+      }
+
+      const etsy = d.etsy || {};
+      const shopify = d.shopify || {};
+      const live = shopify.live || {};
+
+      document.getElementById('detailMeta').textContent = `SKU ${d.sku}`;
+
+      setImage('etsyImage', etsy.image || d.normalized?.image || null);
+      setImage('shopifyImage', live.image || d.normalized?.image || null);
+
+      renderFieldBlock('etsyFields', [
+        ['Listing ID', esc(fmt(etsy.listing_id))],
+        ['Status', esc(fmt(etsy.status))],
+        ['Title', esc(fmt(etsy.title))],
+        ['Price', esc(fmt(etsy.price))],
+        ['Quantity', esc(fmt(etsy.quantity))],
+        ['Match Bucket', esc(fmt(etsy.match?.bucket))],
+        ['Open', etsy.url ? `<a class="btn" href="${esc(etsy.url)}" target="_blank" rel="noopener noreferrer">Open Etsy</a>` : '—'],
+      ]);
+
+      renderFieldBlock('shopifyFields', [
+        ['Product ID', esc(fmt(shopify.shopify_id))],
+        ['Status', esc(fmt(live.status))],
+        ['Title', esc(fmt(live.title))],
+        ['Price', esc(fmt(live.price))],
+        ['Quantity', esc(fmt(live.quantity))],
+        ['Variant ID', esc(fmt(live.variant_id))],
+        ['Open DEV', shopify.links?.dev ? `<a class="btn" href="${esc(shopify.links.dev)}" target="_blank" rel="noopener noreferrer">Open Shopify DEV</a>` : '—'],
+        ['Open PROD', shopify.links?.prod ? `<a class="btn" href="${esc(shopify.links.prod)}" target="_blank" rel="noopener noreferrer">Open Shopify PROD</a>` : '—'],
+      ]);
+
+      renderCompare(d.comparisons || {});
+    }
+
+    document.getElementById('q').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') loadList();
+    });
+
+    async function logout() {
+      try {
+        await fetch('/auth/logout', { method: 'POST' });
+      } finally {
+        window.location.href = '/login?next=/channel-compare';
+      }
+    }
+
+    loadList();
+  </script>
+</body>
+</html>
