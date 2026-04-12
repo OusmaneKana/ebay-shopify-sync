@@ -414,6 +414,97 @@
 
     <script>
         let currentAbort = null;
+        let currentPoll = null;
+
+        const LONG_RUNNING_SYNC_PATHS = new Set([
+            '/sync/dev/sync-ebay-raw',
+            '/sync/dev/normalize-raw',
+            '/sync/dev/sync-shopify',
+            '/sync/dev/run-all',
+            '/sync/dev/sync-shopify-new',
+            '/sync/dev/sync-shopify-inventory',
+            '/sync/dev/purge-shopify',
+            '/sync/prod/sync-ebay-raw',
+            '/sync/prod/normalize-raw',
+            '/sync/prod/sync-shopify',
+            '/sync/prod/run-all',
+            '/sync/prod/sync-shopify-new',
+            '/sync/prod/sync-shopify-inventory',
+            '/sync/prod/purge-shopify',
+        ]);
+
+        function withBackgroundQuery(endpoint) {
+            const [path, query = ''] = endpoint.split('?');
+            if (!LONG_RUNNING_SYNC_PATHS.has(path)) {
+                return endpoint;
+            }
+            const params = new URLSearchParams(query);
+            if (!params.has('background')) {
+                params.set('background', 'true');
+            }
+            const qs = params.toString();
+            return qs ? `${path}?${qs}` : path;
+        }
+
+        function renderResponseData(data) {
+            const out = document.getElementById('output');
+            if (data && typeof data === 'object' && 'message' in data) {
+                const lines = [];
+                lines.push(String(data.message));
+                if (typeof data.elapsed_seconds === 'number') {
+                    lines.push(`Elapsed: ${data.elapsed_seconds.toFixed(2)}s`);
+                }
+                if ('result' in data) {
+                    lines.push('Result:');
+                    lines.push(JSON.stringify(data.result, null, 2));
+                }
+                if ('deleted' in data) {
+                    lines.push(`Deleted: ${JSON.stringify(data.deleted, null, 2)}`);
+                }
+                out.textContent = lines.join('\n');
+                return;
+            }
+            out.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        }
+
+        async function pollJob(jobStatusUrl, label, signal) {
+            const out = document.getElementById('output');
+            while (true) {
+                if (signal.aborted) {
+                    throw new DOMException('Aborted', 'AbortError');
+                }
+
+                const response = await fetch(jobStatusUrl, { signal });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data?.detail || 'Failed to fetch job status');
+                }
+
+                if (data.status === 'running') {
+                    setStatus(`${label} running…`);
+                    out.textContent = `Job ${data.id} is still running...`;
+                    await new Promise((resolve, reject) => {
+                        const timer = setTimeout(resolve, 1500);
+                        const onAbort = () => {
+                            clearTimeout(timer);
+                            reject(new DOMException('Aborted', 'AbortError'));
+                        };
+                        signal.addEventListener('abort', onAbort, { once: true });
+                    });
+                    continue;
+                }
+
+                if (data.status === 'failed') {
+                    setStatus(`${label} failed`, false);
+                    out.textContent = `Job failed: ${data.error || 'Unknown error'}`;
+                    return;
+                }
+
+                setStatus(`${label} completed`, true);
+                renderResponseData(data.result ?? data);
+                return;
+            }
+        }
 
         function setStatus(text, ok = null) {
             const meta = document.getElementById('output-meta');
@@ -437,11 +528,16 @@
             if (currentAbort) {
                 currentAbort.abort();
             }
+            if (currentPoll) {
+                currentPoll.abort();
+            }
             const controller = new AbortController();
             currentAbort = controller;
+            currentPoll = controller;
 
             const { method = 'POST', body = null } = options;
-            setStatus(`${method} ${endpoint} …`);
+            const finalEndpoint = method.toUpperCase() === 'POST' ? withBackgroundQuery(endpoint) : endpoint;
+            setStatus(`${method} ${finalEndpoint} …`);
             out.textContent = 'Processing…';
 
             try {
@@ -454,7 +550,7 @@
                     fetchOptions.headers['Content-Type'] = 'application/json';
                     fetchOptions.body = JSON.stringify(body);
                 }
-                const response = await fetch(endpoint, fetchOptions);
+                const response = await fetch(finalEndpoint, fetchOptions);
                 const text = await response.text();
                 let data;
                 try {
@@ -463,23 +559,16 @@
                     data = text;
                 }
 
-                // Prefer a nicer summary for typical sync responses
-                if (data && typeof data === 'object' && 'message' in data) {
-                    const lines = [];
-                    lines.push(String(data.message));
-                    if (typeof data.elapsed_seconds === 'number') {
-                        lines.push(`Elapsed: ${data.elapsed_seconds.toFixed(2)}s`);
-                    }
-                    if ('result' in data) {
-                        lines.push('Result:');
-                        lines.push(JSON.stringify(data.result, null, 2));
-                    }
-                    out.textContent = lines.join('\n');
-                } else {
-                    out.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+                if (data && typeof data === 'object' && data.job_id && data.job_status_url) {
+                    out.textContent = `Job ${data.job_id} accepted. Polling status...`;
+                    setStatus(`${method} ${finalEndpoint} → started`, true);
+                    await pollJob(data.job_status_url, data.message || 'Sync job', controller.signal);
+                    return;
                 }
 
-                setStatus(`${method} ${endpoint} → ${response.status}`, response.ok);
+                renderResponseData(data);
+
+                setStatus(`${method} ${finalEndpoint} → ${response.status}`, response.ok);
             } catch (error) {
                 if (error.name === 'AbortError') {
                     setStatus('Request aborted', false);
@@ -490,6 +579,7 @@
                 }
             } finally {
                 currentAbort = null;
+                currentPoll = null;
                 // Safety: if we somehow never overwrote the placeholder text,
                 // ensure the UI doesn't remain stuck on "Processing…".
                 if (out.textContent === 'Processing…') {
