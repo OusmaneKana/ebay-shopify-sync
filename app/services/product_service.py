@@ -1,6 +1,7 @@
 from app.database.mongo import db
 from app.ebay.fetch_products import fetch_all_ebay_products
 from datetime import datetime, timezone
+from pymongo import UpdateOne
 
 
 def _parse_ebay_datetime(value: object) -> datetime | None:
@@ -40,6 +41,7 @@ async def sync_ebay_raw_to_mongo():
 
     count = 0
     current_skus: set[str] = set()
+    bulk_ops: list[UpdateOne] = []
 
     for item in items:
         sku = item.get("sku")
@@ -53,7 +55,7 @@ async def sync_ebay_raw_to_mongo():
 
         posted_at = _parse_ebay_datetime(raw_doc.get("ListingStartTime"))
 
-        await db.product_raw.update_one(
+        bulk_ops.append(UpdateOne(
             {"_id": sku},
             {
                 "$set": {
@@ -63,8 +65,13 @@ async def sync_ebay_raw_to_mongo():
                 }
             },
             upsert=True,
-        )
+        ))
         count += 1
+
+    if bulk_ops:
+        print(f"💾 Writing {count} items to MongoDB...")
+        await db.product_raw.bulk_write(bulk_ops, ordered=False)
+        print("✅ MongoDB write complete.")
 
     # Any SKU in product_raw that is not in the latest active set is no longer
     # returned by GetMyeBaySelling (likely sold or ended). Mark it as having

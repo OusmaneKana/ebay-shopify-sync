@@ -48,6 +48,10 @@ async def start_job(name: str, fn: Callable[[], Awaitable[Any]]) -> dict[str, An
             result = await fn()
             status = "completed"
             error = None
+        except asyncio.CancelledError:
+            result = None
+            status = "failed"
+            error = "Task was cancelled"
         except Exception as exc:  # pragma: no cover - defensive catch for async task
             result = None
             status = "failed"
