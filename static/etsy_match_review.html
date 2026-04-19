@@ -59,6 +59,21 @@
       box-shadow: 0 18px 45px rgba(15,23,42,0.9);
       margin-bottom: 14px;
     }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .stat {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(2, 6, 23, 0.75);
+    }
+    .stat .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .stat .value { font-size: 22px; font-weight: 700; margin-top: 4px; }
+    .stat .subvalue { font-size: 12px; color: var(--muted); margin-top: 3px; }
     .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .pill {
       border: 1px solid var(--border);
@@ -66,6 +81,29 @@
       padding: 2px 8px;
       font-size: 11px;
       color: var(--muted);
+    }
+    .field-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .field-value { font-size: 14px; font-weight: 600; }
+    .filters { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .search {
+      background: #020617;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      min-width: 220px;
+    }
+    .checkwrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(2, 6, 23, 0.65);
     }
 
     .grid {
@@ -91,6 +129,26 @@
     .kvs > div { border: 1px solid var(--border); border-radius: 10px; padding: 8px; }
 
     .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .manual-link {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+      background: rgba(2, 6, 23, 0.55);
+    }
+    .manual-link input {
+      background: #020617;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 12px;
+      min-width: 220px;
+      font-size: 13px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
 
     .linkrow { display: flex; gap: 6px; flex-wrap: wrap; }
 
@@ -105,6 +163,9 @@
 
     @media (max-width: 1100px) {
       .grid { grid-template-columns: 1fr; }
+      .dashboard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .filters { width: 100%; margin-left: 0; }
+      .search { min-width: 0; width: 100%; }
     }
   </style>
 </head>
@@ -141,8 +202,16 @@
         <option value="all">all</option>
       </select>
       <span id="meta" class="pill">Idle</span>
+      <div class="filters">
+        <input id="search" class="search" placeholder="Search listing, SKU, or title" oninput="applyClientFilters()" />
+        <label class="checkwrap">
+          <input id="shipOnly" type="checkbox" onchange="applyClientFilters()" />
+          shipping > 0 only
+        </label>
+      </div>
     </div>
     <div id="summary" class="small" style="margin-top: 8px;"></div>
+    <div id="dashboard" class="dashboard"></div>
   </div>
 
   <div id="list" class="grid"></div>
@@ -160,6 +229,60 @@
       el.textContent = text;
       el.style.borderColor = color || 'var(--border)';
       el.style.color = color || 'var(--muted)';
+    }
+
+    function toNum(v) {
+      if (v == null) return null;
+      if (typeof v === 'object' && v.amount != null) {
+        const amount = Number(v.amount);
+        const divisor = Number(v.divisor || 1);
+        if (Number.isFinite(amount) && Number.isFinite(divisor) && divisor !== 0) return amount / divisor;
+      }
+      const n = Number(String(v).replace('$', '').trim());
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function fmtMoney(v) {
+      const n = toNum(v);
+      if (n == null) return 'n/a';
+      return `$${n.toFixed(2)}`;
+    }
+
+    function firstShippingCost(shipping) {
+      if (!Array.isArray(shipping)) return null;
+      for (const opt of shipping) {
+        const n = toNum(opt?.cost);
+        if (n != null) return n;
+      }
+      return null;
+    }
+
+    function renderDashboard(rows) {
+      const total = rows.length;
+      let approved = 0;
+      let pending = 0;
+      let denied = 0;
+      let withShip = 0;
+      let withPrices = 0;
+      for (const item of rows) {
+        const s = (item.review_status || 'pending');
+        if (s === 'approved') approved += 1;
+        else if (s === 'denied') denied += 1;
+        else pending += 1;
+
+        const ship = firstShippingCost(item.normalized_shipping);
+        if (ship != null && ship > 0) withShip += 1;
+
+        if (toNum(item.normalized_price) != null || toNum(item.etsy_price) != null) withPrices += 1;
+      }
+
+      document.getElementById('dashboard').innerHTML = `
+        <div class="stat"><div class="label">Visible Matches</div><div class="value">${total}</div><div class="subvalue">Current filters</div></div>
+        <div class="stat"><div class="label">Pending</div><div class="value">${pending}</div><div class="subvalue">Needs review</div></div>
+        <div class="stat"><div class="label">Approved</div><div class="value">${approved}</div><div class="subvalue">Linked to Mongo</div></div>
+        <div class="stat"><div class="label">Denied</div><div class="value">${denied}</div><div class="subvalue">Rejected links</div></div>
+        <div class="stat"><div class="label">Shipping > 0</div><div class="value">${withShip}</div><div class="subvalue">Rows with non-free shipping</div></div>
+      `;
     }
 
     async function loadSummary() {
@@ -186,20 +309,53 @@
       await loadItems();
     }
 
+    function cardId(item) {
+      return `row-${item.etsy_listing_id}`;
+    }
+
+    function removeCard(item) {
+      const el = document.getElementById(cardId(item));
+      if (el) el.remove();
+      // remove from __rowsAll so filters stay consistent
+      window.__rowsAll = (window.__rowsAll || []).filter(
+        (r) => r.etsy_listing_id !== item.etsy_listing_id
+      );
+      // recalculate dashboard from rendered rows
+      renderDashboard(window.__rowsAll);
+      const remaining = document.querySelectorAll('#list .item').length;
+      setMeta(`${remaining} items`, 'var(--success)');
+    }
+
+    function markCardStatus(item, newStatus) {
+      const el = document.getElementById(cardId(item));
+      if (!el) return;
+      // update status pill in-place
+      const pill = el.querySelector('.pill-status');
+      if (pill) pill.textContent = `status: ${newStatus}`;
+      // flash border colour
+      const color = newStatus === 'approved' ? 'var(--success)' : 'var(--danger)';
+      el.style.transition = 'border-color 0.2s';
+      el.style.borderColor = color;
+      el.style.opacity = '0.5';
+      setTimeout(() => el.remove(), 600);
+    }
+
     function rowCard(item) {
       const idx = window.__rows.length;
       window.__rows.push(item);
       const etsyLink = item.etsy_link ? `<a class="btn" href="${item.etsy_link}" target="_blank" rel="noopener noreferrer">Open Etsy</a>` : '';
       const shopifyDev = item.shopify_links?.dev ? `<a class="btn" href="${item.shopify_links.dev}" target="_blank" rel="noopener noreferrer">Open Shopify Dev</a>` : '';
       const shopifyProd = item.shopify_links?.prod ? `<a class="btn" href="${item.shopify_links.prod}" target="_blank" rel="noopener noreferrer">Open Shopify Prod</a>` : '';
+      const ship = firstShippingCost(item.normalized_shipping);
 
       return `
-        <div class="item" id="row-${esc(item.etsy_listing_id)}-${esc(item.normalized_sku)}">
+        <div class="item" id="${cardId(item)}">
           <div class="row">
             <span class="pill mono">listing ${esc(item.etsy_listing_id)}</span>
+            <span class="pill mono">sku ${esc(item.normalized_sku || 'n/a')}</span>
             <span class="pill">${esc(item.bucket || 'n/a')}</span>
             <span class="pill">score: ${esc(item.score ?? 'n/a')}</span>
-            <span class="pill">status: ${esc(item.review_status || 'pending')}</span>
+            <span class="pill pill-status">status: ${esc(item.review_status || 'pending')}</span>
           </div>
 
           <div class="kvs">
@@ -211,6 +367,11 @@
               <div class="small">Potential normalized match (${esc(item.normalized_sku || 'none')})</div>
               <p class="title">${esc(item.normalized_title || 'No candidate')}</p>
             </div>
+            <div>
+              <div class="field-label">Pricing</div>
+              <div class="field-value">eBay/Etsy: ${fmtMoney(item.etsy_price)} | Normalized: ${fmtMoney(item.normalized_price)}</div>
+              <div class="small">Shipping (Mongo): ${ship == null ? 'n/a' : `$${ship.toFixed(2)}`}</div>
+            </div>
           </div>
 
           <div class="linkrow">
@@ -219,12 +380,42 @@
             ${shopifyProd}
           </div>
 
+          <div class="manual-link">
+            <span class="small">Mongo SKU to link</span>
+            <input id="manual-sku-${idx}" value="${esc(item.normalized_sku || '')}" placeholder="Type normalized SKU (example: EB-156497205403)" />
+          </div>
+
           <div class="actions">
-            <button class="good" onclick="approveMatch(${idx})" ${item.normalized_sku ? '' : 'disabled'}>Approve</button>
+            <button class="good" onclick="approveMatch(${idx})">Approve / Link</button>
             <button class="bad" onclick="denyMatch(${idx})">Deny</button>
           </div>
         </div>
       `;
+    }
+
+    function applyClientFilters() {
+      const q = document.getElementById('search').value.trim().toLowerCase();
+      const shipOnly = document.getElementById('shipOnly').checked;
+      const rows = (window.__rowsAll || []).filter((item) => {
+        if (shipOnly) {
+          const ship = firstShippingCost(item.normalized_shipping);
+          if (!(ship != null && ship > 0)) return false;
+        }
+
+        if (!q) return true;
+        const haystack = [
+          item.etsy_listing_id,
+          item.normalized_sku,
+          item.etsy_title,
+          item.normalized_title,
+        ].map((v) => String(v || '').toLowerCase()).join(' ');
+        return haystack.includes(q);
+      });
+
+      window.__rows = [];
+      document.getElementById('list').innerHTML = rows.map(rowCard).join('');
+      renderDashboard(rows);
+      setMeta(`${rows.length} items`, 'var(--success)');
     }
 
     async function loadItems() {
@@ -237,17 +428,27 @@
         setMeta(`Error ${r.status}`, 'var(--danger)');
         return;
       }
+      window.__rowsAll = d.items || [];
       window.__rows = [];
-      document.getElementById('list').innerHTML = (d.items || []).map(rowCard).join('');
-      setMeta(`${d.count} items`, 'var(--success)');
+      applyClientFilters();
     }
 
     async function approveMatch(idx) {
       const item = window.__rows[idx];
       if (!item) return;
+      const manualSkuInput = document.getElementById(`manual-sku-${idx}`);
+      const selectedSku = (manualSkuInput?.value || item.normalized_sku || '').trim();
+      if (!selectedSku) {
+        setMeta('Enter a Mongo SKU before approving', 'var(--warn)');
+        manualSkuInput?.focus();
+        return;
+      }
+      // disable buttons immediately to prevent double-submit
+      const card = document.getElementById(cardId(item));
+      card?.querySelectorAll('button').forEach((b) => (b.disabled = true));
       const body = {
         etsy_listing_id: item.etsy_listing_id,
-        normalized_sku: item.normalized_sku,
+        normalized_sku: selectedSku,
         score: item.score,
         bucket: item.bucket,
       };
@@ -256,18 +457,26 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
+      let respJson = null;
+      try { respJson = await r.json(); } catch (_) {}
       if (!r.ok) {
-        setMeta(`Approve failed (${r.status})`, 'var(--danger)');
+        const detail = respJson?.detail || `HTTP ${r.status}`;
+        setMeta(`Approve failed: ${detail}`, 'var(--danger)');
+        alert(`Approve failed: ${detail}`);
+        card?.querySelectorAll('button').forEach((b) => (b.disabled = false));
         return;
       }
-      setMeta('Approved', 'var(--success)');
-      await loadItems();
+      setMeta(`Approved ${selectedSku}`, 'var(--success)');
+      markCardStatus(item, 'approved');
+      setTimeout(() => removeCard(item), 620);
     }
 
     async function denyMatch(idx) {
       const item = window.__rows[idx];
       if (!item) return;
       const reason = prompt('Optional deny reason:', '') || null;
+      const card = document.getElementById(cardId(item));
+      card?.querySelectorAll('button').forEach((b) => (b.disabled = true));
       const body = {
         etsy_listing_id: item.etsy_listing_id,
         normalized_sku: item.normalized_sku,
@@ -280,10 +489,12 @@
       });
       if (!r.ok) {
         setMeta(`Deny failed (${r.status})`, 'var(--danger)');
+        card?.querySelectorAll('button').forEach((b) => (b.disabled = false));
         return;
       }
       setMeta('Denied', 'var(--warn)');
-      await loadItems();
+      markCardStatus(item, 'denied');
+      setTimeout(() => removeCard(item), 620);
     }
 
     async function logout() {
@@ -293,6 +504,7 @@
 
     (async () => {
       window.__rows = [];
+      window.__rowsAll = [];
       await loadSummary();
       await loadItems();
     })();

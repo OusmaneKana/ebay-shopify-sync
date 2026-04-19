@@ -42,6 +42,10 @@ def resolve_api_key(explicit_api_key: str | None) -> str:
     if explicit_api_key:
         return explicit_api_key
 
+    # Etsy listings endpoint may require keystring in "client_id:client_secret" format.
+    if settings.ETSY_CLIENT_ID and settings.ETSY_CLIENT_SECRET:
+        return f"{settings.ETSY_CLIENT_ID}:{settings.ETSY_CLIENT_SECRET}"
+
     # Etsy docs usually refer to this as the keystring.
     for candidate in [
         settings.ETSY_CLIENT_ID,

@@ -535,11 +535,24 @@ async def etsy_match_review(
         if status != "all" and row_status != status:
             continue
 
+        etsy_doc = None
+        if listing_id is not None:
+            etsy_doc = await db.etsy_listings_investigation.find_one(
+                {"listing_id": listing_id},
+                {"_id": 0, "price": 1, "quantity": 1, "listing_state": 1},
+            )
+
         normalized_doc = None
         if sku:
             normalized_doc = await db.product_normalized.find_one(
                 {"_id": sku},
-                {"_id": 1, "shopify_id": 1, "channels.shopify.shopify_id": 1},
+                {
+                    "_id": 1,
+                    "price": 1,
+                    "shipping": 1,
+                    "shopify_id": 1,
+                    "channels.shopify.shopify_id": 1,
+                },
             )
 
         shopify_id = None
@@ -558,6 +571,10 @@ async def etsy_match_review(
                 "etsy_link": f"https://www.etsy.com/listing/{listing_id}" if listing_id else None,
                 "shopify_id": shopify_id,
                 "shopify_links": _build_shopify_links(shopify_id),
+                "normalized_price": (normalized_doc or {}).get("price"),
+                "normalized_shipping": (normalized_doc or {}).get("shipping"),
+                "etsy_price": (etsy_doc or {}).get("price"),
+                "etsy_state_live": (etsy_doc or {}).get("listing_state"),
             }
         )
 
