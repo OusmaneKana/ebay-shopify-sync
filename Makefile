@@ -19,6 +19,7 @@ REPO ?=
 SERVICE ?=
 TAG ?= latest
 DRY_RUN ?=
+BUILD_PLATFORM ?= linux/amd64
 
 IMAGE := $(REGION)-docker.pkg.dev/$(PROJECT_ID)/$(REPO)/$(SERVICE):$(TAG)
 
@@ -32,7 +33,7 @@ help:
 	@echo "  make print-image   Print resolved image ref"
 	@echo ""
 	@echo "Required env vars: PROJECT_ID REGION REPO SERVICE"
-	@echo "Optional: TAG (default latest), DRY_RUN=1"
+	@echo "Optional: TAG (default latest), BUILD_PLATFORM (default linux/amd64), DRY_RUN=1"
 
 check-env:
 	@[ -n "$(PROJECT_ID)" ] || (echo "Missing PROJECT_ID" && exit 2)
@@ -45,16 +46,24 @@ print-image: check-env
 
 build: check-env
 	@echo "Building $(IMAGE)"
-	@if [ "$(DRY_RUN)" = "1" ]; then echo "+ docker build -t $(IMAGE) ."; else docker build -t "$(IMAGE)" .; fi
+	@if [ "$(DRY_RUN)" = "1" ]; then \
+		echo "+ docker buildx build --platform $(BUILD_PLATFORM) --provenance=false --load -t $(IMAGE) ."; \
+	else \
+		docker buildx build --platform "$(BUILD_PLATFORM)" --provenance=false --load -t "$(IMAGE)" .; \
+	fi
 
 push: check-env
 	@echo "Pushing $(IMAGE)"
-	@if [ "$(DRY_RUN)" = "1" ]; then echo "+ docker push $(IMAGE)"; else docker push "$(IMAGE)"; fi
+	@if [ "$(DRY_RUN)" = "1" ]; then \
+		echo "+ docker buildx build --platform $(BUILD_PLATFORM) --provenance=false --push -t $(IMAGE) ."; \
+	else \
+		docker buildx build --platform "$(BUILD_PLATFORM)" --provenance=false --push -t "$(IMAGE)" .; \
+	fi
 
 deploy: check-env
 	@echo "Deploying $(SERVICE) using $(IMAGE)"
 	@if [ "$(DRY_RUN)" = "1" ]; then \
 		echo "+ ./scripts/deploy_cloud_run.sh"; \
 	else \
-		TAG="$(TAG)" ./scripts/deploy_cloud_run.sh; \
+		TAG="$(TAG)" BUILD_PLATFORM="$(BUILD_PLATFORM)" ./scripts/deploy_cloud_run.sh; \
 	fi

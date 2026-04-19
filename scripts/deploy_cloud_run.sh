@@ -8,6 +8,7 @@ set -euo pipefail
 # Optional:
 #   TAG          (default: latest)
 #   PLATFORM     (default: managed)
+#   BUILD_PLATFORM (default: linux/amd64)
 #   DRY_RUN=1    (prints commands, does not execute)
 #
 # Example:
@@ -40,6 +41,7 @@ require_env SERVICE
 
 TAG="${TAG:-latest}"
 PLATFORM="${PLATFORM:-managed}"
+BUILD_PLATFORM="${BUILD_PLATFORM:-linux/amd64}"
 
 IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${SERVICE}:${TAG}"
 
@@ -48,12 +50,15 @@ echo "- Region:   ${REGION}"
 echo "- Project:  ${PROJECT_ID}"
 echo "- Repo:     ${REPO}"
 echo "- Image:    ${IMAGE}"
+echo "- Build:    ${BUILD_PLATFORM}"
 
-echo "\n==> Docker build"
-run docker build -t "${IMAGE}" .
-
-echo "\n==> Docker push"
-run docker push "${IMAGE}"
+echo "\n==> Docker buildx (push)"
+run docker buildx build \
+  --platform "${BUILD_PLATFORM}" \
+  --provenance=false \
+  --push \
+  -t "${IMAGE}" \
+  .
 
 echo "\n==> Cloud Run deploy"
 run gcloud run deploy "${SERVICE}" \
