@@ -1,0 +1,397 @@
+{
+  "audit_timestamp": "2026-04-30T07:41:25.570885+00:00",
+  "audit_scope": "ACTIVE Etsy listings only",
+  "note": "Archived, draft, and sold-out listings are excluded from all counts",
+  "summary": {
+    "total_active_etsy_listings": 822,
+    "total_linked_normalized": 970,
+    "matched_pairs": 814,
+    "quantity_mismatches": 21,
+    "unlinked_active_etsy": 8,
+    "orphaned_normalized_links": 156
+  },
+  "quantity_mismatches_sample": [
+    {
+      "listing_id": 4476253651,
+      "etsy_title": "Rare Vtg Seiko Lot Of 5 Collector World Digital Timer Alarm Quartz Watches Read",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "157761583986",
+      "shopify_id": 10300997533977,
+      "url": "https://www.etsy.com/listing/4476253651/rare-vtg-seiko-lot-of-5-collector-world"
+    },
+    {
+      "listing_id": 4476254393,
+      "etsy_title": "Vintage 1960&#39;s 14K Solid Gold Large Emerald Cut Blue Topaz Ring Sz 7.25 Cocktail",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "157770927330",
+      "shopify_id": 10302253629721,
+      "url": "https://www.etsy.com/listing/4476254393/vintage-1960s-14k-solid-gold-large"
+    },
+    {
+      "listing_id": 4470702910,
+      "etsy_title": "Rare Antique Bronze Lion Amsterdam Coat of Arms Double Candle Holder Candelabra",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "EB-157353154574",
+      "shopify_id": 10225471521049,
+      "url": "https://www.etsy.com/listing/4470702910/rare-antique-bronze-lion-amsterdam-coat"
+    },
+    {
+      "listing_id": 4465780309,
+      "etsy_title": "Civil War Magic Lantern Slide: Lee Surrender to Grant, Hand-Tinted Americana History",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "157712095780",
+      "shopify_id": 10288002105625,
+      "url": "https://www.etsy.com/listing/4465780309/civil-war-magic-lantern-slide-lee"
+    },
+    {
+      "listing_id": 4465785968,
+      "etsy_title": "Vintage Collectible Casio Melody Alarm 82H108 Alarm Men\u2019 Watch. Works. Read.",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "157721656462",
+      "shopify_id": 10288740663577,
+      "url": "https://www.etsy.com/listing/4465785968/vintage-collectible-casio-melody-alarm"
+    },
+    {
+      "listing_id": 4462543410,
+      "etsy_title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "EB-156504277292",
+      "shopify_id": 10225328324889,
+      "url": "https://www.etsy.com/listing/4462543410/vintage-dunhill-rollagas-gold-tone-made"
+    },
+    {
+      "listing_id": 4458697050,
+      "etsy_title": "Vintage 1970s Gucci 1 Parfum, Rare Collectible Splash Perfume",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "EB-157277317666",
+      "shopify_id": 10225344250137,
+      "url": "https://www.etsy.com/listing/4458697050/vintage-1970s-gucci-1-parfum-rare"
+    },
+    {
+      "listing_id": 4458696506,
+      "etsy_title": "1960s Zodiac Automatic Gold Plated Men&#39;s Watch - Vintage Timepiece",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "EB-157259499690",
+      "shopify_id": 10225343791385,
+      "url": "https://www.etsy.com/listing/4458696506/1960s-zodiac-automatic-gold-plated-mens"
+    },
+    {
+      "listing_id": 4458697049,
+      "etsy_title": "Vintage Swarovski Crystal Figurine Set: Columbine Shield, 1990s Austria",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "EB-157355265573",
+      "shopify_id": 10225471783193,
+      "url": "https://www.etsy.com/listing/4458697049/vintage-swarovski-crystal-figurine-set"
+    },
+    {
+      "listing_id": 4458700854,
+      "etsy_title": "Vintage Waterford Crystal Blue Butterfly Figurine: Ribbed Pedestal Paperweight",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "EB-157355225616",
+      "shopify_id": 10225471717657,
+      "url": "https://www.etsy.com/listing/4458700854/vintage-waterford-crystal-blue-butterfly"
+    },
+    {
+      "listing_id": 4458602143,
+      "etsy_title": "Rare Set Of 3 Antique 1930&#39;s Barclay Manoil Armored Cars & Anti-Tank Gun Cars.",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "156999149554",
+      "shopify_id": 10225293033753,
+      "url": "https://www.etsy.com/listing/4458602143/rare-set-of-3-antique-1930s-barclay"
+    },
+    {
+      "listing_id": 4458609228,
+      "etsy_title": "Vintage Emerald Green Glass Pitcher Set, Ornate Hand-Blown 1950s Barware",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "157670015306",
+      "shopify_id": 10269784604953,
+      "url": "https://www.etsy.com/listing/4458609228/vintage-emerald-green-glass-pitcher-set"
+    },
+    {
+      "listing_id": 4458604631,
+      "etsy_title": "Antique C 1830&#39;s Victorian Silver Plate & Cut Glass Vanity Box / Soap Holder.",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "157026423822",
+      "shopify_id": 10225299882265,
+      "url": "https://www.etsy.com/listing/4458604631/antique-c-1830s-victorian-silver-plate"
+    },
+    {
+      "listing_id": 4458581342,
+      "etsy_title": "Vintage Heuer Split-Second Chronograph - 1/100 Minute Timer",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "EB-156645840756",
+      "shopify_id": 10225329832217,
+      "url": "https://www.etsy.com/listing/4458581342/vintage-heuer-split-second-chronograph"
+    },
+    {
+      "listing_id": 4458579304,
+      "etsy_title": "Disney Women Spring Pop Up Tigger Brown Leather Strap Quartz Watch 7 1/4&quot;",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "156611486096",
+      "shopify_id": 10225273274649,
+      "url": "https://www.etsy.com/listing/4458579304/disney-women-spring-pop-up-tigger-brown"
+    },
+    {
+      "listing_id": 4458582852,
+      "etsy_title": "Lladro &#39;Boy With Snails&#39; Figure 4896 Retired Beutiful Condition Made In Spain",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "EB-156654233396",
+      "shopify_id": 10225330159897,
+      "url": "https://www.etsy.com/listing/4458582852/lladro-boy-with-snails-figure-4896"
+    },
+    {
+      "listing_id": 4458583867,
+      "etsy_title": "Lladro Children Puppy Love Porcelain Figurine MADE IN SPAIN 1127 Retired Matte",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "EB-156837894055",
+      "shopify_id": 10225334223129,
+      "url": "https://www.etsy.com/listing/4458583867/lladro-children-puppy-love-porcelain"
+    },
+    {
+      "listing_id": 4458527464,
+      "etsy_title": "Set Of 4 Antique Waterford Crystal Kenmare Water Goblet Glasses 6 3/4&quot; H",
+      "etsy_qty": 3,
+      "normalized_qty": 2,
+      "delta": 1,
+      "sku": "EB-157399198148",
+      "shopify_id": 10225474896153,
+      "url": "https://www.etsy.com/listing/4458527464/set-of-4-antique-waterford-crystal"
+    },
+    {
+      "listing_id": 4458540128,
+      "etsy_title": "Vintage Ingersoll Disney Mickey Mouse 24mm Manual Wind Watch Good Running",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "157544171665",
+      "shopify_id": 10225322950937,
+      "url": "https://www.etsy.com/listing/4458540128/vintage-ingersoll-disney-mickey-mouse"
+    },
+    {
+      "listing_id": 4458528056,
+      "etsy_title": "Antique Baccarat Crystal Candlestick, Dolphin Form, 24 Inch",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "EB-157401494855",
+      "shopify_id": 10288083075353,
+      "url": "https://www.etsy.com/listing/4458528056/antique-baccarat-crystal-candlestick"
+    },
+    {
+      "listing_id": 4458545279,
+      "etsy_title": "Vtg 1940 Parker 51 Fountain Pen Black Barrel Sterling Silver Cap Gold Arrow Clip",
+      "etsy_qty": 1,
+      "normalized_qty": 0,
+      "delta": 1,
+      "sku": "157800537418",
+      "shopify_id": 10313799368985,
+      "url": "https://www.etsy.com/listing/4458545279/vtg-1940-parker-51-fountain-pen-black"
+    }
+  ],
+  "unlinked_etsy_sample": [
+    {
+      "listing_id": 4476989594,
+      "title": "PRIVATE: 5 Original Antique Civil War Union Federal Eagle Uniform Coat Vest Tunic Buttons",
+      "quantity": 1,
+      "url": "https://www.etsy.com/listing/4476989594/private-5-original-antique-civil-war"
+    },
+    {
+      "listing_id": 4462053387,
+      "title": "Original Antique 1860 John Adams. Engraving by J. Stephenson after J.S. Copley",
+      "quantity": 1,
+      "url": "https://www.etsy.com/listing/4462053387/original-antique-1860-john-adams"
+    },
+    {
+      "listing_id": 4462541539,
+      "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+      "quantity": 1,
+      "url": "https://www.etsy.com/listing/4462541539/vintage-dunhill-rollagas-gold-tone-made"
+    },
+    {
+      "listing_id": 4462542907,
+      "title": "Rare DE Vintage European Manual Solid Wood Cast Iron Coffee Grinder With Drawer.",
+      "quantity": 1,
+      "url": "https://www.etsy.com/listing/4462542907/rare-de-vintage-european-manual-solid"
+    },
+    {
+      "listing_id": 4458699147,
+      "title": "Rare Antique Baroque Victorian Ornate Gilt Brass Oval Frame Vanity Mirror/frame.",
+      "quantity": 1,
+      "url": "https://www.etsy.com/listing/4458699147/rare-antique-baroque-victorian-ornate"
+    },
+    {
+      "listing_id": 4458701820,
+      "title": "Sterling Silver Overlay Glass Bowl, Art Nouveau Floral Design, 12.5 Inch",
+      "quantity": 1,
+      "url": "https://www.etsy.com/listing/4458701820/sterling-silver-overlay-glass-bowl-art"
+    },
+    {
+      "listing_id": 4458526369,
+      "title": "Antique Czech Silver Inlaid Enamel Fairy Plates, Art Nouveau Set",
+      "quantity": 1,
+      "url": "https://www.etsy.com/listing/4458526369/antique-czech-silver-inlaid-enamel-fairy"
+    },
+    {
+      "listing_id": 4458531120,
+      "title": "Antique Czech Silver Inlaid Enamel Plates, Art Nouveau Fairy Decor, Set of 3",
+      "quantity": 1,
+      "url": "https://www.etsy.com/listing/4458531120/antique-czech-silver-inlaid-enamel"
+    }
+  ],
+  "orphaned_links_sample": [
+    {
+      "sku": "156696619841",
+      "listing_id": 4458584840,
+      "quantity": 1,
+      "title": "Lot Of 5 Vintage Prince Albert Crimp Cut Long Burning Pipe Cigarette Tobacco Tin"
+    },
+    {
+      "sku": "156696621493",
+      "listing_id": 4458584740,
+      "quantity": 0,
+      "title": "Vintage Fencing Sword Handle Foil Ashtray Figural Tobacciana Smoking Decor"
+    },
+    {
+      "sku": "EB-156254095222",
+      "listing_id": 4462545261,
+      "quantity": 0,
+      "title": "Original 11x14 Matt Damon Jason Bourne Autographed Photo. PSA COA"
+    },
+    {
+      "sku": "156887242883",
+      "listing_id": 4458591442,
+      "quantity": 0,
+      "title": "Antique D. Peres Solingen Sterling Silver Art Deco Cake Pie Server Knife W Box"
+    },
+    {
+      "sku": "156459534357",
+      "listing_id": 4462058521,
+      "quantity": 0,
+      "title": "Vintage Chinese Cloisonne Health Exercise Stress Baoding Green/red Enamel Balls"
+    },
+    {
+      "sku": "156409324141",
+      "listing_id": 4462059874,
+      "quantity": 0,
+      "title": "Rare Vintage Caroline 17 jewel pendant Swiss watch. Working Condition. No Chain"
+    },
+    {
+      "sku": "157098116099",
+      "listing_id": 4458608979,
+      "quantity": 0,
+      "title": "Vintage 1950s Hollywood Regency Ormolu Jewelry Casket Beveled Glass Filigree Box"
+    },
+    {
+      "sku": "EB-157101143865",
+      "listing_id": 4458613998,
+      "quantity": 0,
+      "title": "Antique Japan Meiji Era C 1880's Enameled Bronze /Cloisonn\u00e9 Umbrella/Stick Stand"
+    },
+    {
+      "sku": "156521048809",
+      "listing_id": 4462541829,
+      "quantity": 1,
+      "title": "Vintage Original 1945 Brass Trench Art Ashtray & Match Holder. Matching Set."
+    },
+    {
+      "sku": "157475529593",
+      "listing_id": 4458533776,
+      "quantity": 0,
+      "title": "Antique 1930's Sacred Heart Jesus Chalkware Statue 13\u201d Painted Religious Figure"
+    },
+    {
+      "sku": "156999164245",
+      "listing_id": 4458602719,
+      "quantity": 0,
+      "title": "Antique Ralstoy 1930's US Army Truck with Spotlight and Artillery Gun Original"
+    },
+    {
+      "sku": "157482362780",
+      "listing_id": 4458528933,
+      "quantity": 0,
+      "title": "Antique Herend Porcelain Figurine Motherhood Mother & Child Breastfeeding. VG."
+    },
+    {
+      "sku": "157259462265",
+      "listing_id": 4458620462,
+      "quantity": 1,
+      "title": "Antique Trench Art French Pocket Cigarette Lighter, C 1915 Silverplated. Working"
+    },
+    {
+      "sku": "157336999625",
+      "listing_id": 4458699298,
+      "quantity": 0,
+      "title": "Vintage Nude African Woman & Warrior W Shield MARWAL chalkware Sculpture 19.5\""
+    },
+    {
+      "sku": "EB-156912746630",
+      "listing_id": 4458587383,
+      "quantity": 0,
+      "title": "Antique 19th C ECHT German Meerschaum & Amber Pipe Horse Theme W Original Case."
+    },
+    {
+      "sku": "EB-156912768110",
+      "listing_id": 4458587781,
+      "quantity": 0,
+      "title": "Antique 19th C Horse Theme German Meerschaum Cigarette Holder W Original Case."
+    },
+    {
+      "sku": "156912803061",
+      "listing_id": 4458587641,
+      "quantity": 1,
+      "title": "Vintage European Wood Block Pipe Hand Carved Bacco Baccus Greek Worrior Theme."
+    },
+    {
+      "sku": "156177493383",
+      "listing_id": 4470705208,
+      "quantity": 0,
+      "title": "Large Vintage/Antique Spencer Buffalo USA Microscope W/Case & Multiple Parts"
+    },
+    {
+      "sku": "EB-157261780011",
+      "listing_id": 4458692473,
+      "quantity": 0,
+      "title": "Vintage Christian Dior Lighter Swiss Made CD Logo Silver and Gold Plated. Works."
+    },
+    {
+      "sku": "EB-157261814281",
+      "listing_id": 4458693023,
+      "quantity": 0,
+      "title": "Vintage Swarovski Style Crystal Trimlite & Gold P Love Birds On Tree Figurine."
+    }
+  ]
+}

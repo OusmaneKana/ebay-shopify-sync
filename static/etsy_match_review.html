@@ -6,495 +6,565 @@
   <title>Etsy Match Review</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --bg-alt: #020617;
-      --card-bg: #020617;
-      --border: #1e293b;
-      --accent: #38bdf8;
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --danger: #f97373;
-      --success: #4ade80;
-      --warn: #fbbf24;
+      --bg: #f3ede3;
+      --paper: #fffaf3;
+      --ink: #1f1f1f;
+      --muted: #6d665f;
+      --line: #dccdb7;
+      --accent: #2f6d5f;
+      --accent-2: #c24b39;
+      --ok: #2a7a4a;
+      --warn: #b56f1e;
+      --danger: #9f2a1f;
+      --shadow: 0 10px 30px rgba(49, 35, 21, 0.08);
     }
+
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 24px;
-      color: var(--text);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1e293b 0, #020617 42%, #000 100%);
+      color: var(--ink);
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 20% -10%, rgba(246, 211, 165, 0.6) 0, rgba(246, 211, 165, 0) 32%),
+        radial-gradient(circle at 90% 0%, rgba(181, 205, 179, 0.55) 0, rgba(181, 205, 179, 0) 35%),
+        var(--bg);
+      min-height: 100vh;
     }
-    .topbar {
+
+    .container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 20px 16px 50px;
+    }
+
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(6px);
+      background: rgba(243, 237, 227, 0.85);
+      border-bottom: 1px solid var(--line);
+      margin: 0 -16px 16px;
+      padding: 14px 16px;
+    }
+
+    .top-inner {
+      max-width: 1320px;
+      margin: 0 auto;
       display: flex;
-      justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
       align-items: center;
-      margin-bottom: 16px;
+      justify-content: space-between;
     }
-    h1 { margin: 0; font-size: 26px; }
-    .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
-    .nav { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn, button {
-      border: 1px solid var(--border);
-      background: #0b1222;
-      color: var(--text);
-      border-radius: 999px;
-      padding: 8px 14px;
+
+    .title-wrap h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .sub {
+      color: var(--muted);
       font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn, button {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      color: var(--ink);
       cursor: pointer;
       text-decoration: none;
+      transition: transform 0.14s ease, border-color 0.14s ease;
     }
-    .btn:hover, button:hover { border-color: var(--accent); }
-    .btn.primary, button.primary { border-color: var(--accent); }
-    .btn.good, button.good { border-color: var(--success); color: var(--success); }
-    .btn.bad, button.bad { border-color: var(--danger); color: var(--danger); }
 
-    .card {
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
-      box-shadow: 0 18px 45px rgba(15,23,42,0.9);
-      margin-bottom: 14px;
+    .btn:hover, button:hover {
+      transform: translateY(-1px);
+      border-color: #b9a68b;
     }
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .stat {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px;
-      background: rgba(2, 6, 23, 0.75);
-    }
-    .stat .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-    .stat .value { font-size: 22px; font-weight: 700; margin-top: 4px; }
-    .stat .subvalue { font-size: 12px; color: var(--muted); margin-top: 3px; }
-    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    .pill {
-      border: 1px solid var(--border);
+
+    .btn-approve { border-color: #8dbf9e; color: var(--ok); }
+    .btn-deny { border-color: #d9a19a; color: var(--danger); }
+
+    .search {
+      border: 1px solid var(--line);
+      background: #fff;
       border-radius: 999px;
-      padding: 2px 8px;
+      padding: 8px 12px;
+      min-width: 250px;
+      font-size: 13px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0 18px;
+    }
+
+    .stat {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 10px 12px;
+    }
+
+    .stat-label {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       font-size: 11px;
       color: var(--muted);
     }
-    .field-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
-    .field-value { font-size: 14px; font-weight: 600; }
-    .filters { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .search {
-      background: #020617;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 13px;
-      min-width: 220px;
+
+    .stat-value {
+      margin-top: 2px;
+      font-size: 26px;
+      font-weight: 700;
+      font-family: Georgia, "Times New Roman", serif;
     }
-    .checkwrap {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 12px;
+
+    .meta {
       color: var(--muted);
-      background: rgba(2, 6, 23, 0.65);
+      font-size: 12px;
+      margin-top: 4px;
+      min-height: 18px;
     }
 
-    .grid {
+    .list {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
+      gap: 14px;
+      max-height: calc(100vh - 220px);
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
-    .item {
-      border: 1px solid var(--border);
-      border-radius: 14px;
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      opacity: 0;
+      transform: translateY(8px);
+      animation: reveal 0.35s ease forwards;
+    }
+
+    @keyframes reveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .row-head {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 11px;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .pane {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .pane h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .img-wrap {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      aspect-ratio: 1 / 1;
+      background: linear-gradient(160deg, #f7f1e8, #f0e5d5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .img-fallback {
+      color: var(--muted);
+      font-size: 12px;
       padding: 12px;
-      background: rgba(2,6,23,0.7);
-      display: grid;
-      gap: 10px;
+      text-align: center;
     }
 
-    .title { font-size: 14px; font-weight: 700; line-height: 1.3; margin: 0; }
-    .small { font-size: 12px; color: var(--muted); }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .title {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 600;
+    }
 
-    .kvs { display: grid; grid-template-columns: 1fr; gap: 6px; }
-    .kvs > div { border: 1px solid var(--border); border-radius: 10px; padding: 8px; }
-
-    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .manual-link {
+    .sku-row {
+      margin-top: 10px;
       display: flex;
       gap: 8px;
       align-items: center;
       flex-wrap: wrap;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px;
-      background: rgba(2, 6, 23, 0.55);
     }
-    .manual-link input {
-      background: #020617;
-      color: var(--text);
-      border: 1px solid var(--border);
+
+    .sku-row input {
+      border: 1px solid var(--line);
       border-radius: 999px;
-      padding: 7px 12px;
-      min-width: 220px;
+      padding: 7px 11px;
+      min-width: 260px;
       font-size: 13px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #fff;
     }
 
-    .linkrow { display: flex; gap: 6px; flex-wrap: wrap; }
-
-    select {
-      background: #020617;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 8px 10px;
-      font-size: 13px;
+    .actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
-    @media (max-width: 1100px) {
-      .grid { grid-template-columns: 1fr; }
-      .dashboard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .filters { width: 100%; margin-left: 0; }
-      .search { min-width: 0; width: 100%; }
+    @media (max-width: 980px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .compare { grid-template-columns: 1fr; }
+      .search { min-width: 180px; width: 100%; }
+      .list { max-height: calc(100vh - 260px); }
     }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div>
-      <h1>Etsy Match Review</h1>
-      <div class="sub">Apply exact title matches and manually approve/deny fuzzy matches.</div>
-    </div>
-    <div class="nav">
-      <a class="btn" href="/">Home</a>
-      <a class="btn" href="/reporting">Reporting</a>
-      <a class="btn" href="/admin">Admin</a>
-      <button onclick="logout()">Logout</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="row">
-      <button class="primary" onclick="applyExact()">Apply Exact + Normalized Exact</button>
-      <label class="small">Bucket</label>
-      <select id="bucket" onchange="loadItems()">
-        <option value="all">all</option>
-        <option value="high">high</option>
-        <option value="medium" selected>medium</option>
-        <option value="low">low</option>
-        <option value="unmatched">unmatched</option>
-      </select>
-      <label class="small">Status</label>
-      <select id="status" onchange="loadItems()">
-        <option value="pending" selected>pending</option>
-        <option value="approved">approved</option>
-        <option value="denied">denied</option>
-        <option value="all">all</option>
-      </select>
-      <span id="meta" class="pill">Idle</span>
-      <div class="filters">
-        <input id="search" class="search" placeholder="Search listing, SKU, or title" oninput="applyClientFilters()" />
-        <label class="checkwrap">
-          <input id="shipOnly" type="checkbox" onchange="applyClientFilters()" />
-          shipping > 0 only
-        </label>
+  <div class="top">
+    <div class="top-inner">
+      <div class="title-wrap">
+        <h1>Etsy Match Review</h1>
+        <div class="sub">Excel-driven review queue. Approve writes SKU to Etsy and removes that row from workbook.</div>
+      </div>
+      <div class="controls">
+        <input id="search" class="search" placeholder="Search listing id, sku, title" oninput="applyFilters()" />
+        <button id="flushBtn" onclick="flushQueuedApprovals()">Flush Approvals</button>
+        <a class="btn" href="/">Home</a>
+        <button onclick="refreshData()">Refresh</button>
+        <button onclick="logout()">Logout</button>
       </div>
     </div>
-    <div id="summary" class="small" style="margin-top: 8px;"></div>
-    <div id="dashboard" class="dashboard"></div>
   </div>
 
-  <div id="list" class="grid"></div>
+  <div class="container">
+    <div class="stats" id="stats"></div>
+    <div class="meta" id="meta">Loading...</div>
+    <div class="list" id="list"></div>
+  </div>
 
   <script>
-    function esc(s) {
-      return String(s ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;');
+    const APPROVAL_BATCH_SIZE = 15;
+    const APPROVAL_QUEUE_KEY = "etsy_review_approval_queue_v1";
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
     }
 
     function setMeta(text, color) {
-      const el = document.getElementById('meta');
+      const el = document.getElementById("meta");
       el.textContent = text;
-      el.style.borderColor = color || 'var(--border)';
-      el.style.color = color || 'var(--muted)';
+      el.style.color = color || "var(--muted)";
     }
 
-    function toNum(v) {
-      if (v == null) return null;
-      if (typeof v === 'object' && v.amount != null) {
-        const amount = Number(v.amount);
-        const divisor = Number(v.divisor || 1);
-        if (Number.isFinite(amount) && Number.isFinite(divisor) && divisor !== 0) return amount / divisor;
-      }
-      const n = Number(String(v).replace('$', '').trim());
-      return Number.isFinite(n) ? n : null;
+    function formatConfidence(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return "n/a";
+      return `${n.toFixed(2)}%`;
     }
 
-    function fmtMoney(v) {
-      const n = toNum(v);
-      if (n == null) return 'n/a';
-      return `$${n.toFixed(2)}`;
-    }
-
-    function firstShippingCost(shipping) {
-      if (!Array.isArray(shipping)) return null;
-      for (const opt of shipping) {
-        const n = toNum(opt?.cost);
-        if (n != null) return n;
-      }
-      return null;
-    }
-
-    function renderDashboard(rows) {
-      const total = rows.length;
-      let approved = 0;
-      let pending = 0;
-      let denied = 0;
-      let withShip = 0;
-      let withPrices = 0;
-      for (const item of rows) {
-        const s = (item.review_status || 'pending');
-        if (s === 'approved') approved += 1;
-        else if (s === 'denied') denied += 1;
-        else pending += 1;
-
-        const ship = firstShippingCost(item.normalized_shipping);
-        if (ship != null && ship > 0) withShip += 1;
-
-        if (toNum(item.normalized_price) != null || toNum(item.etsy_price) != null) withPrices += 1;
-      }
-
-      document.getElementById('dashboard').innerHTML = `
-        <div class="stat"><div class="label">Visible Matches</div><div class="value">${total}</div><div class="subvalue">Current filters</div></div>
-        <div class="stat"><div class="label">Pending</div><div class="value">${pending}</div><div class="subvalue">Needs review</div></div>
-        <div class="stat"><div class="label">Approved</div><div class="value">${approved}</div><div class="subvalue">Linked to Mongo</div></div>
-        <div class="stat"><div class="label">Denied</div><div class="value">${denied}</div><div class="subvalue">Rejected links</div></div>
-        <div class="stat"><div class="label">Shipping > 0</div><div class="value">${withShip}</div><div class="subvalue">Rows with non-free shipping</div></div>
+    function renderStats(rows, workbook) {
+      const withImages = rows.filter((r) => r.etsy_image || r.shopify_image).length;
+      const highConf = rows.filter((r) => Number(r.confidence_rate) >= 80).length;
+      const queued = (window.__approvalQueue || []).length;
+      document.getElementById("stats").innerHTML = `
+        <div class="stat"><div class="stat-label">Rows Remaining</div><div class="stat-value">${rows.length}</div></div>
+        <div class="stat"><div class="stat-label">High Confidence</div><div class="stat-value">${highConf}</div></div>
+        <div class="stat"><div class="stat-label">Rows With Images</div><div class="stat-value">${withImages}</div></div>
+        <div class="stat"><div class="stat-label">Workbook</div><div class="stat-value" style="font-size:13px;line-height:1.35;">${esc(workbook || "n/a")}</div></div>
+        <div class="stat"><div class="stat-label">Queued Approvals</div><div class="stat-value">${queued}</div></div>
       `;
+
+      const flushBtn = document.getElementById("flushBtn");
+      if (flushBtn) {
+        flushBtn.textContent = queued > 0 ? `Flush Approvals (${queued})` : "Flush Approvals";
+        flushBtn.disabled = queued === 0 || !!window.__isFlushing;
+      }
     }
 
-    async function loadSummary() {
-      const r = await fetch('/reporting/etsy-match/summary');
-      const d = await r.json();
-      if (!r.ok) {
-        document.getElementById('summary').textContent = 'No summary found. Run JSON export first.';
-        return;
+    function imagePane(url, alt) {
+      if (!url) {
+        return `<div class="img-wrap"><div class="img-fallback">No image available</div></div>`;
       }
-      const s = d.summary || {};
-      document.getElementById('summary').textContent =
-        `Etsy ${s.etsy_total ?? 0} | Exact ${s.exact ?? 0} | Normalized Exact ${s.normalized_exact ?? 0} | High ${s.high ?? 0} | Medium ${s.medium ?? 0} | Low ${s.low ?? 0} | Unmatched ${s.unmatched ?? 0}`;
-    }
-
-    async function applyExact() {
-      setMeta('Applying exact matches...');
-      const r = await fetch('/reporting/etsy-match/apply-exact', { method: 'POST' });
-      const d = await r.json();
-      if (!r.ok) {
-        setMeta(`Error ${r.status}`, 'var(--danger)');
-        return;
-      }
-      setMeta(`Applied ${d.applied}/${d.matched_candidates}`, 'var(--success)');
-      await loadItems();
+      return `<div class="img-wrap"><img src="${esc(url)}" alt="${esc(alt)}" loading="lazy" /></div>`;
     }
 
     function cardId(item) {
-      return `row-${item.etsy_listing_id}`;
+      return `row-${item.listing_id}`;
     }
 
-    function removeCard(item) {
-      const el = document.getElementById(cardId(item));
-      if (el) el.remove();
-      // remove from __rowsAll so filters stay consistent
-      window.__rowsAll = (window.__rowsAll || []).filter(
-        (r) => r.etsy_listing_id !== item.etsy_listing_id
-      );
-      // recalculate dashboard from rendered rows
-      renderDashboard(window.__rowsAll);
-      const remaining = document.querySelectorAll('#list .item').length;
-      setMeta(`${remaining} items`, 'var(--success)');
-    }
-
-    function markCardStatus(item, newStatus) {
-      const el = document.getElementById(cardId(item));
-      if (!el) return;
-      // update status pill in-place
-      const pill = el.querySelector('.pill-status');
-      if (pill) pill.textContent = `status: ${newStatus}`;
-      // flash border colour
-      const color = newStatus === 'approved' ? 'var(--success)' : 'var(--danger)';
-      el.style.transition = 'border-color 0.2s';
-      el.style.borderColor = color;
-      el.style.opacity = '0.5';
-      setTimeout(() => el.remove(), 600);
-    }
-
-    function rowCard(item) {
-      const idx = window.__rows.length;
-      window.__rows.push(item);
-      const etsyLink = item.etsy_link ? `<a class="btn" href="${item.etsy_link}" target="_blank" rel="noopener noreferrer">Open Etsy</a>` : '';
-      const shopifyDev = item.shopify_links?.dev ? `<a class="btn" href="${item.shopify_links.dev}" target="_blank" rel="noopener noreferrer">Open Shopify Dev</a>` : '';
-      const shopifyProd = item.shopify_links?.prod ? `<a class="btn" href="${item.shopify_links.prod}" target="_blank" rel="noopener noreferrer">Open Shopify Prod</a>` : '';
-      const ship = firstShippingCost(item.normalized_shipping);
+    function rowCard(item, index) {
+      const etsyLink = item.etsy_link
+        ? `<a class="btn" target="_blank" rel="noopener noreferrer" href="${esc(item.etsy_link)}">Open Etsy</a>`
+        : "";
+      const shopifyLink = item.matched_shopify_link || item.shopify_links?.prod;
+      const shopifyBtn = shopifyLink
+        ? `<a class="btn" target="_blank" rel="noopener noreferrer" href="${esc(shopifyLink)}">Open Shopify</a>`
+        : "";
 
       return `
-        <div class="item" id="${cardId(item)}">
-          <div class="row">
-            <span class="pill mono">listing ${esc(item.etsy_listing_id)}</span>
-            <span class="pill mono">sku ${esc(item.normalized_sku || 'n/a')}</span>
-            <span class="pill">${esc(item.bucket || 'n/a')}</span>
-            <span class="pill">score: ${esc(item.score ?? 'n/a')}</span>
-            <span class="pill pill-status">status: ${esc(item.review_status || 'pending')}</span>
+        <div class="card" id="${cardId(item)}" style="animation-delay:${Math.min(index * 0.02, 0.3)}s">
+          <div class="row-head">
+            <span class="pill">Listing ${esc(item.listing_id)}</span>
+            <span class="pill">SKU ${esc(item.matched_mongo_sku || "n/a")}</span>
+            <span class="pill">Confidence ${esc(formatConfidence(item.confidence_rate))}</span>
           </div>
 
-          <div class="kvs">
-            <div>
-              <div class="small">Etsy title</div>
-              <p class="title">${esc(item.etsy_title)}</p>
+          <div class="compare">
+            <div class="pane">
+              <h3>Etsy Listing</h3>
+              ${imagePane(item.etsy_image, item.etsy_title || "Etsy listing image")}
+              <p class="title">${esc(item.etsy_title || "Untitled listing")}</p>
+              <div class="actions">${etsyLink}</div>
             </div>
-            <div>
-              <div class="small">Potential normalized match (${esc(item.normalized_sku || 'none')})</div>
-              <p class="title">${esc(item.normalized_title || 'No candidate')}</p>
-            </div>
-            <div>
-              <div class="field-label">Pricing</div>
-              <div class="field-value">eBay/Etsy: ${fmtMoney(item.etsy_price)} | Normalized: ${fmtMoney(item.normalized_price)}</div>
-              <div class="small">Shipping (Mongo): ${ship == null ? 'n/a' : `$${ship.toFixed(2)}`}</div>
+
+            <div class="pane">
+              <h3>Potential Shopify Match</h3>
+              ${imagePane(item.shopify_image, item.matched_mongo_title || "Shopify product image")}
+              <p class="title">${esc(item.matched_mongo_title || "No Mongo title")}</p>
+              <div class="actions">${shopifyBtn}</div>
             </div>
           </div>
 
-          <div class="linkrow">
-            ${etsyLink}
-            ${shopifyDev}
-            ${shopifyProd}
-          </div>
-
-          <div class="manual-link">
-            <span class="small">Mongo SKU to link</span>
-            <input id="manual-sku-${idx}" value="${esc(item.normalized_sku || '')}" placeholder="Type normalized SKU (example: EB-156497205403)" />
+          <div class="sku-row">
+            <span>SKU to write to Etsy:</span>
+            <input id="sku-${index}" value="${esc(item.matched_mongo_sku || "")}" />
           </div>
 
           <div class="actions">
-            <button class="good" onclick="approveMatch(${idx})">Approve / Link</button>
-            <button class="bad" onclick="denyMatch(${idx})">Deny</button>
+            <button class="btn-approve" onclick="approve(${index})">Approve</button>
+            <button class="btn-deny" onclick="deny(${index})">Deny</button>
           </div>
         </div>
       `;
     }
 
-    function applyClientFilters() {
-      const q = document.getElementById('search').value.trim().toLowerCase();
-      const shipOnly = document.getElementById('shipOnly').checked;
+    function applyFilters() {
+      const q = document.getElementById("search").value.trim().toLowerCase();
       const rows = (window.__rowsAll || []).filter((item) => {
-        if (shipOnly) {
-          const ship = firstShippingCost(item.normalized_shipping);
-          if (!(ship != null && ship > 0)) return false;
-        }
-
         if (!q) return true;
-        const haystack = [
-          item.etsy_listing_id,
-          item.normalized_sku,
+        const hay = [
+          item.listing_id,
+          item.matched_mongo_sku,
           item.etsy_title,
-          item.normalized_title,
-        ].map((v) => String(v || '').toLowerCase()).join(' ');
-        return haystack.includes(q);
+          item.matched_mongo_title,
+        ].map((v) => String(v || "").toLowerCase()).join(" ");
+        return hay.includes(q);
       });
 
-      window.__rows = [];
-      document.getElementById('list').innerHTML = rows.map(rowCard).join('');
-      renderDashboard(rows);
-      setMeta(`${rows.length} items`, 'var(--success)');
+      window.__rows = rows;
+      document.getElementById("list").innerHTML = rows.map(rowCard).join("");
+      renderStats(rows, window.__workbook);
+      setMeta(`${rows.length} visible rows`);
     }
 
-    async function loadItems() {
-      const bucket = document.getElementById('bucket').value;
-      const status = document.getElementById('status').value;
-      setMeta('Loading...');
-      const r = await fetch(`/reporting/etsy-match/review?bucket=${encodeURIComponent(bucket)}&status=${encodeURIComponent(status)}&limit=300`);
-      const d = await r.json();
+    async function refreshData() {
+      setMeta("Loading review queue...");
+      const r = await fetch("/reporting/etsy-match-excel/review?limit=1200");
+      const data = await r.json();
       if (!r.ok) {
-        setMeta(`Error ${r.status}`, 'var(--danger)');
+        setMeta(data.detail || `Failed (${r.status})`, "var(--danger)");
         return;
       }
-      window.__rowsAll = d.items || [];
-      window.__rows = [];
-      applyClientFilters();
+      window.__rowsAll = data.items || [];
+      window.__workbook = data.workbook;
+      applyFilters();
     }
 
-    async function approveMatch(idx) {
-      const item = window.__rows[idx];
+    function removeFromState(listingId) {
+      window.__rowsAll = (window.__rowsAll || []).filter((r) => String(r.listing_id) !== String(listingId));
+      applyFilters();
+    }
+
+    function loadApprovalQueue() {
+      try {
+        const raw = localStorage.getItem(APPROVAL_QUEUE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        window.__approvalQueue = Array.isArray(parsed) ? parsed : [];
+      } catch (_) {
+        window.__approvalQueue = [];
+      }
+    }
+
+    function persistApprovalQueue() {
+      localStorage.setItem(APPROVAL_QUEUE_KEY, JSON.stringify(window.__approvalQueue || []));
+      renderStats(window.__rows || [], window.__workbook);
+    }
+
+    function upsertApprovalQueue(item) {
+      const queue = window.__approvalQueue || [];
+      const key = String(item.listing_id);
+      const next = queue.filter((x) => String(x.listing_id) !== key);
+      next.push(item);
+      window.__approvalQueue = next;
+      persistApprovalQueue();
+    }
+
+    function removeApprovedFromQueue(successes) {
+      const done = new Set((successes || []).map((x) => String(x.listing_id)));
+      window.__approvalQueue = (window.__approvalQueue || []).filter((x) => !done.has(String(x.listing_id)));
+      persistApprovalQueue();
+    }
+
+    async function approve(index) {
+      const item = window.__rows[index];
       if (!item) return;
-      const manualSkuInput = document.getElementById(`manual-sku-${idx}`);
-      const selectedSku = (manualSkuInput?.value || item.normalized_sku || '').trim();
-      if (!selectedSku) {
-        setMeta('Enter a Mongo SKU before approving', 'var(--warn)');
-        manualSkuInput?.focus();
+      const skuInput = document.getElementById(`sku-${index}`);
+      const sku = (skuInput?.value || "").trim();
+      if (!sku) {
+        setMeta("SKU is required for approve", "var(--warn)");
+        skuInput?.focus();
         return;
       }
-      // disable buttons immediately to prevent double-submit
-      const card = document.getElementById(cardId(item));
-      card?.querySelectorAll('button').forEach((b) => (b.disabled = true));
-      const body = {
-        etsy_listing_id: item.etsy_listing_id,
-        normalized_sku: selectedSku,
-        score: item.score,
-        bucket: item.bucket,
+
+      const queuedItem = {
+        listing_id: item.listing_id,
+        matched_mongo_sku: sku,
+        confidence_rate: item.confidence_rate,
       };
-      const r = await fetch('/reporting/etsy-match/review/approve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      let respJson = null;
-      try { respJson = await r.json(); } catch (_) {}
-      if (!r.ok) {
-        const detail = respJson?.detail || `HTTP ${r.status}`;
-        setMeta(`Approve failed: ${detail}`, 'var(--danger)');
-        alert(`Approve failed: ${detail}`);
-        card?.querySelectorAll('button').forEach((b) => (b.disabled = false));
-        return;
+      upsertApprovalQueue(queuedItem);
+
+      const card = document.getElementById(cardId(item));
+      card.style.opacity = "0.3";
+      setTimeout(() => {
+        card.remove();
+        removeFromState(item.listing_id);
+      }, 260);
+
+      const queued = (window.__approvalQueue || []).length;
+      setMeta(`Queued ${item.listing_id}. Pending approvals: ${queued}.`, "var(--ok)");
+
+      if (queued >= APPROVAL_BATCH_SIZE) {
+        await flushQueuedApprovals();
       }
-      setMeta(`Approved ${selectedSku}`, 'var(--success)');
-      markCardStatus(item, 'approved');
-      setTimeout(() => removeCard(item), 620);
     }
 
-    async function denyMatch(idx) {
-      const item = window.__rows[idx];
-      if (!item) return;
-      const reason = prompt('Optional deny reason:', '') || null;
-      const card = document.getElementById(cardId(item));
-      card?.querySelectorAll('button').forEach((b) => (b.disabled = true));
-      const body = {
-        etsy_listing_id: item.etsy_listing_id,
-        normalized_sku: item.normalized_sku,
-        reason,
-      };
-      const r = await fetch('/reporting/etsy-match/review/deny', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      if (!r.ok) {
-        setMeta(`Deny failed (${r.status})`, 'var(--danger)');
-        card?.querySelectorAll('button').forEach((b) => (b.disabled = false));
+    async function flushQueuedApprovals() {
+      if (window.__isFlushing) return;
+      const queue = window.__approvalQueue || [];
+      if (!queue.length) {
+        setMeta("No queued approvals to flush.");
         return;
       }
-      setMeta('Denied', 'var(--warn)');
-      markCardStatus(item, 'denied');
-      setTimeout(() => removeCard(item), 620);
+
+      window.__isFlushing = true;
+      renderStats(window.__rows || [], window.__workbook);
+      setMeta(`Flushing ${queue.length} queued approvals...`);
+
+      const r = await fetch("/reporting/etsy-match-excel/review/approve-batch", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ approvals: queue }),
+      });
+      let d = null;
+      try { d = await r.json(); } catch (_) {}
+
+      if (!r.ok) {
+        const msg = d?.detail || `Batch approve failed (${r.status})`;
+        setMeta(msg, "var(--danger)");
+        window.__isFlushing = false;
+        renderStats(window.__rows || [], window.__workbook);
+        return;
+      }
+
+      removeApprovedFromQueue(d.successes || []);
+      const failed = Number(d.failed || 0);
+      if (failed > 0) {
+        setMeta(`Applied ${d.applied}, failed ${failed}. Failed items stayed queued for retry.`, "var(--warn)");
+      } else {
+        setMeta(`Applied ${d.applied} queued approvals.`, "var(--ok)");
+      }
+
+      window.__isFlushing = false;
+      renderStats(window.__rows || [], window.__workbook);
+    }
+
+    async function deny(index) {
+      const item = window.__rows[index];
+      if (!item) return;
+      const reason = prompt("Optional deny reason:", "") || null;
+
+      const card = document.getElementById(cardId(item));
+      card?.querySelectorAll("button").forEach((b) => (b.disabled = true));
+
+      const r = await fetch("/reporting/etsy-match-excel/review/deny", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          listing_id: item.listing_id,
+          matched_mongo_sku: item.matched_mongo_sku,
+          reason,
+        }),
+      });
+      let d = null;
+      try { d = await r.json(); } catch (_) {}
+
+      if (!r.ok) {
+        const msg = d?.detail || `Deny failed (${r.status})`;
+        setMeta(msg, "var(--danger)");
+        card?.querySelectorAll("button").forEach((b) => (b.disabled = false));
+        return;
+      }
+
+      setMeta(`Denied listing ${item.listing_id}`, "var(--warn)");
+      card.style.opacity = "0.55";
+      card.style.borderColor = "#d9a19a";
     }
 
     async function logout() {
@@ -502,12 +572,13 @@
       window.location.href = '/login?next=/etsy-review';
     }
 
-    (async () => {
-      window.__rows = [];
-      window.__rowsAll = [];
-      await loadSummary();
-      await loadItems();
-    })();
+    window.__rowsAll = [];
+    window.__rows = [];
+    window.__workbook = null;
+    window.__approvalQueue = [];
+    window.__isFlushing = false;
+    loadApprovalQueue();
+    refreshData();
   </script>
 </body>
 </html>

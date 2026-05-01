@@ -12,11 +12,23 @@ from app.config import settings
 from scripts.update_shopify_inventory_only import update_shopify_inventory_only
 from app.security.passkey import require_authorized
 from app.services.job_tracker import get_job, start_job
+from app.services.multichannel_sync_service import (
+    enqueue_reconcile_jobs_for_sku,
+    get_inventory_command_center,
+    get_item_timeline,
+    get_sync_dashboard,
+    get_conflict_policy,
+    ingest_sale_event,
+    replay_unresolved_etsy_receipt_events,
+    replay_unprocessed_ebay_fixed_price_transactions,
+    replay_failed_jobs,
+    run_worker_batch,
+    set_conflict_policy,
+)
 
 router = APIRouter()
 
-# Dev environment routes
-dev_router = APIRouter(dependencies=[Depends(require_authorized)])
+prod_router = APIRouter(dependencies=[Depends(require_authorized)])
 
 
 def _parse_shopify_sync_options(options: dict | None) -> tuple[bool, bool, bool, bool]:
@@ -34,17 +46,15 @@ def _parse_shopify_sync_options(options: dict | None) -> tuple[bool, bool, bool,
     return do_new, do_zero, allow_zero, do_other
 
 
-def _shopify_client_for_env(env: str) -> ShopifyClient:
-    if env == "prod":
-        return ShopifyClient(
-            api_key=settings.SHOPIFY_API_KEY_PROD,
-            password=settings.SHOPIFY_PASSWORD_PROD,
-            store_url=settings.SHOPIFY_STORE_URL_PROD,
-        )
-    return ShopifyClient()
+def _shopify_client_for_prod() -> ShopifyClient:
+    return ShopifyClient(
+        api_key=settings.SHOPIFY_API_KEY_PROD,
+        password=settings.SHOPIFY_PASSWORD_PROD,
+        store_url=settings.SHOPIFY_STORE_URL_PROD,
+    )
 
 
-async def _run_all_steps(*, env: str, shopify_options: dict | None) -> dict:
+async def _run_all_steps(*, shopify_options: dict | None) -> dict:
     """Run eBay sync -> normalization -> Shopify sync sequentially."""
 
     t0 = time.perf_counter()
@@ -61,10 +71,10 @@ async def _run_all_steps(*, env: str, shopify_options: dict | None) -> dict:
 
     # Step 3: normalized → Shopify
     t_shopify = time.perf_counter()
-    client = _shopify_client_for_env(env)
+    client = _shopify_client_for_prod()
     do_new, do_zero, allow_zero, do_other = _parse_shopify_sync_options(shopify_options)
     shopify_result = await full_shopify_sync(
-        env=env,
+        env="prod",
         shopify_client=client,
         do_new_products=do_new,
         do_zero_inventory=do_zero,
@@ -109,209 +119,7 @@ async def _maybe_background(
         "status": job["status"],
     }
 
-@dev_router.post("/sync-ebay-raw")
-async def sync_ebay_raw_dev(request: Request, background: bool = False):
-    async def _run() -> dict:
-        start = time.perf_counter()
-        result = await sync_ebay_raw_to_mongo()
-        elapsed = time.perf_counter() - start
-        return {
-            "message": "eBay raw sync completed (DEV)",
-            "result": result,
-            "elapsed_seconds": elapsed,
-        }
-
-    return await _maybe_background(
-        request=request,
-        name="DEV eBay raw sync",
-        fn=_run,
-        background=background,
-    )
-
-@dev_router.post("/normalize-raw")
-async def normalize_raw_dev(request: Request, background: bool = False):
-    async def _run() -> dict:
-        start = time.perf_counter()
-        result = await normalize_from_raw()
-        elapsed = time.perf_counter() - start
-        return {
-            "message": "Normalization completed (DEV)",
-            "result": result,
-            "elapsed_seconds": elapsed,
-        }
-
-    return await _maybe_background(
-        request=request,
-        name="DEV normalization",
-        fn=_run,
-        background=background,
-    )
-
-@dev_router.post("/sync-shopify")
-async def sync_shopify_dev(
-    request: Request,
-    options: dict | None = Body(None),
-    background: bool = False,
-):
-    """Dev: configurable full Shopify sync.
-
-        Body (all optional):
-            {"new_products": true, "zero_inventory": false, "allow_zero_inventory_updates": false, "other_updates": true}
-    """
-
-    async def _run() -> dict:
-        start = time.perf_counter()
-        client = ShopifyClient()
-
-        opts = options or {}
-        do_new = bool(opts.get("new_products", True))
-        do_zero = bool(opts.get("zero_inventory", False))
-        allow_zero = bool(opts.get("allow_zero_inventory_updates", False))
-        do_other = bool(opts.get("other_updates", True))
-
-        result = await full_shopify_sync(
-            env="dev",
-            shopify_client=client,
-            do_new_products=do_new,
-            do_zero_inventory=do_zero,
-            allow_zero_inventory_updates=allow_zero,
-            do_other_updates=do_other,
-        )
-        elapsed = time.perf_counter() - start
-        return {
-            "message": "Shopify sync completed (DEV)",
-            "result": result,
-            "elapsed_seconds": elapsed,
-        }
-
-    return await _maybe_background(
-        request=request,
-        name="DEV Shopify sync",
-        fn=_run,
-        background=background,
-    )
-
-
-@dev_router.post("/run-all")
-async def run_all_dev(
-    request: Request,
-    shopify_options: dict | None = Body(None),
-    background: bool = False,
-):
-    """Dev: run eBay sync, normalization, then Shopify sync in one call."""
-
-    async def _run() -> dict:
-        result = await _run_all_steps(env="dev", shopify_options=shopify_options)
-        return {
-            "message": "Full pipeline completed (DEV)",
-            "result": result,
-        }
-
-    return await _maybe_background(
-        request=request,
-        name="DEV full pipeline",
-        fn=_run,
-        background=background,
-    )
-
-
-@dev_router.post("/sync-shopify-new")
-async def sync_shopify_new_dev(request: Request, limit: int | None = None, background: bool = False):
-    """Dev: create Shopify products only for normalized docs without shopify_id."""
-    async def _run() -> dict:
-        start = time.perf_counter()
-        client = ShopifyClient()
-        result = await sync_new_products_to_shopify(client, limit=limit)
-        elapsed = time.perf_counter() - start
-        return {
-            "message": "Shopify NEW-products sync completed (DEV)",
-            "result": result,
-            "elapsed_seconds": elapsed,
-        }
-
-    return await _maybe_background(
-        request=request,
-        name="DEV Shopify new-products sync",
-        fn=_run,
-        background=background,
-    )
-
-
-@dev_router.post("/sync-shopify-inventory")
-async def sync_shopify_inventory_dev(
-    request: Request,
-    only_zero: bool = False,
-    allow_zero_updates: bool = False,
-    limit: int | None = None,
-    dry_run: bool = False,
-    background: bool = False,
-):
-    """Dev: force Shopify inventory to match product_normalized.quantity only."""
-    async def _run() -> dict:
-        start = time.perf_counter()
-        result = await update_shopify_inventory_only(
-            limit=limit,
-            env="dev",
-            only_zero=only_zero,
-            allow_zero_updates=allow_zero_updates,
-            dry_run=dry_run,
-        )
-        elapsed = time.perf_counter() - start
-        return {
-            "message": "Shopify inventory-only sync completed (DEV)",
-            "result": result,
-            "elapsed_seconds": elapsed,
-        }
-
-    return await _maybe_background(
-        request=request,
-        name="DEV inventory-only sync",
-        fn=_run,
-        background=background,
-    )
-
-@dev_router.post("/purge-shopify")
-async def purge_shopify_dev(request: Request, background: bool = False):
-    async def _run() -> dict:
-        start = time.perf_counter()
-        client = ShopifyClient()
-        deleted = await purge_all_shopify_products(client)
-        elapsed = time.perf_counter() - start
-        return {
-            "message": "Shopify products purged (DEV)",
-            "deleted": deleted,
-            "elapsed_seconds": elapsed,
-        }
-
-    return await _maybe_background(
-        request=request,
-        name="DEV purge Shopify",
-        fn=_run,
-        background=background,
-    )
-
-
-@dev_router.post("/shopify-health")
-async def shopify_health_dev():
-    start = time.perf_counter()
-    client = ShopifyClient()
-    try:
-        resp = await client.get("shop.json")
-        last = getattr(client, "last_response", None)
-        ok = last is not None and last.status == 200
-        elapsed = time.perf_counter() - start
-        return {
-            "ok": ok,
-            "status_code": last.status if last is not None else None,
-            "shop": resp,
-            "elapsed_seconds": elapsed,
-        }
-    except Exception as e:
-        elapsed = time.perf_counter() - start
-        return {"ok": False, "error": str(e), "elapsed_seconds": elapsed}
-
-# Prod environment routes
-prod_router = APIRouter(dependencies=[Depends(require_authorized)])
+# Production routes
 
 @prod_router.post("/sync-ebay-raw")
 async def sync_ebay_raw_prod(request: Request, background: bool = False):
@@ -538,6 +346,117 @@ async def shopify_health_prod():
     except Exception as e:
         elapsed = time.perf_counter() - start
         return {"ok": False, "error": str(e), "elapsed_seconds": elapsed}
+
+
+@prod_router.get("/multichannel/dashboard")
+async def multichannel_dashboard_prod(limit_recent_jobs: int = 50):
+    """Design-mode dashboard data for multichannel inventory orchestration (PROD)."""
+    return await get_sync_dashboard(limit_recent_jobs=limit_recent_jobs)
+
+
+@prod_router.get("/multichannel/command-center")
+async def multichannel_command_center_prod(
+    status: str = "all",
+    drift_only: bool = False,
+    search: str | None = None,
+    limit: int = 100,
+    skip: int = 0,
+):
+    """Inventory command-center rows (PROD)."""
+    return await get_inventory_command_center(
+        status=status,
+        drift_only=drift_only,
+        search=search,
+        limit=limit,
+        skip=skip,
+    )
+
+
+@prod_router.get("/multichannel/timeline/{sku}")
+async def multichannel_timeline_prod(sku: str, limit: int = 100):
+    """Per-SKU multichannel timeline (PROD)."""
+    return await get_item_timeline(sku=sku, limit=limit)
+
+
+@prod_router.post("/multichannel/ingest-sale")
+async def multichannel_ingest_sale_prod(payload: dict = Body(...)):
+    """Ingest a sale event into canonical inventory and enqueue channel jobs (PROD)."""
+    return await ingest_sale_event(
+        source_channel=str(payload.get("source_channel") or "manual"),
+        payload=payload.get("payload") or payload,
+        quantity_sold=int(payload.get("quantity_sold") or 1),
+        explicit_sku=payload.get("sku"),
+        explicit_event_id=payload.get("event_id"),
+        enqueue_jobs_flag=bool(payload.get("enqueue_jobs", True)),
+    )
+
+
+@prod_router.post("/multichannel/run-worker")
+async def multichannel_run_worker_prod(limit: int = 25):
+    """Run a batch of queued multichannel sync jobs (PROD)."""
+    return await run_worker_batch(limit=limit)
+
+
+@prod_router.post("/multichannel/replay-failed")
+async def multichannel_replay_failed_prod(payload: dict = Body(None)):
+    """Replay failed multichannel jobs by filters (PROD)."""
+    body = payload or {}
+    return await replay_failed_jobs(
+        target_channel=body.get("target_channel"),
+        sku=body.get("sku"),
+        error_contains=body.get("error_contains"),
+        limit=int(body.get("limit") or 200),
+    )
+
+
+@prod_router.post("/multichannel/replay-unresolved-etsy-receipts")
+async def multichannel_replay_unresolved_etsy_receipts_prod(payload: dict = Body(None)):
+    """Replay unresolved Etsy sale events that reference receipt resource URLs (PROD)."""
+    body = payload or {}
+    return await replay_unresolved_etsy_receipt_events(
+        limit=int(body.get("limit") or 200),
+        event_id=body.get("event_id"),
+    )
+
+
+@prod_router.post("/multichannel/replay-unprocessed-ebay-transactions")
+async def multichannel_replay_unprocessed_ebay_transactions_prod(payload: dict = Body(None)):
+    """Re-process stored eBay FixedPriceTransaction notifications that were never ingested (PROD)."""
+    body = payload or {}
+    return await replay_unprocessed_ebay_fixed_price_transactions(
+        limit=int(body.get("limit") or 200),
+        event_id=body.get("event_id"),
+    )
+
+
+@prod_router.post("/multichannel/reconcile/{sku}")
+async def multichannel_reconcile_sku_prod(sku: str, payload: dict = Body(None)):
+    """Queue reconciliation jobs for one SKU (PROD)."""
+    body = payload or {}
+    channels = body.get("channels")
+    return await enqueue_reconcile_jobs_for_sku(
+        sku=sku,
+        target_channels=channels if isinstance(channels, list) else None,
+        reason=str(body.get("reason") or "manual_reconcile"),
+    )
+
+
+@prod_router.get("/multichannel/policy/{sku}")
+async def multichannel_get_policy_prod(sku: str):
+    """Get per-SKU conflict policy (PROD)."""
+    return await get_conflict_policy(sku)
+
+
+@prod_router.put("/multichannel/policy/{sku}")
+async def multichannel_set_policy_prod(sku: str, payload: dict = Body(...)):
+    """Set per-SKU conflict policy (PROD)."""
+    return await set_conflict_policy(
+        sku=sku,
+        priority_channel=payload.get("priority_channel"),
+        max_delta_guard=payload.get("max_delta_guard"),
+        strict_priority=bool(payload.get("strict_priority", False)),
+        note=payload.get("note"),
+    )
 
 # Legacy routes (for backward compatibility)
 @router.post("/run")

@@ -151,8 +151,7 @@ def _make_shopify_client(env: str) -> ShopifyClient | None:
             password=settings.SHOPIFY_PASSWORD_PROD,
             store_url=settings.SHOPIFY_STORE_URL_PROD,
         )
-    logger.info("Using Shopify DEV credentials (for handle lookup)")
-    return ShopifyClient()
+    raise ValueError("Only the prod Shopify environment is supported for handle lookup")
 
 
 def _shopify_last_status(client: ShopifyClient) -> Optional[int]:
@@ -352,7 +351,7 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--batch-size", type=int, default=25, help="Baserow batch size.")
     p.add_argument(
         "--shopify-env",
-        choices=["prod", "dev", "none"],
+        choices=["prod", "none"],
         default="prod",
         help="Which Shopify credentials to use for handle lookup (product_url).",
     )

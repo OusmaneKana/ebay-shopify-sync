@@ -12,10 +12,10 @@ API_VERSION = "2023-10"  # Reverted to ensure compatibility
 
 class ShopifyClient:
     def __init__(self, api_key=None, password=None, store_url=None):
-        # Use provided params or fall back to dev settings
-        self.api_key = api_key or settings.SHOPIFY_API_KEY
-        self.password = password or settings.SHOPIFY_PASSWORD
-        self.store_url = store_url or settings.SHOPIFY_STORE_URL
+        # Use provided params or fall back to the production store settings.
+        self.api_key = api_key or settings.SHOPIFY_API_KEY_PROD
+        self.password = password or settings.SHOPIFY_PASSWORD_PROD
+        self.store_url = store_url or settings.SHOPIFY_STORE_URL_PROD
 
         self.base_url = (
             f"https://{self.api_key}:{self.password}"

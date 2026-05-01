@@ -41,16 +41,15 @@ logger = logging.getLogger(__name__)
 
 
 def _make_shopify_client(env: str) -> ShopifyClient:
-    """Create a Shopify client for the given environment (dev or prod)."""
-    if env == "prod":
-        logger.info("[BACKFILL] Using Shopify PROD credentials")
-        return ShopifyClient(
-            api_key=settings.SHOPIFY_API_KEY_PROD,
-            password=settings.SHOPIFY_PASSWORD_PROD,
-            store_url=settings.SHOPIFY_STORE_URL_PROD,
-        )
-    logger.info("[BACKFILL] Using Shopify DEV credentials")
-    return ShopifyClient()
+    """Create a Shopify client for the production environment."""
+    if env != "prod":
+        raise ValueError("Only the prod Shopify environment is supported")
+    logger.info("[BACKFILL] Using Shopify PROD credentials")
+    return ShopifyClient(
+        api_key=settings.SHOPIFY_API_KEY_PROD,
+        password=settings.SHOPIFY_PASSWORD_PROD,
+        store_url=settings.SHOPIFY_STORE_URL_PROD,
+    )
 
 
 async def _get_location_id_from_existing_product(
@@ -146,7 +145,7 @@ async def _infer_location_id_from_inventory_levels(
 
 
 async def backfill_inventory_ids(
-    env: str = "dev",
+    env: str = "prod",
     limit: Optional[int] = None,
     dry_run: bool = False,
     location_id: Optional[int] = None,
@@ -155,7 +154,7 @@ async def backfill_inventory_ids(
     Backfill inventory_item_id and location_id for existing products.
     
     Args:
-        env: "dev" or "prod"
+        env: production Shopify environment only
         limit: Maximum number of products to backfill (None = all)
         dry_run: If True, plan but don't update
         location_id: Optional location_id to use. If not provided, will try to:
@@ -442,9 +441,9 @@ def main() -> None:
     )
     parser.add_argument(
         "--env",
-        choices=["dev", "prod"],
-        default="dev",
-        help="Which Shopify environment to use (default: dev)",
+        choices=["prod"],
+        default="prod",
+        help="Which Shopify environment to use (production only)",
     )
     parser.add_argument(
         "--limit",

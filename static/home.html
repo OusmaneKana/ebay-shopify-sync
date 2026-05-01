@@ -50,7 +50,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 18px;
       margin-top: 18px;
     }
@@ -113,10 +113,42 @@
 
     <div class="card">
       <div>
+        <h2>Etsy Match Review</h2>
+        <p>Review Etsy listings, inspect candidate Mongo SKU matches, and approve or deny links.</p>
+      </div>
+      <a class="button" href="/etsy-review">Open Etsy Review</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <h2>Channel Compare</h2>
+        <p>Compare normalized records against Etsy and Shopify snapshots to spot drift quickly.</p>
+      </div>
+      <a class="button" href="/channel-compare">Open Channel Compare</a>
+    </div>
+
+    <div class="card">
+      <div>
         <h2>Admin</h2>
-        <p>Run sync workflows and maintenance endpoints for dev/prod environments.</p>
+        <p>Run sync workflows and maintenance endpoints for the production environment.</p>
       </div>
       <a class="button" href="/admin">Open Admin</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <h2>Multichannel</h2>
+        <p>Monitor queued sync jobs, replay dead letters, and manage per-SKU conflict policies.</p>
+      </div>
+      <a class="button" href="/multichannel-dashboard">Open Multichannel</a>
+    </div>
+
+    <div class="card">
+      <div>
+        <h2>Command Center</h2>
+        <p>Review SKU-level inventory drift, replay failed jobs, and trigger reconcile actions.</p>
+      </div>
+      <a class="button" href="/inventory-command-center">Open Command Center</a>
     </div>
   </div>
 

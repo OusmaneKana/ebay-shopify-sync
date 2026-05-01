@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Item Detail Timeline</title>
+  <style>
+    :root {
+      --bg-1: #111827;
+      --bg-2: #0f172a;
+      --card: rgba(15, 23, 42, 0.92);
+      --border: #223047;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #f97316;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --info: #38bdf8;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(900px 500px at 100% 0%, rgba(249, 115, 22, 0.12), transparent 55%),
+        radial-gradient(700px 500px at 0% 100%, rgba(56, 189, 248, 0.1), transparent 55%),
+        linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    }
+
+    h1 { margin: 0; font-size: 30px; }
+    .subtitle { color: var(--muted); margin: 6px 0 0; font-size: 14px; }
+
+    .topbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      padding: 14px;
+      box-shadow: 0 18px 44px rgba(2, 6, 23, 0.45);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+
+    input, select, button {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0b1220;
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    button { cursor: pointer; font-weight: 600; }
+    button:hover { border-color: var(--accent); }
+    button.primary { border-color: var(--accent); }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .metric {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(2, 6, 23, 0.55);
+      padding: 10px;
+    }
+
+    .metric .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .metric .v { font-size: 22px; font-weight: 700; margin-top: 4px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(320px, 0.9fr);
+      gap: 14px;
+      margin-top: 14px;
+      align-items: start;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .entry {
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--info);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: rgba(2, 6, 23, 0.58);
+    }
+
+    .entry.event { border-left-color: var(--accent); }
+    .entry.job { border-left-color: var(--info); }
+    .entry.policy { border-left-color: var(--warn); }
+
+    .entry-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .entry-title { font-size: 17px; font-weight: 700; }
+    .entry-time { color: var(--muted); font-size: 12px; }
+    .entry-status { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .entry-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 12px;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+
+    .field { color: var(--muted); }
+    .value { color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .raw {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(2, 6, 23, 0.65);
+      max-height: 70vh;
+      overflow: auto;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .muted { color: var(--muted); font-size: 12px; }
+
+    @media (max-width: 1100px) {
+      .controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .layout { grid-template-columns: minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Item Detail Timeline</h1>
+  <p class="subtitle">Single-SKU event history across canonical inventory, channel jobs, and policy changes.</p>
+
+  <div class="topbar">
+    <a href="/"><button>Home</button></a>
+    <a href="/inventory-command-center"><button>Command Center</button></a>
+    <a href="/multichannel-dashboard"><button>Multichannel Dashboard</button></a>
+    <button onclick="goBack()">Back</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="panel">
+    <div class="controls">
+      <div>
+        <label>Environment</label>
+        <input value="prod" disabled />
+      </div>
+      <div>
+        <label for="sku">SKU</label>
+        <input id="sku" type="text" placeholder="required" />
+      </div>
+      <div>
+        <label for="limit">Entries</label>
+        <input id="limit" type="number" min="1" max="250" value="100" />
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button class="primary" onclick="loadTimeline()">Load Timeline</button>
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button onclick="openCommandCenter()">Back To Command Center</button>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="metric"><div class="k">Canonical Qty</div><div class="v" id="mQty">-</div></div>
+      <div class="metric"><div class="k">Events</div><div class="v" id="mEvents">-</div></div>
+      <div class="metric"><div class="k">Jobs</div><div class="v" id="mJobs">-</div></div>
+      <div class="metric"><div class="k">Policy Changes</div><div class="v" id="mPolicies">-</div></div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+      <div id="productMeta" class="muted">No SKU loaded.</div>
+      <div id="timeline" class="timeline" style="margin-top: 12px;"></div>
+    </div>
+    <div class="stack">
+      <div class="panel">
+        <div style="font-weight: 700; margin-bottom: 8px;">Selected Entry</div>
+        <div id="selectedRaw" class="raw">Select an entry to inspect raw data.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function requestUrl(path) {
+      return `/sync/prod${path}`;
+    }
+
+    async function requestJson(url, options = {}) {
+      const resp = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.headers || {}),
+        },
+      });
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(text || `HTTP ${resp.status}`);
+      }
+      return await resp.json();
+    }
+
+    function fmt(value) {
+      return value === null || value === undefined || value === '' ? '-' : String(value);
+    }
+
+    function renderSummary(data) {
+      const product = data.product || {};
+      const counts = data.counts || {};
+      document.getElementById('mQty').textContent = fmt(product.canonical_qty);
+      document.getElementById('mEvents').textContent = fmt(counts.events);
+      document.getElementById('mJobs').textContent = fmt(counts.jobs);
+      document.getElementById('mPolicies').textContent = fmt(counts.policy_changes);
+      document.getElementById('productMeta').textContent = `${product.sku || '-'} | ${product.title || '-'} | Updated ${product.updated_at ? new Date(product.updated_at).toLocaleString() : '-'}`;
+    }
+
+    function showRaw(entry) {
+      document.getElementById('selectedRaw').textContent = JSON.stringify(entry.raw || entry, null, 2);
+    }
+
+    function renderEntryField(label, value) {
+      return `<div><span class="field">${label}</span><br/><span class="value">${fmt(value)}</span></div>`;
+    }
+
+    function renderTimeline(entries) {
+      const root = document.getElementById('timeline');
+      if (!entries.length) {
+        root.innerHTML = '<div class="muted">No timeline entries for this SKU.</div>';
+        document.getElementById('selectedRaw').textContent = 'No entry selected.';
+        return;
+      }
+
+      root.innerHTML = entries.map((entry, index) => {
+        const summary = entry.summary || {};
+        return `
+          <div class="entry ${entry.kind}" onclick="window.__selectEntry(${index})">
+            <div class="entry-top">
+              <div>
+                <div class="entry-title">${entry.title || entry.kind || 'entry'}</div>
+                <div class="entry-status">${fmt(entry.kind)} | ${fmt(entry.status)}</div>
+              </div>
+              <div class="entry-time">${entry.timestamp ? new Date(entry.timestamp).toLocaleString() : '-'}</div>
+            </div>
+            <div class="entry-summary">
+              ${renderEntryField('Event / Job', summary.event_id || summary.job_id)}
+              ${renderEntryField('Channel', summary.source_channel || summary.target_channel || summary.priority_channel)}
+              ${renderEntryField('Before', summary.quantity_before)}
+              ${renderEntryField('After / Target', summary.quantity_after ?? summary.target_qty)}
+              ${renderEntryField('Qty Sold / Attempts', summary.quantity_sold ?? summary.attempts)}
+              ${renderEntryField('Reason / Note', summary.reason || summary.note || summary.error)}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      window.__timelineEntries = entries;
+      window.__selectEntry = (index) => showRaw(window.__timelineEntries[index]);
+      showRaw(entries[0]);
+    }
+
+    async function loadTimeline() {
+      const sku = document.getElementById('sku').value.trim();
+      const limit = Number(document.getElementById('limit').value || 100);
+      if (!sku) {
+        alert('SKU is required.');
+        return;
+      }
+
+      try {
+        const data = await requestJson(requestUrl(`/multichannel/timeline/${encodeURIComponent(sku)}?limit=${limit}`));
+        if (!data.ok) {
+          throw new Error(data.reason || 'timeline load failed');
+        }
+        renderSummary(data);
+        renderTimeline(data.entries || []);
+      } catch (err) {
+        alert(`Timeline load failed: ${err.message}`);
+      }
+    }
+
+    function openCommandCenter() {
+      window.location.href = `/inventory-command-center`;
+    }
+
+    function goBack() {
+      if (document.referrer) {
+        window.history.back();
+        return;
+      }
+      openCommandCenter();
+    }
+
+    async function logout() {
+      try {
+        await fetch('/auth/logout', { method: 'POST' });
+      } catch (_) {}
+      window.location.href = '/login';
+    }
+
+    (function initFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const sku = params.get('sku') || '';
+      const limit = params.get('limit') || '100';
+      document.getElementById('sku').value = sku;
+      document.getElementById('limit').value = limit;
+      if (sku) {
+        loadTimeline();
+      }
+    })();
+  </script>
+</body>
+</html>

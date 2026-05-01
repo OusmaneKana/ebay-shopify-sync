@@ -21,15 +21,14 @@ logger = logging.getLogger(__name__)
 
 
 def _make_shopify_client(env: str) -> ShopifyClient:
-    if env == "prod":
-        logger.info("Using Shopify PROD credentials")
-        return ShopifyClient(
-            api_key=settings.SHOPIFY_API_KEY_PROD,
-            password=settings.SHOPIFY_PASSWORD_PROD,
-            store_url=settings.SHOPIFY_STORE_URL_PROD,
-        )
-    logger.info("Using Shopify DEV credentials")
-    return ShopifyClient()
+    if env != "prod":
+        raise ValueError("Only the prod Shopify environment is supported")
+    logger.info("Using Shopify PROD credentials")
+    return ShopifyClient(
+        api_key=settings.SHOPIFY_API_KEY_PROD,
+        password=settings.SHOPIFY_PASSWORD_PROD,
+        store_url=settings.SHOPIFY_STORE_URL_PROD,
+    )
 
 
 def _is_http_ok(status: Optional[int]) -> bool:
@@ -232,9 +231,9 @@ def main() -> None:
     )
     parser.add_argument(
         "--env",
-        choices=["dev", "prod"],
-        default="dev",
-        help="Which Shopify environment to use (default: dev)",
+        choices=["prod"],
+        default="prod",
+        help="Which Shopify environment to use (production only)",
     )
     parser.add_argument(
         "--tag",

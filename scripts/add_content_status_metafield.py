@@ -69,15 +69,14 @@ def _extract_next_link(link_header: str | None) -> str | None:
 
 
 def _make_shopify_client(env: str) -> ShopifyClient:
-    if env == "prod":
-        logger.info("Using Shopify PROD credentials")
-        return ShopifyClient(
-            api_key=settings.SHOPIFY_API_KEY_PROD,
-            password=settings.SHOPIFY_PASSWORD_PROD,
-            store_url=settings.SHOPIFY_STORE_URL_PROD,
-        )
-    logger.info("Using Shopify DEV credentials")
-    return ShopifyClient()
+    if env != "prod":
+        raise ValueError("Only the prod Shopify environment is supported")
+    logger.info("Using Shopify PROD credentials")
+    return ShopifyClient(
+        api_key=settings.SHOPIFY_API_KEY_PROD,
+        password=settings.SHOPIFY_PASSWORD_PROD,
+        store_url=settings.SHOPIFY_STORE_URL_PROD,
+    )
 
 
 def _last_status(client: ShopifyClient) -> Optional[int]:
@@ -110,7 +109,7 @@ async def _put_ok(client: ShopifyClient, endpoint: str, payload: dict) -> dict:
 
 async def add_content_status_metafield(
     *,
-    env: str = "dev",
+    env: str = "prod",
     source: str = "shopify",
     value: str = "pending",
     limit: Optional[int] = None,
@@ -316,9 +315,9 @@ def main() -> None:
     )
     parser.add_argument(
         "--env",
-        choices=["dev", "prod"],
-        default="dev",
-        help="Which Shopify environment to target (dev or prod). Default: dev",
+        choices=["prod"],
+        default="prod",
+        help="Which Shopify environment to target (production only)",
     )
     parser.add_argument(
         "--source",

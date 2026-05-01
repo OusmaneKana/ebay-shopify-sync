@@ -75,6 +75,39 @@
       align-items: start;
     }
 
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .kpi {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(2, 6, 23, 0.65);
+    }
+
+    .kpi .label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .kpi .value {
+      margin-top: 4px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .kpi .subvalue {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
     .card {
       background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
       border: 1px solid var(--border);
@@ -220,6 +253,7 @@
     .small { color: var(--muted); font-size: 12px; }
 
     @media (max-width: 1080px) {
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .layout { grid-template-columns: 1fr; }
       .channel-grid, .comp-grid { grid-template-columns: 1fr; }
     }
@@ -236,6 +270,29 @@
       <a class="btn" href="/reporting">Reporting</a>
       <a class="btn" href="/etsy-review">Etsy Review</a>
       <button onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi">
+      <div class="label">eBay Total Inventory</div>
+      <div class="value" id="kpiEbayInv">-</div>
+      <div class="subvalue" id="kpiProducts">-</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Shopify Total Inventory</div>
+      <div class="value" id="kpiShopifyInv">-</div>
+      <div class="subvalue" id="kpiShopifyMissing">-</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Etsy Total Inventory</div>
+      <div class="value" id="kpiEtsyInv">-</div>
+      <div class="subvalue" id="kpiEtsyMissing">-</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Likely Not Synced Yet</div>
+      <div class="value" id="kpiUnsynced">-</div>
+      <div class="subvalue">max(missing Etsy, missing Shopify)</div>
     </div>
   </div>
 
@@ -344,6 +401,38 @@
       `).join('');
     }
 
+    function fmtNum(v) {
+      const n = Number(v || 0);
+      return n.toLocaleString();
+    }
+
+    async function loadKpis() {
+      const r = await fetch('/reporting/channel-compare/kpis');
+      const d = await r.json();
+      if (!r.ok) {
+        document.getElementById('kpiEbayInv').textContent = 'error';
+        document.getElementById('kpiShopifyInv').textContent = 'error';
+        document.getElementById('kpiEtsyInv').textContent = 'error';
+        document.getElementById('kpiUnsynced').textContent = 'error';
+        return;
+      }
+
+      const k = d.kpis || {};
+      const totalProducts = Number(k.total_products || 0);
+      const etsyMissing = Number(k.etsy_missing_products || 0);
+      const shopifyMissing = Number(k.shopify_missing_products || 0);
+      const likelyUnsynced = Math.max(etsyMissing, shopifyMissing);
+
+      document.getElementById('kpiEbayInv').textContent = fmtNum(k.ebay_total_inventory);
+      document.getElementById('kpiShopifyInv').textContent = fmtNum(k.shopify_total_inventory);
+      document.getElementById('kpiEtsyInv').textContent = fmtNum(k.etsy_total_inventory);
+      document.getElementById('kpiUnsynced').textContent = fmtNum(likelyUnsynced);
+
+      document.getElementById('kpiProducts').textContent = `${fmtNum(totalProducts)} total products`;
+      document.getElementById('kpiShopifyMissing').textContent = `${fmtNum(shopifyMissing)} missing Shopify link`;
+      document.getElementById('kpiEtsyMissing').textContent = `${fmtNum(etsyMissing)} missing Etsy link`;
+    }
+
     async function loadList() {
       const q = document.getElementById('q').value.trim();
       const driftOnly = document.getElementById('driftOnly').checked;
@@ -361,6 +450,7 @@
 
       document.getElementById('listMeta').textContent = `${d.count} item(s)`;
       renderRows(d.items || []);
+      await loadKpis();
     }
 
     function setImage(elId, src) {
@@ -449,8 +539,7 @@
         ['Price', esc(fmt(live.price))],
         ['Quantity', esc(fmt(live.quantity))],
         ['Variant ID', esc(fmt(live.variant_id))],
-        ['Open DEV', shopify.links?.dev ? `<a class="btn" href="${esc(shopify.links.dev)}" target="_blank" rel="noopener noreferrer">Open Shopify DEV</a>` : '—'],
-        ['Open PROD', shopify.links?.prod ? `<a class="btn" href="${esc(shopify.links.prod)}" target="_blank" rel="noopener noreferrer">Open Shopify PROD</a>` : '—'],
+        ['Open Shopify', shopify.links?.prod ? `<a class="btn" href="${esc(shopify.links.prod)}" target="_blank" rel="noopener noreferrer">Open Shopify</a>` : '—'],
       ]);
 
       renderCompare(d.comparisons || {});

@@ -99,6 +99,27 @@ async def channel_compare_page(request: Request):
     return FileResponse("static/channel_compare.html")
 
 
+@app.get("/multichannel-dashboard", response_class=FileResponse)
+async def multichannel_dashboard_page(request: Request):
+    if passkey_enabled() and not is_authorized(request):
+        return RedirectResponse(url="/login?next=/multichannel-dashboard")
+    return FileResponse("static/multichannel_dashboard.html")
+
+
+@app.get("/inventory-command-center", response_class=FileResponse)
+async def inventory_command_center_page(request: Request):
+    if passkey_enabled() and not is_authorized(request):
+        return RedirectResponse(url="/login?next=/inventory-command-center")
+    return FileResponse("static/inventory_command_center.html")
+
+
+@app.get("/item-detail-timeline", response_class=FileResponse)
+async def item_detail_timeline_page(request: Request):
+    if passkey_enabled() and not is_authorized(request):
+        return RedirectResponse(url="/login?next=/item-detail-timeline")
+    return FileResponse("static/item_detail_timeline.html")
+
+
 @app.get("/login", response_class=FileResponse)
 async def login_page():
     return FileResponse("static/login.html")

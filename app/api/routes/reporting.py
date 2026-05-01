@@ -1,8 +1,12 @@
 import re
 import json
+import copy
+import asyncio
 from pathlib import Path
 from datetime import datetime, timezone
 
+import httpx
+from openpyxl import load_workbook
 from fastapi import APIRouter, Query, HTTPException
 
 from app.database.mongo import db
@@ -12,6 +16,12 @@ router = APIRouter()
 
 MATCH_REPORT_PATH = Path("logs/etsy_title_match_analysis.json")
 REVIEW_COLLECTION = "etsy_match_review"
+EXCEL_REVIEW_PATTERNS = [
+    "active_etsy_no_ebay_match_with_mongo_candidates_and_shopify_link_*.xlsx",
+    "active_etsy_no_ebay_match_with_mongo_candidates_*.xlsx",
+    "active_etsy_no_ebay_match_*.xlsx",
+]
+ETSY_BASE_URL = "https://openapi.etsy.com/v3/application"
 
 
 def _ensure_utc(dt: datetime | None) -> datetime | None:
@@ -46,12 +56,240 @@ def _build_shopify_links(shopify_id: object) -> dict | None:
     except Exception:
         return None
 
-    links: dict[str, str] = {}
-    if settings.SHOPIFY_STORE_URL:
-        links["dev"] = f"https://{settings.SHOPIFY_STORE_URL}/admin/products/{pid}"
     if settings.SHOPIFY_STORE_URL_PROD:
-        links["prod"] = f"https://{settings.SHOPIFY_STORE_URL_PROD}/admin/products/{pid}"
-    return links or None
+        store = str(settings.SHOPIFY_STORE_URL_PROD).strip()
+        if store.startswith("http://") or store.startswith("https://"):
+            base = store.rstrip("/")
+        else:
+            base = f"https://{store}".rstrip("/")
+        return {"prod": f"{base}/admin/products/{pid}"}
+    return None
+
+
+def _find_latest_excel_review_path() -> Path:
+    root = Path(".")
+    candidates: list[Path] = []
+    for pattern in EXCEL_REVIEW_PATTERNS:
+        candidates.extend(root.glob(pattern))
+
+    if not candidates:
+        raise HTTPException(
+            status_code=404,
+            detail="No Etsy review workbook found. Generate the Excel report first.",
+        )
+    return max(candidates, key=lambda p: p.stat().st_mtime)
+
+
+def _normalize_header(value: object) -> str:
+    return str(value or "").strip().lower()
+
+
+def _load_excel_rows(workbook_path: Path) -> tuple[list[dict], dict[str, int]]:
+    wb = load_workbook(workbook_path, read_only=True, data_only=True)
+    ws = wb.active
+    rows_iter = ws.iter_rows(values_only=True)
+    headers = next(rows_iter, None)
+    if not headers:
+        return [], {}
+
+    header_map = {_normalize_header(h): i for i, h in enumerate(headers)}
+    out_rows: list[dict] = []
+    for values in rows_iter:
+        row: dict = {}
+        for key, idx in header_map.items():
+            row[key] = values[idx] if idx < len(values) else None
+        out_rows.append(row)
+    return out_rows, header_map
+
+
+def _extract_etsy_image_from_doc(etsy_doc: dict | None) -> str | None:
+    if not etsy_doc:
+        return None
+
+    raw = (etsy_doc.get("raw") or {}) if isinstance(etsy_doc, dict) else {}
+    images = raw.get("images")
+    if isinstance(images, list) and images:
+        image = images[0] if isinstance(images[0], dict) else None
+        if image:
+            for key in ("url_fullxfull", "url_570xN", "url_170x135", "url_75x75"):
+                val = image.get(key)
+                if val:
+                    return str(val)
+    return None
+
+
+async def _resolve_etsy_auth_headers_for_review() -> dict[str, str]:
+    token = settings.ETSY_TOKEN
+    if not token:
+        token_doc = await db["etsy_oauth_tokens"].find_one({"_id": "primary"}, {"access_token": 1})
+        token = token_doc.get("access_token") if token_doc else None
+    if not token:
+        raise HTTPException(status_code=400, detail="Missing Etsy token")
+
+    if settings.ETSY_CLIENT_ID and settings.ETSY_CLIENT_SECRET:
+        api_key = f"{settings.ETSY_CLIENT_ID}:{settings.ETSY_CLIENT_SECRET}"
+    else:
+        api_key = settings.ETSY_CLIENT_ID
+    if not api_key:
+        raise HTTPException(status_code=400, detail="Missing Etsy API key")
+
+    return {
+        "Authorization": f"Bearer {token}",
+        "x-api-key": str(api_key),
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+
+
+def _money_to_float(value: object) -> float:
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, dict):
+        amount = value.get("amount")
+        divisor = value.get("divisor")
+        if amount is None or divisor in (None, 0):
+            raise ValueError(f"invalid_money_value={value!r}")
+        return float(amount) / float(divisor)
+    raise ValueError(f"unsupported_price_value={value!r}")
+
+
+def _build_etsy_inventory_update_payload(inventory: dict, new_sku: str, target_quantity: int) -> dict:
+    products = inventory.get("products") or []
+    if not products:
+        raise HTTPException(status_code=400, detail="etsy_inventory_missing_products")
+
+    payload_products: list[dict] = []
+    for product in products:
+        offerings = product.get("offerings") or []
+        if not offerings:
+            raise HTTPException(status_code=400, detail="etsy_inventory_product_missing_offerings")
+
+        payload_offerings: list[dict] = []
+        positive_quantity_found = False
+        for offering in offerings:
+            quantity = int(offering.get("quantity") or 0)
+            if quantity > 0:
+                positive_quantity_found = True
+            payload_offerings.append(
+                {
+                    "price": _money_to_float(offering.get("price")),
+                    "quantity": quantity,
+                    "is_enabled": bool(offering.get("is_enabled")),
+                    "readiness_state_id": offering.get("readiness_state_id"),
+                }
+            )
+
+        if not positive_quantity_found and target_quantity > 0:
+            first_enabled_index = next(
+                (index for index, item in enumerate(payload_offerings) if item["is_enabled"]),
+                0,
+            )
+            payload_offerings[first_enabled_index]["quantity"] = int(target_quantity)
+
+        payload_product: dict = {
+            "sku": str(new_sku),
+            "offerings": payload_offerings,
+        }
+        property_values = product.get("property_values") or []
+        if property_values:
+            payload_product["property_values"] = copy.deepcopy(property_values)
+        payload_products.append(payload_product)
+
+    return {
+        "products": payload_products,
+        "price_on_property": copy.deepcopy(inventory.get("price_on_property") or []),
+        "quantity_on_property": copy.deepcopy(inventory.get("quantity_on_property") or []),
+        "sku_on_property": copy.deepcopy(inventory.get("sku_on_property") or []),
+        "readiness_state_on_property": copy.deepcopy(inventory.get("readiness_state_on_property") or []),
+    }
+
+
+async def _update_etsy_listing_sku_for_review(
+    *,
+    listing_id: int,
+    new_sku: str,
+    target_quantity: int,
+    headers: dict[str, str],
+) -> None:
+    async with httpx.AsyncClient(timeout=45.0) as client:
+        get_response = await client.get(
+            f"{ETSY_BASE_URL}/listings/{listing_id}/inventory",
+            headers=headers,
+            params={"show_deleted": "true"},
+        )
+        if get_response.status_code >= 400:
+            raise HTTPException(
+                status_code=400,
+                detail=f"etsy_inventory_get_failed status={get_response.status_code}",
+            )
+
+        inventory_payload = get_response.json() if get_response.content else {}
+        update_payload = _build_etsy_inventory_update_payload(inventory_payload, new_sku, target_quantity)
+
+        put_response = await client.put(
+            f"{ETSY_BASE_URL}/listings/{listing_id}/inventory",
+            headers=headers,
+            content=json.dumps(update_payload),
+        )
+        if put_response.status_code >= 400:
+            raise HTTPException(
+                status_code=400,
+                detail=f"etsy_inventory_put_failed status={put_response.status_code}",
+            )
+
+
+async def _fetch_etsy_main_image_from_api(
+    client: httpx.AsyncClient,
+    headers: dict[str, str],
+    listing_id: int,
+) -> str | None:
+    response = await client.get(
+        f"{ETSY_BASE_URL}/listings/{listing_id}/images",
+        headers=headers,
+    )
+    if response.status_code >= 400:
+        return None
+    payload = response.json() if response.content else {}
+    results = payload.get("results") or []
+    if not results:
+        return None
+
+    first = results[0] if isinstance(results[0], dict) else None
+    if not first:
+        return None
+    for key in ("url_fullxfull", "url_570xN", "url_170x135", "url_75x75"):
+        value = first.get(key)
+        if value:
+            return str(value)
+    return None
+
+
+def _remove_listing_from_excel(workbook_path: Path, listing_id: int) -> bool:
+    wb = load_workbook(workbook_path)
+    ws = wb.active
+    headers = [str(c.value or "").strip().lower() for c in ws[1]]
+    if "listing_id" not in headers:
+        raise HTTPException(status_code=400, detail="Workbook missing listing_id column")
+
+    listing_col = headers.index("listing_id") + 1
+    target_row = None
+    for row_num in range(2, ws.max_row + 1):
+        value = ws.cell(row=row_num, column=listing_col).value
+        try:
+            if int(value) == int(listing_id):
+                target_row = row_num
+                break
+        except Exception:
+            continue
+
+    if target_row is None:
+        wb.close()
+        return False
+
+    ws.delete_rows(target_row, 1)
+    wb.save(workbook_path)
+    wb.close()
+    return True
 
 
 def _to_float(value: object) -> float | None:
@@ -106,34 +344,31 @@ async def _fetch_shopify_snapshot(shopify_id: object) -> dict | None:
     if sid is None:
         return None
 
-    clients = [
-        ("dev", ShopifyClient()),
-    ]
+    client = None
     if settings.SHOPIFY_API_KEY_PROD and settings.SHOPIFY_PASSWORD_PROD and settings.SHOPIFY_STORE_URL_PROD:
-        clients.append(
-            (
-                "prod",
-                ShopifyClient(
-                    api_key=settings.SHOPIFY_API_KEY_PROD,
-                    password=settings.SHOPIFY_PASSWORD_PROD,
-                    store_url=settings.SHOPIFY_STORE_URL_PROD,
-                ),
-            )
+        client = ShopifyClient(
+            api_key=settings.SHOPIFY_API_KEY_PROD,
+            password=settings.SHOPIFY_PASSWORD_PROD,
+            store_url=settings.SHOPIFY_STORE_URL_PROD,
         )
+
+    if client is None:
+        return {
+            "product_id": sid,
+            "error": "shopify_prod_credentials_not_configured",
+        }
 
     product = None
     source_store = None
     last_error = None
-    for store_name, client in clients:
-        try:
-            resp = await client.get(f"products/{sid}.json")
-            candidate = (resp or {}).get("product")
-            if isinstance(candidate, dict):
-                product = candidate
-                source_store = store_name
-                break
-        except Exception as exc:
-            last_error = str(exc)
+    try:
+        resp = await client.get(f"products/{sid}.json")
+        candidate = (resp or {}).get("product")
+        if isinstance(candidate, dict):
+            product = candidate
+            source_store = "prod"
+    except Exception as exc:
+        last_error = str(exc)
 
     if not isinstance(product, dict):
         return {
@@ -630,6 +865,279 @@ async def etsy_match_deny(payload: dict):
     return {"ok": True}
 
 
+@router.get("/etsy-match-excel/summary")
+async def etsy_match_excel_summary():
+    workbook_path = _find_latest_excel_review_path()
+    rows, _ = _load_excel_rows(workbook_path)
+    with_shopify = sum(1 for row in rows if row.get("matched_shopify_link"))
+    with_sku = sum(1 for row in rows if row.get("matched_mongo_sku"))
+    return {
+        "workbook": str(workbook_path),
+        "count": len(rows),
+        "with_shopify_link": with_shopify,
+        "with_matched_sku": with_sku,
+        "generated_at": _now_utc(),
+    }
+
+
+@router.get("/etsy-match-excel/review")
+async def etsy_match_excel_review(
+    limit: int = Query(default=500, ge=1, le=2000),
+):
+    workbook_path = _find_latest_excel_review_path()
+    rows, _ = _load_excel_rows(workbook_path)
+    selected = rows[:limit]
+
+    listing_ids: list[int] = []
+    skus: list[str] = []
+    for row in selected:
+        try:
+            listing_ids.append(int(row.get("listing_id")))
+        except Exception:
+            pass
+        sku = row.get("matched_mongo_sku")
+        if sku:
+            skus.append(str(sku))
+
+    etsy_docs_by_listing: dict[int, dict] = {}
+    if listing_ids:
+        cursor = db.etsy_listings_investigation.find(
+            {"listing_id": {"$in": listing_ids}},
+            {"_id": 0, "listing_id": 1, "title": 1, "url": 1, "raw.images": 1},
+        )
+        async for doc in cursor:
+            try:
+                etsy_docs_by_listing[int(doc.get("listing_id"))] = doc
+            except Exception:
+                continue
+
+    norm_docs_by_sku: dict[str, dict] = {}
+    if skus:
+        cursor = db.product_normalized.find(
+            {"_id": {"$in": skus}},
+            {
+                "_id": 1,
+                "title": 1,
+                "images": 1,
+                "quantity": 1,
+                "shopify_id": 1,
+                "channels.shopify.shopify_id": 1,
+            },
+        )
+        async for doc in cursor:
+            norm_docs_by_sku[str(doc.get("_id"))] = doc
+
+    etsy_images_by_listing: dict[int, str | None] = {}
+    listings_missing_image: list[int] = []
+
+    for listing_id in listing_ids:
+        etsy_doc = etsy_docs_by_listing.get(listing_id)
+        image = _extract_etsy_image_from_doc(etsy_doc)
+        etsy_images_by_listing[listing_id] = image
+        if not image:
+            listings_missing_image.append(listing_id)
+
+    if listings_missing_image:
+        headers = None
+        try:
+            headers = await _resolve_etsy_auth_headers_for_review()
+        except HTTPException:
+            headers = None
+
+        if headers:
+            semaphore = asyncio.Semaphore(6)
+            async with httpx.AsyncClient(timeout=20.0) as client:
+                async def _fetch_one(lid: int) -> None:
+                    async with semaphore:
+                        image_url = await _fetch_etsy_main_image_from_api(client, headers, lid)
+                        if image_url:
+                            etsy_images_by_listing[lid] = image_url
+
+                await asyncio.gather(*(_fetch_one(lid) for lid in listings_missing_image))
+
+    out: list[dict] = []
+    for row in selected:
+        listing_id_raw = row.get("listing_id")
+        try:
+            listing_id = int(listing_id_raw)
+        except Exception:
+            listing_id = None
+
+        sku = str(row.get("matched_mongo_sku") or "").strip() or None
+        etsy_doc = etsy_docs_by_listing.get(listing_id) if listing_id is not None else None
+        norm_doc = norm_docs_by_sku.get(sku) if sku else None
+
+        shopify_id = None
+        if norm_doc:
+            shopify_id = (
+                (norm_doc.get("channels") or {}).get("shopify", {}).get("shopify_id")
+                or norm_doc.get("shopify_id")
+            )
+
+        shopify_image = None
+        if norm_doc:
+            images = norm_doc.get("images") or []
+            if images:
+                shopify_image = images[0]
+
+        etsy_image = etsy_images_by_listing.get(listing_id) if listing_id is not None else None
+
+        out.append(
+            {
+                "listing_id": listing_id,
+                "etsy_title": row.get("live_title") or (etsy_doc or {}).get("title"),
+                "etsy_link": row.get("live_url") or (etsy_doc or {}).get("url"),
+                "etsy_image": etsy_image,
+                "matched_mongo_title": row.get("matched_mongo_title") or (norm_doc or {}).get("title"),
+                "matched_mongo_sku": sku,
+                "confidence_rate": row.get("confidence_rate"),
+                "matched_shopify_link": row.get("matched_shopify_link"),
+                "shopify_image": shopify_image,
+                "shopify_id": shopify_id,
+                "shopify_links": _build_shopify_links(shopify_id),
+                "mongo_quantity": (norm_doc or {}).get("quantity"),
+            }
+        )
+
+    return {
+        "workbook": str(workbook_path),
+        "count": len(out),
+        "items": out,
+    }
+
+
+@router.post("/etsy-match-excel/review/approve")
+async def etsy_match_excel_approve(payload: dict):
+    return await _approve_excel_match(payload)
+
+
+async def _approve_excel_match(
+    payload: dict,
+    *,
+    headers: dict[str, str] | None = None,
+    workbook_path: Path | None = None,
+) -> dict:
+    listing_id = payload.get("listing_id")
+    sku = str(payload.get("matched_mongo_sku") or "").strip()
+    if not listing_id or not sku:
+        raise HTTPException(status_code=400, detail="listing_id and matched_mongo_sku are required")
+
+    try:
+        listing_id_int = int(listing_id)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail="invalid_listing_id") from exc
+
+    norm_doc = await db.product_normalized.find_one({"_id": sku}, {"_id": 1, "quantity": 1})
+    if not norm_doc:
+        raise HTTPException(status_code=404, detail="matched_mongo_sku_not_found")
+
+    etsy_headers = headers or await _resolve_etsy_auth_headers_for_review()
+    target_quantity = int(norm_doc.get("quantity") or 0)
+    await _update_etsy_listing_sku_for_review(
+        listing_id=listing_id_int,
+        new_sku=sku,
+        target_quantity=target_quantity,
+        headers=etsy_headers,
+    )
+
+    ok, reason = await _apply_match_row(
+        {
+            "etsy_listing_id": listing_id_int,
+            "normalized_sku": sku,
+            "score": payload.get("confidence_rate"),
+            "bucket": "excel_review",
+        },
+        matched_by="excel_manual_review",
+    )
+    if not ok:
+        raise HTTPException(status_code=400, detail=reason)
+
+    workbook = workbook_path or _find_latest_excel_review_path()
+    removed = _remove_listing_from_excel(workbook, listing_id_int)
+
+    return {
+        "ok": True,
+        "listing_id": listing_id_int,
+        "matched_mongo_sku": sku,
+        "removed_from_excel": removed,
+        "workbook": str(workbook),
+    }
+
+
+@router.put("/etsy-match-excel/review/approve-batch")
+async def etsy_match_excel_approve_batch(payload: dict):
+    approvals = payload.get("approvals") if isinstance(payload, dict) else None
+    if not isinstance(approvals, list) or not approvals:
+        raise HTTPException(status_code=400, detail="approvals list is required")
+
+    workbook_path = _find_latest_excel_review_path()
+    headers = await _resolve_etsy_auth_headers_for_review()
+
+    successes: list[dict] = []
+    failures: list[dict] = []
+    for item in approvals:
+        try:
+            result = await _approve_excel_match(item, headers=headers, workbook_path=workbook_path)
+            successes.append(
+                {
+                    "listing_id": result.get("listing_id"),
+                    "matched_mongo_sku": result.get("matched_mongo_sku"),
+                    "removed_from_excel": result.get("removed_from_excel"),
+                }
+            )
+        except HTTPException as exc:
+            failures.append(
+                {
+                    "listing_id": item.get("listing_id") if isinstance(item, dict) else None,
+                    "matched_mongo_sku": (item or {}).get("matched_mongo_sku") if isinstance(item, dict) else None,
+                    "detail": exc.detail,
+                    "status_code": exc.status_code,
+                }
+            )
+        except Exception as exc:
+            failures.append(
+                {
+                    "listing_id": item.get("listing_id") if isinstance(item, dict) else None,
+                    "matched_mongo_sku": (item or {}).get("matched_mongo_sku") if isinstance(item, dict) else None,
+                    "detail": str(exc),
+                    "status_code": 500,
+                }
+            )
+
+    return {
+        "ok": len(failures) == 0,
+        "workbook": str(workbook_path),
+        "requested": len(approvals),
+        "applied": len(successes),
+        "failed": len(failures),
+        "successes": successes,
+        "failures": failures,
+    }
+
+
+@router.post("/etsy-match-excel/review/deny")
+async def etsy_match_excel_deny(payload: dict):
+    listing_id = payload.get("listing_id")
+    sku = str(payload.get("matched_mongo_sku") or "").strip() or None
+    reason = payload.get("reason")
+    if not listing_id:
+        raise HTTPException(status_code=400, detail="listing_id is required")
+
+    await db[REVIEW_COLLECTION].update_one(
+        {"etsy_listing_id": listing_id, "normalized_sku": sku},
+        {
+            "$set": {
+                "status": "denied",
+                "reason": reason,
+                "bucket": "excel_review",
+                "updated_at": _now_utc(),
+            }
+        },
+        upsert=True,
+    )
+    return {"ok": True}
+
+
 @router.get("/channel-compare/list")
 async def channel_compare_list(
     q: str | None = Query(default=None, description="Search SKU/title"),
@@ -701,6 +1209,53 @@ async def channel_compare_list(
     return {
         "count": len(items),
         "items": items,
+    }
+
+
+@router.get("/channel-compare/kpis")
+async def channel_compare_kpis():
+    total_products = await db.product_normalized.count_documents({})
+
+    etsy_linked = await db.product_normalized.count_documents(
+        {"channels.etsy.listing_id": {"$exists": True, "$ne": None}}
+    )
+    shopify_linked = await db.product_normalized.count_documents(
+        {"$or": [
+            {"channels.shopify.shopify_id": {"$exists": True, "$ne": None}},
+            {"shopify_id": {"$exists": True, "$ne": None}},
+        ]}
+    )
+
+    inventory_pipeline = [
+        {
+            "$group": {
+                "_id": None,
+                "ebay_total_inventory": {
+                    "$sum": {"$ifNull": ["$quantity", 0]}
+                },
+                "etsy_total_inventory": {
+                    "$sum": {"$ifNull": ["$channels.etsy.quantity", 0]}
+                },
+                "shopify_total_inventory": {
+                    "$sum": {"$ifNull": ["$channels.shopify.quantity", 0]}
+                },
+            }
+        }
+    ]
+    agg = await db.product_normalized.aggregate(inventory_pipeline).to_list(length=1)
+    totals = agg[0] if agg else {}
+
+    return {
+        "kpis": {
+            "ebay_total_inventory": int(totals.get("ebay_total_inventory", 0) or 0),
+            "etsy_total_inventory": int(totals.get("etsy_total_inventory", 0) or 0),
+            "shopify_total_inventory": int(totals.get("shopify_total_inventory", 0) or 0),
+            "total_products": int(total_products),
+            "etsy_linked_products": int(etsy_linked),
+            "shopify_linked_products": int(shopify_linked),
+            "etsy_missing_products": max(0, int(total_products) - int(etsy_linked)),
+            "shopify_missing_products": max(0, int(total_products) - int(shopify_linked)),
+        }
     }
 
 

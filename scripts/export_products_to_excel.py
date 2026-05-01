@@ -19,7 +19,7 @@ Usage examples:
 Environment variables (loaded from .env if present):
 - MONGO_URI (required)
 - MONGO_DB (required)
-- SHOPIFY_STORE_URL (optional; used to build admin product URLs)
+- SHOPIFY_STORE_URL_PROD (optional; used to build admin product URLs)
 """
 
 from __future__ import annotations
@@ -299,11 +299,10 @@ def main() -> None:
     parser.add_argument(
         "--shopify-store-url",
         default=(
-            os.getenv("SHOPIFY_STORE_URL")
-            or os.getenv("SHOPIFY_STORE_URL_PROD")
+            os.getenv("SHOPIFY_STORE_URL_PROD")
             or os.getenv("SHOPIFY_SHOP")
         ),
-        help="Shopify store hostname used to build admin URLs (default: env SHOPIFY_STORE_URL)",
+        help="Shopify store hostname used to build admin URLs (default: env SHOPIFY_STORE_URL_PROD)",
     )
 
     args = parser.parse_args()

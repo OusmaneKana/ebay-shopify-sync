@@ -29,7 +29,7 @@ flowchart LR
 ## Key features
 
 - **Async I/O** throughout (FastAPI + Motor + aiohttp)
-- **Dev/Prod separation** for Shopify credentials via `/sync/dev/*` and `/sync/prod/*`
+- **Production-only Shopify operations** via `/sync/prod/*`
 - **Inventory correctness**: updates Shopify inventory using `inventory_item_id + location_id` when available, with a fallback variant-based method
 - **Shopify rate limiting** built in (2 req/s) in `ShopifyClient`
 - **Hard exclusions**: block specific normalized docs from ever syncing to Shopify via `BLOCKED_SHOPIFY_TAGS`
@@ -71,11 +71,6 @@ EBAY_RUNAME=...   # eBay RuName / redirect-uri identifier from the eBay develope
 # Optional fallback token (legacy/manual; DB OAuth is preferred)
 EBAY_OAUTH_TOKEN=
 
-# Shopify (DEV)
-SHOPIFY_API_KEY=...
-SHOPIFY_PASSWORD=...
-SHOPIFY_STORE_URL=your-store.myshopify.com
-
 # Shopify (PROD)
 SHOPIFY_API_KEY_PROD=...
 SHOPIFY_PASSWORD_PROD=...
@@ -104,7 +99,6 @@ uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
 - `GET /` — service status
 - `GET /health` — simple health check (also available as `GET /health/`)
 - `GET /products/?limit=50` — list normalized products from MongoDB
-- `POST /sync/dev/*` — development Shopify store operations
 - `POST /sync/prod/*` — production Shopify store operations
 - `GET /auth/ebay/*` — eBay OAuth login/callback/status
 - `GET|POST /webhooks/ebay/orders` — eBay order webhook endpoints
@@ -165,22 +159,19 @@ Tokens are stored in MongoDB in the `ebay_oauth_tokens` collection (document id 
 
 ### 2) Fetch raw eBay listings
 
-- Dev: `POST /sync/dev/sync-ebay-raw`
-- Prod: `POST /sync/prod/sync-ebay-raw`
+- `POST /sync/prod/sync-ebay-raw`
 
 Writes to `product_raw` (upsert by SKU). SKUs not returned in the latest fetch are marked with `raw.QuantityAvailable = 0` to propagate ended/sold items downstream.
 
 ### 3) Normalize raw → normalized
 
-- Dev: `POST /sync/dev/normalize-raw`
-- Prod: `POST /sync/prod/normalize-raw`
+- `POST /sync/prod/normalize-raw`
 
 Writes to `product_normalized`.
 
 ### 4) Sync normalized → Shopify
 
-- Dev: `POST /sync/dev/sync-shopify`
-- Prod: `POST /sync/prod/sync-shopify`
+- `POST /sync/prod/sync-shopify`
 
 Body is optional and defaults to syncing everything:
 
@@ -191,16 +182,13 @@ Body is optional and defaults to syncing everything:
 Additional targeted endpoints:
 
 - Create only new products (no updates):
-	- Dev: `POST /sync/dev/sync-shopify-new?limit=50`
-	- Prod: `POST /sync/prod/sync-shopify-new?limit=50`
+	- `POST /sync/prod/sync-shopify-new?limit=50`
 - Inventory-only enforcement:
-	- Dev: `POST /sync/dev/sync-shopify-inventory?only_zero=false&limit=200&dry_run=true`
-	- Prod: `POST /sync/prod/sync-shopify-inventory?only_zero=false&limit=200&dry_run=true`
+	- `POST /sync/prod/sync-shopify-inventory?only_zero=false&limit=200&dry_run=true`
 
 ### Destructive operations (use with care)
 
-- Dev: `POST /sync/dev/purge-shopify` — deletes Shopify products in the DEV store
-- Prod: `POST /sync/prod/purge-shopify` — deletes Shopify products in the PROD store
+- `POST /sync/prod/purge-shopify` — deletes Shopify products in the production store
 
 ## Webhooks
 

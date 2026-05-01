@@ -14,14 +14,13 @@ Key components:
 - **Full Sync Process**: Execute `python -m scripts.run_full_sync` (normalizes raw data and syncs to Shopify)
 - **Individual Steps**:
   - Fetch eBay: `python -m scripts.test_ebay_fetch`
-  - Normalize: Call `/sync/dev/normalize-raw` API endpoint
-  - Sync to Shopify: Call `/sync/dev/sync-shopify` API endpoint
-- **Environment Switching**: Use `/sync/dev/*` routes for development Shopify store, `/sync/prod/*` for production
+  - Normalize: Call `/sync/prod/normalize-raw` API endpoint
+  - Sync to Shopify: Call `/sync/prod/sync-shopify` API endpoint
 - **Database Reset**: `python -m scripts.reset_shopify_links` to clear Shopify product links
 
 ## Project Conventions
 - **Async Everywhere**: All I/O operations use async/await (Motor for MongoDB, aiohttp implied)
-- **Dev/Prod Separation**: Shopify clients instantiated with different credentials for dev vs prod environments
+- **Production-only Shopify**: All runtime Shopify operations target the production store
 - **Metafield Mapping**: Extensive domain-specific metafield mappings in `app/services/normalizer_service.py` (e.g., antiques, books, blades)
 - **Configuration**: Environment variables loaded via Pydantic Settings from `.env` file
 - **Error Handling**: API clients store last response for debugging (`client.last_response`)

@@ -295,6 +295,25 @@ def hash_dict(d: dict) -> str:
     return hashlib.md5(s.encode()).hexdigest()
 
 
+def canonicalize_title(title: object) -> str:
+    """Reduce titles to a stable comparison key for cross-SKU candidate matching."""
+
+    text = str(title or "").strip().lower()
+    if not text:
+        return ""
+
+    text = re.sub(r"[^a-z0-9\s]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
+def compute_title_hash(title: object) -> str | None:
+    canonical_title = canonicalize_title(title)
+    if not canonical_title:
+        return None
+    return hashlib.md5(canonical_title.encode("utf-8")).hexdigest()
+
+
 def compute_content_hash(fields: dict) -> str:
     """Stable content hash for normalized Shopify-relevant fields.
 
@@ -741,6 +760,12 @@ async def normalize_from_raw():
     """
     logger.info("▶ Normalizing RAW eBay products...")
 
+    await db.product_normalized.create_index(
+        "canonical_title_hash",
+        name="idx_product_normalized_canonical_title_hash",
+        background=True,
+    )
+
     batch_size = 100
     last_id = None
     count = 0
@@ -786,6 +811,32 @@ async def normalize_from_raw():
             async for doc in cursor_norm:
                 existing_by_sku[doc["_id"]] = doc
 
+        title_hashes: set[str] = set()
+        for raw_doc in batch_docs:
+            raw = raw_doc.get("raw", {}) or {}
+            title_hash = compute_title_hash(raw.get("Title"))
+            if title_hash:
+                title_hashes.add(title_hash)
+
+        existing_by_title_hash: dict[str, list[dict]] = {}
+        if title_hashes:
+            cursor_title_matches = db.product_normalized.find(
+                {"canonical_title_hash": {"$in": list(title_hashes)}},
+                {
+                    "_id": 1,
+                    "title": 1,
+                    "canonical_title": 1,
+                    "canonical_title_hash": 1,
+                    "quantity": 1,
+                    "updated_at": 1,
+                },
+            )
+            async for doc in cursor_title_matches:
+                title_hash = doc.get("canonical_title_hash")
+                if not title_hash:
+                    continue
+                existing_by_title_hash.setdefault(title_hash, []).append(doc)
+
         # Single timestamp per batch is sufficient and cheaper
         now_utc = datetime.now(timezone.utc)
 
@@ -800,6 +851,8 @@ async def normalize_from_raw():
                 raw = raw_doc.get("raw", {}) or {}
 
                 title = (raw.get("Title") or "").strip()
+                canonical_title = canonicalize_title(title)
+                canonical_title_hash = compute_title_hash(title)
                 description = (raw.get("Description") or "").strip()
                 images = raw.get("Images", []) or []
                 # Normalize price to a numeric value (float) when possible
@@ -1040,6 +1093,29 @@ async def normalize_from_raw():
                     logger.debug(f"SKU {sku}: normalized hash unchanged, skipping update")
                     return 0
 
+                title_match_candidates: list[dict[str, object]] = []
+                if canonical_title_hash:
+                    for candidate in existing_by_title_hash.get(canonical_title_hash, []):
+                        candidate_sku = candidate.get("_id")
+                        if not candidate_sku or candidate_sku == sku:
+                            continue
+                        title_match_candidates.append(
+                            {
+                                "sku": str(candidate_sku),
+                                "title": candidate.get("title") or "",
+                                "quantity": int(candidate.get("quantity") or 0),
+                                "updated_at": candidate.get("updated_at"),
+                            }
+                        )
+
+                title_match_candidates.sort(
+                    key=lambda candidate: (
+                        -int(candidate.get("quantity") or 0),
+                        str(candidate.get("sku") or ""),
+                    )
+                )
+                title_match_candidates = title_match_candidates[:10]
+
                 channels = dict((existing_norm or {}).get("channels") or {})
                 channels_ebay = dict(channels.get("ebay") or {})
                 channels_ebay.update(
@@ -1060,6 +1136,8 @@ async def normalize_from_raw():
                     "_id": sku,
                     "sku": sku,
                     "title": title,
+                    "canonical_title": canonical_title,
+                    "canonical_title_hash": canonical_title_hash,
                     "description": description,
                     "images": images,
                     "price": adjusted_price,
@@ -1096,6 +1174,9 @@ async def normalize_from_raw():
                     "last_normalized_at": local_now_utc,
                     "collection_key": collection_key,
                     "collection_key_fingerprint": ck_fingerprint,
+                    "title_match_candidate_count": len(title_match_candidates),
+                    "title_match_candidate_skus": [candidate["sku"] for candidate in title_match_candidates],
+                    "title_match_candidates": title_match_candidates,
                     # Backwards compatibility: keep legacy 'hash' field, but also
                     # store a more explicit 'content_hash' used by Shopify sync.
                     "hash": new_hash,

@@ -1,29 +1,26 @@
 import logging
+from datetime import datetime, timezone
 from typing import Any
 
 from app.database.mongo import db
-from app.shopify.client import ShopifyClient
-from app.shopify.update_inventory import set_inventory_quantity_by_variant
-from app.services.inventory_zero_guard import was_already_zeroed, mark_zeroed
-from app.services.channel_utils import get_shopify_field
+from app.services.multichannel_sync_service import ingest_sale_event, run_worker_batch
 
 logger = logging.getLogger(__name__)
 
 
-async def handle_ebay_order_webhook(payload: dict[str, Any], shopify_client: ShopifyClient | None = None, make_unavailable: bool = True) -> dict:
+async def handle_ebay_order_webhook(payload: dict[str, Any], shopify_client: Any = None, make_unavailable: bool = True) -> dict:
     """
     Process an eBay order webhook payload. For each line item:
-    - find normalized product by SKU
-    - set the Shopify variant inventory to 0
-    - optionally mark the Shopify product as draft (unpublished)
+    - resolve SKU
+    - apply canonical quantity decrement (idempotent inventory event)
+    - enqueue multichannel inventory jobs (eBay/Etsy/Shopify except source)
+    - optionally run a worker batch immediately
 
     Returns a summary dict.
     """
-    if shopify_client is None:
-        shopify_client = ShopifyClient()
-
     processed = []
     errors = 0
+    unresolved = 0
 
     # payload shape may vary depending on eBay event type
     order = payload.get("order") or payload
@@ -39,80 +36,84 @@ async def handle_ebay_order_webhook(payload: dict[str, Any], shopify_client: Sho
         if not sku:
             continue
 
-        doc = await db.product_normalized.find_one(
-            {"$or": [{"_id": sku}, {"sku": sku}]},
-            {
-                "shopify_variant_id": 1,
-                "shopify_id": 1,
-                "inventory_item_id": 1,
-                "location_id": 1,
-                "channels.shopify": 1,
-            },
-        )
-        if not doc:
-            processed.append({"sku": sku, "status": "no_product"})
-            continue
-
-        vid = get_shopify_field(doc, "shopify_variant_id")
-        pid = get_shopify_field(doc, "shopify_id")
-        inventory_item_id = get_shopify_field(doc, "inventory_item_id")
-        location_id = get_shopify_field(doc, "location_id")
-
-        if not vid:
-            processed.append({"sku": sku, "status": "no_variant"})
-            continue
+        qty_sold = 1
+        try:
+            qty_sold = int(li.get("quantity") or li.get("lineItemQuantity") or 1)
+            if qty_sold <= 0:
+                qty_sold = 1
+        except Exception:
+            qty_sold = 1
 
         try:
-            already = False
-            try:
-                already = await was_already_zeroed(
-                    env="dev",
-                    sku=str(sku),
-                    variant_id=int(vid),
-                    inventory_item_id=int(inventory_item_id) if inventory_item_id is not None else None,
-                    location_id=int(location_id) if location_id is not None else None,
-                )
-            except Exception as e:
-                logger.debug("Zero-guard lookup failed for webhook | sku=%s | error=%s", sku, e)
-
-            if already:
-                ok = True
-                entry = {"sku": sku, "variant_id": vid, "inventory_set_to": 0, "ok": True, "skipped": "already_zeroed"}
-            else:
-                ok = await set_inventory_quantity_by_variant(int(vid), 0, shopify_client)
-                entry = {"sku": sku, "variant_id": vid, "inventory_set_to": 0, "ok": ok}
-                if ok:
-                    try:
-                        await mark_zeroed(
-                            env="dev",
-                            sku=str(sku),
-                            variant_id=int(vid),
-                            inventory_item_id=int(inventory_item_id) if inventory_item_id is not None else None,
-                            location_id=int(location_id) if location_id is not None else None,
-                            source="ebay_order_webhook",
-                        )
-                    except Exception as e:
-                        logger.debug("Failed to mark zeroed for webhook | sku=%s | error=%s", sku, e)
-
-            # optionally unpublish product
-            if make_unavailable and pid and ok:
-                try:
-                    await shopify_client.put(
-                        f"products/{int(pid)}.json",
-                        {"product": {"id": int(pid), "status": "draft"}},
-                    )
-                    entry["product_unpublished"] = True
-                except Exception as e:
-                    logger.exception("Failed to unpublish Shopify product %s: %s", pid, e)
-                    entry["product_unpublished"] = False
-
-            processed.append(entry)
+            event_result = await ingest_sale_event(
+                source_channel="ebay",
+                payload={
+                    "order_id": order_id,
+                    "line_item": li,
+                },
+                quantity_sold=qty_sold,
+                explicit_sku=str(sku),
+                explicit_event_id=f"ebay-order:{order_id}:{sku}",
+                enqueue_jobs_flag=bool(make_unavailable),
+            )
+            processed.append({"sku": sku, "quantity_sold": qty_sold, "event": event_result})
+            if event_result.get("status") in {"unresolved_sku", "no_product"}:
+                unresolved += 1
         except Exception as e:
             logger.exception("Error handling SKU %s: %s", sku, e)
             processed.append({"sku": sku, "status": "error", "error": str(e)})
             errors += 1
 
-    # persist webhook processing record
-    await db.sync_log.insert_one({"webhook": "ebay_order", "order_id": order_id, "processed": processed})
+    worker_result = None
+    if make_unavailable:
+        # Run a short worker pass so important inventory pushes happen quickly.
+        worker_result = await run_worker_batch(limit=max(10, len(processed) * 3))
 
-    return {"processed_count": len(processed), "errors": errors, "details": processed}
+    # persist webhook processing record
+    await db.sync_log.insert_one(
+        {
+            "webhook": "ebay_order",
+            "order_id": order_id,
+            "processed": processed,
+            "unresolved": unresolved,
+            "errors": errors,
+            "worker": worker_result,
+        }
+    )
+
+    return {
+        "processed_count": len(processed),
+        "unresolved": unresolved,
+        "errors": errors,
+        "worker": worker_result,
+        "details": processed,
+    }
+
+
+async def handle_ebay_item_listed(payload: dict[str, Any]) -> dict:
+    """
+    Handle an ItemListed notification from eBay.
+    Persists the event to MongoDB for downstream processing / sync.
+    """
+    item_data = payload.get("Item") or {}
+    item_id = item_data.get("ItemID") or payload.get("ItemID") or ""
+    sku = item_data.get("SKU") or item_data.get("ApplicationData") or ""
+    title = item_data.get("Title") or ""
+
+    doc = {
+        "event_type": "ItemListed",
+        "item_id": item_id,
+        "sku": sku,
+        "title": title,
+        "raw": payload,
+        "status": "pending_sync",
+        "created_at": datetime.now(timezone.utc),
+    }
+
+    result = await db.ebay_listing_events.insert_one(doc)
+    logger.info(
+        "ItemListed event stored | item_id=%s | sku=%s | doc_id=%s",
+        item_id, sku, result.inserted_id,
+    )
+
+    return {"item_id": item_id, "sku": sku, "stored_id": str(result.inserted_id)}

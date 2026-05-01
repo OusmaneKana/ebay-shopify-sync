@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventory Command Center</title>
+  <style>
+    :root {
+      --bg-1: #111827;
+      --bg-2: #0f172a;
+      --card: rgba(15, 23, 42, 0.9);
+      --border: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #22d3ee;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --ok: #22c55e;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 20px;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1000px 500px at 95% -10%, rgba(34, 211, 238, 0.12), transparent 60%),
+        radial-gradient(700px 500px at -20% 110%, rgba(245, 158, 11, 0.12), transparent 55%),
+        linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    }
+
+    h1 { margin: 0; font-size: 28px; letter-spacing: 0.01em; }
+    .subtitle { color: var(--muted); margin: 6px 0 0; font-size: 14px; }
+
+    .topbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      padding: 14px;
+      box-shadow: 0 16px 40px rgba(2, 6, 23, 0.45);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+
+    input, select, button {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0b1220;
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    button {
+      cursor: pointer;
+      transition: transform 0.08s ease, border-color 0.15s ease;
+      font-weight: 600;
+    }
+
+    button:hover { transform: translateY(-1px); border-color: var(--accent); }
+    button.primary { border-color: var(--accent); }
+    button.warning { border-color: var(--warn); }
+    button.danger { border-color: var(--danger); }
+
+    .qty-link {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+
+    .qty-link:hover {
+      text-decoration: underline;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .metric {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(2, 6, 23, 0.6);
+    }
+
+    .metric .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .metric .v { font-size: 21px; font-weight: 700; margin-top: 4px; }
+
+    .table-wrap {
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: auto;
+      max-height: 72vh;
+      background: rgba(2, 6, 23, 0.7);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1180px;
+      font-size: 12px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #0b1220;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sku { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .title { max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .status {
+      display: inline-block;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status.in_sync { border-color: var(--ok); color: var(--ok); }
+    .status.pending { border-color: var(--warn); color: var(--warn); }
+    .status.failed { border-color: var(--danger); color: var(--danger); }
+    .status.drift, .status.conflict { border-color: #fb7185; color: #fb7185; }
+    .status.stale { border-color: #a78bfa; color: #a78bfa; }
+
+    .row-actions {
+      display: grid;
+      gap: 6px;
+    }
+
+    .row-actions button {
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 8px;
+    }
+
+    .footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer .pager {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .footer .pager button {
+      width: auto;
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    .notice {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 1200px) {
+      .filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 14px; }
+      .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Inventory Command Center</h1>
+  <p class="subtitle">Live SKU drift visibility, failed job replay, and fast reconcile actions.</p>
+
+  <div class="topbar">
+    <a href="/"><button>Home</button></a>
+    <a href="/admin"><button>Admin</button></a>
+    <a href="/reporting"><button>Reporting</button></a>
+    <a href="/etsy-review"><button>Etsy Review</button></a>
+    <a href="/channel-compare"><button>Channel Compare</button></a>
+    <a href="/multichannel-dashboard"><button>Multichannel Dashboard</button></a>
+    <button class="danger" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="panel">
+    <div class="filters">
+      <div>
+        <label>Environment</label>
+        <input value="prod" disabled />
+      </div>
+      <div>
+        <label for="status">Status</label>
+        <select id="status">
+          <option value="all" selected>all</option>
+          <option value="in_sync">in_sync</option>
+          <option value="pending">pending</option>
+          <option value="failed">failed</option>
+          <option value="drift">drift</option>
+          <option value="conflict">conflict</option>
+          <option value="stale">stale</option>
+        </select>
+      </div>
+      <div>
+        <label for="driftOnly">Drift Only</label>
+        <select id="driftOnly">
+          <option value="false" selected>false</option>
+          <option value="true">true</option>
+        </select>
+      </div>
+      <div>
+        <label for="search">Search SKU / Title</label>
+        <input id="search" type="text" placeholder="partial sku or title" />
+      </div>
+      <div>
+        <label for="limit">Limit</label>
+        <input id="limit" type="number" min="1" max="5000" value="100" />
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button class="primary" onclick="loadRows(true)">Refresh</button>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><div class="k">Returned</div><div class="v" id="mReturned">-</div></div>
+      <div class="metric"><div class="k">In Sync</div><div class="v" id="mInSync">-</div></div>
+      <div class="metric"><div class="k">Pending</div><div class="v" id="mPending">-</div></div>
+      <div class="metric"><div class="k">Failed</div><div class="v" id="mFailed">-</div></div>
+      <div class="metric"><div class="k">Drift</div><div class="v" id="mDrift">-</div></div>
+      <div class="metric"><div class="k">Conflict</div><div class="v" id="mConflict">-</div></div>
+      <div class="metric"><div class="k">eBay Active (API)</div><div class="v" id="kpiEbayActive">-</div></div>
+      <div class="metric"><div class="k">Etsy Active (API)</div><div class="v" id="kpiEtsyActive">-</div></div>
+      <div class="metric"><div class="k">Etsy Draft (API)</div><div class="v" id="kpiEtsyDraft">-</div></div>
+      <div class="metric"><div class="k">Etsy Sold Out (API)</div><div class="v" id="kpiEtsySoldOut">-</div></div>
+      <div class="metric"><div class="k">Shopify Products (API)</div><div class="v" id="kpiShopifyProducts">-</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Canonical</th>
+            <th>eBay</th>
+            <th>Etsy</th>
+            <th>Shopify</th>
+            <th>Jobs</th>
+            <th>Last Event</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <div id="lastUpdated">Not loaded yet.</div>
+      <div class="pager">
+        <button onclick="prevPage()">Prev</button>
+        <span id="pageInfo">Page 1</span>
+        <button onclick="nextPage()">Next</button>
+      </div>
+    </div>
+
+    <div class="notice">Actions: Replay failed retries failed jobs for this SKU, Reconcile queues push jobs to all channels, Policy opens quick edit prompts.</div>
+  </div>
+
+  <script>
+    let currentSkip = 0;
+    let lastReturned = 0;
+
+    function endpoint(path) {
+      return `/sync/prod${path}`;
+    }
+
+    async function requestJson(url, options = {}) {
+      const resp = await fetch(url, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {}),
+        },
+      });
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(text || `HTTP ${resp.status}`);
+      }
+      return await resp.json();
+    }
+
+    function fmtQty(v) {
+      return v === null || v === undefined ? "-" : String(v);
+    }
+
+    function fmtNum(v) {
+      if (v === null || v === undefined || Number.isNaN(Number(v))) return "-";
+      return Number(v).toLocaleString();
+    }
+
+    function resolveChannelUrl(row, channelName, channelData) {
+      const direct = channelData?.url;
+      if (direct) return direct;
+      // Frontend fallback so links still work even if backend URL fields are stale.
+      if (channelName === "ebay" && row?.sku) {
+        return `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(String(row.sku))}`;
+      }
+      return null;
+    }
+
+    function qtyCell(row, channelName, channelData) {
+      const qty = channelData?.qty;
+      const url = resolveChannelUrl(row, channelName, channelData);
+      const qtyText = fmtQty(qty);
+      if (qty !== null && qty !== undefined && Number(qty) > 0 && url) {
+        return `<a class="qty-link" href="${url}" target="_blank" rel="noopener noreferrer">${qtyText}</a>`;
+      }
+      return qtyText;
+    }
+
+    function qtyValueCell(qty, url) {
+      const qtyText = fmtQty(qty);
+      if (qty !== null && qty !== undefined && Number(qty) > 0 && url) {
+        return `<a class="qty-link" href="${url}" target="_blank" rel="noopener noreferrer">${qtyText}</a>`;
+      }
+      return qtyText;
+    }
+
+    function fmtDrift(v) {
+      if (v === null || v === undefined) return "-";
+      if (v > 0) return `+${v}`;
+      return String(v);
+    }
+
+    function statusBadge(status) {
+      const s = status || "unknown";
+      return `<span class="status ${s}">${s}</span>`;
+    }
+
+    function renderRows(rows) {
+      const tbody = document.getElementById("rows");
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="10">No rows for current filters.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map((row) => {
+        const jobs = row.jobs || {};
+        const ev = row.latest_event || {};
+        const channel = row.channel || {};
+        return `
+          <tr>
+            <td class="sku">${row.sku || "-"}</td>
+            <td class="title" title="${(row.title || "").replace(/"/g, "&quot;")}">${row.title || "-"}</td>
+            <td>${statusBadge(row.status)}</td>
+            <td>${qtyValueCell(row.canonical_qty, resolveChannelUrl(row, 'ebay', channel.ebay))}</td>
+            <td>${qtyCell(row, 'ebay', channel.ebay)} (${fmtDrift(channel.ebay?.drift)})</td>
+            <td>${qtyCell(row, 'etsy', channel.etsy)} (${fmtDrift(channel.etsy?.drift)})</td>
+            <td>${qtyCell(row, 'shopify', channel.shopify)} (${fmtDrift(channel.shopify?.drift)})</td>
+            <td>q:${jobs.queued || 0}<br/>p:${jobs.processing || 0}<br/>f:${jobs.failed || 0}</td>
+            <td>${ev.status || "-"}<br/>${ev.source_channel || "-"}</td>
+            <td>
+              <div class="row-actions">
+                <button onclick="openTimeline('${row.sku}')">Timeline</button>
+                <button class="warning" onclick="replaySku('${row.sku}')">Replay Failed</button>
+                <button class="primary" onclick="reconcileSku('${row.sku}')">Reconcile</button>
+                <button onclick="editPolicy('${row.sku}')">Policy</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function setMetrics(data) {
+      const counts = data.status_counts || {};
+      document.getElementById("mReturned").textContent = data.returned ?? 0;
+      document.getElementById("mInSync").textContent = counts.in_sync ?? 0;
+      document.getElementById("mPending").textContent = counts.pending ?? 0;
+      document.getElementById("mFailed").textContent = counts.failed ?? 0;
+      document.getElementById("mDrift").textContent = counts.drift ?? 0;
+      document.getElementById("mConflict").textContent = counts.conflict ?? 0;
+
+      const kpi = data.live_kpis || {};
+      const etsy = kpi.etsy || {};
+      document.getElementById("kpiEbayActive").textContent = fmtNum(kpi.ebay_active_total);
+      document.getElementById("kpiEtsyActive").textContent = fmtNum(etsy.active);
+      document.getElementById("kpiEtsyDraft").textContent = fmtNum(etsy.draft);
+      document.getElementById("kpiEtsySoldOut").textContent = fmtNum(etsy.sold_out);
+      document.getElementById("kpiShopifyProducts").textContent = fmtNum(kpi.shopify_total_products);
+    }
+
+    async function loadRows(resetPage = false) {
+      if (resetPage) currentSkip = 0;
+
+      const limit = Number(document.getElementById("limit").value || 100);
+      const status = encodeURIComponent(document.getElementById("status").value || "all");
+      const driftOnly = document.getElementById("driftOnly").value === "true";
+      const search = encodeURIComponent(document.getElementById("search").value || "");
+
+      const query = `?status=${status}&drift_only=${driftOnly}&search=${search}&limit=${limit}&skip=${currentSkip}`;
+      try {
+        const data = await requestJson(endpoint(`/multichannel/command-center${query}`));
+        lastReturned = Number(data.returned || 0);
+        setMetrics(data);
+        renderRows(data.rows || []);
+
+        const page = Math.floor(currentSkip / limit) + 1;
+        document.getElementById("pageInfo").textContent = `Page ${page}`;
+        document.getElementById("lastUpdated").textContent = `Generated: ${new Date(data.generated_at).toLocaleString()} | Showing ${data.returned} of ${data.total_products}`;
+      } catch (err) {
+        alert(`Load failed: ${err.message}`);
+      }
+    }
+
+    function nextPage() {
+      const limit = Number(document.getElementById("limit").value || 100);
+      if (lastReturned < limit) return;
+      currentSkip += limit;
+      loadRows(false);
+    }
+
+    function prevPage() {
+      const limit = Number(document.getElementById("limit").value || 100);
+      currentSkip = Math.max(0, currentSkip - limit);
+      loadRows(false);
+    }
+
+    async function replaySku(sku) {
+      try {
+        await requestJson(endpoint("/multichannel/replay-failed"), {
+          method: "POST",
+          body: JSON.stringify({ sku, limit: 200 }),
+        });
+        await loadRows(false);
+      } catch (err) {
+        alert(`Replay failed: ${err.message}`);
+      }
+    }
+
+    function openTimeline(sku) {
+      window.location.href = `/item-detail-timeline?sku=${encodeURIComponent(sku)}`;
+    }
+
+    async function reconcileSku(sku) {
+      try {
+        await requestJson(endpoint(`/multichannel/reconcile/${encodeURIComponent(sku)}`), {
+          method: "POST",
+          body: JSON.stringify({ reason: "command_center_reconcile" }),
+        });
+        await requestJson(endpoint("/multichannel/run-worker?limit=50"), { method: "POST" });
+        await loadRows(false);
+      } catch (err) {
+        alert(`Reconcile failed: ${err.message}`);
+      }
+    }
+
+    async function editPolicy(sku) {
+      try {
+        const current = await requestJson(endpoint(`/multichannel/policy/${encodeURIComponent(sku)}`));
+        const priority = prompt(`Priority channel for ${sku} (ebay|etsy|shopify|blank):`, current.priority_channel || "") || "";
+        const deltaRaw = prompt(`Max delta guard for ${sku} (number|blank):`, current.max_delta_guard ?? "");
+        const strictRaw = prompt(`Strict priority for ${sku}? (true|false):`, String(Boolean(current.strict_priority)));
+
+        const payload = {
+          priority_channel: priority || null,
+          max_delta_guard: deltaRaw === "" ? null : Number(deltaRaw),
+          strict_priority: String(strictRaw).toLowerCase() === "true",
+          note: "Edited from command_center",
+        };
+
+        await requestJson(endpoint(`/multichannel/policy/${encodeURIComponent(sku)}`), {
+          method: "PUT",
+          body: JSON.stringify(payload),
+        });
+        await loadRows(false);
+      } catch (err) {
+        alert(`Policy update failed: ${err.message}`);
+      }
+    }
+
+    async function logout() {
+      try {
+        await fetch('/auth/logout', { method: 'POST' });
+      } catch (_) {}
+      window.location.href = '/login';
+    }
+
+    document.getElementById("status").addEventListener("change", () => loadRows(true));
+    document.getElementById("driftOnly").addEventListener("change", () => loadRows(true));
+
+    loadRows(true);
+  </script>
+</body>
+</html>

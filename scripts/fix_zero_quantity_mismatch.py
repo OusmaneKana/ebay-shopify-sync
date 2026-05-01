@@ -20,21 +20,20 @@ logger = logging.getLogger(__name__)
 
 
 def _make_shopify_client(env: str) -> ShopifyClient:
-    """Create a Shopify client for the given environment (dev or prod)."""
-    if env == "prod":
-        logger.info("Using Shopify PROD credentials")
-        return ShopifyClient(
-            api_key=settings.SHOPIFY_API_KEY_PROD,
-            password=settings.SHOPIFY_PASSWORD_PROD,
-            store_url=settings.SHOPIFY_STORE_URL_PROD,
-        )
-    logger.info("Using Shopify DEV credentials")
-    return ShopifyClient()
+    """Create a Shopify client for the production environment."""
+    if env != "prod":
+        raise ValueError("Only the prod Shopify environment is supported")
+    logger.info("Using Shopify PROD credentials")
+    return ShopifyClient(
+        api_key=settings.SHOPIFY_API_KEY_PROD,
+        password=settings.SHOPIFY_PASSWORD_PROD,
+        store_url=settings.SHOPIFY_STORE_URL_PROD,
+    )
 
 
 async def fix_zero_quantity_mismatches(
     limit: Optional[int] = None,
-    env: str = "dev",
+    env: str = "prod",
     dry_run: bool = False,
 ) -> Dict[str, Any]:
     """Fix products where raw shows sold-out but normalized+Shopify still show quantity 1.
@@ -182,9 +181,9 @@ def main() -> None:
     )
     parser.add_argument(
         "--env",
-        choices=["dev", "prod"],
-        default="dev",
-        help="Which Shopify environment to use (default: dev)",
+        choices=["prod"],
+        default="prod",
+        help="Which Shopify environment to use (production only)",
     )
     parser.add_argument(
         "--limit",

@@ -248,11 +248,15 @@
 </head>
 <body>
     <h1>eBay → Shopify Sync Admin</h1>
-    <p class="subheading">Trigger sync jobs and maintenance scripts for dev and prod environments.</p>
+    <p class="subheading">Trigger sync jobs and maintenance scripts for the production environment.</p>
 
     <div class="button-row" style="margin: 0 0 18px;">
         <a href="/" style="text-decoration:none;"><button><span class="label">Home</span></button></a>
         <a href="/reporting" style="text-decoration:none;"><button class="primary"><span class="label">Reporting</span></button></a>
+        <a href="/etsy-review" style="text-decoration:none;"><button class="primary"><span class="label">Etsy Review</span></button></a>
+        <a href="/channel-compare" style="text-decoration:none;"><button class="primary"><span class="label">Channel Compare</span></button></a>
+        <a href="/multichannel-dashboard" style="text-decoration:none;"><button class="primary"><span class="label">Multichannel</span></button></a>
+        <a href="/inventory-command-center" style="text-decoration:none;"><button class="primary"><span class="label">Command Center</span></button></a>
         <button onclick="logout()"><span class="label">Logout</span></button>
     </div>
 
@@ -261,43 +265,7 @@
             <div class="section">
                 <div class="section-header">
                     <div>
-                        <h2>Dev Sync Flows</h2>
-                        <small>Use against your development Shopify store.</small>
-                    </div>
-                    <span class="env-badge">DEV</span>
-                </div>
-                <div class="button-row">
-                    <button class="primary" onclick="callApi('/sync/dev/sync-ebay-raw')">
-                        <span class="label">Sync eBay Raw</span>
-                    </button>
-                    <button onclick="callApi('/sync/dev/normalize-raw')">
-                        <span class="label">Normalize Raw</span>
-                    </button>
-                    <button onclick="runFullShopify('dev')">
-                        <span class="label">Sync Shopify (full)</span>
-                    </button>
-                    <button class="danger" onclick="confirmAndCall('/sync/dev/purge-shopify', 'Purge ALL Shopify products in DEV?')">
-                        <span class="label">Purge All Products</span>
-                    </button>
-                    <button onclick="callApi('/sync/dev/sync-shopify-new')">
-                        <span class="label">Create Missing Shopify Products</span>
-                    </button>
-                    <button onclick="callApi('/sync/dev/shopify-health')">
-                        <span class="label">Shopify Health</span>
-                    </button>
-                </div>
-                <div class="field-row" style="margin-top: 6px; font-size: 11px; color: var(--muted);">
-                    <label><input id="dev-full-new" type="checkbox" checked /> New products</label>
-                    <label><input id="dev-full-zero" type="checkbox" checked /> 0 inventories</label>
-                    <label><input id="dev-full-other" type="checkbox" checked /> Other updates</label>
-                </div>
-                <p class="hint">Typical flow: Sync eBay Raw → Normalize Raw → Sync Shopify (choose phases above).</p>
-            </div>
-
-            <div class="section">
-                <div class="section-header">
-                    <div>
-                        <h2>Prod Sync Flows</h2>
+                        <h2>Production Sync Flows</h2>
                         <small>Careful: live Shopify storefront.</small>
                     </div>
                     <span class="env-badge prod">PROD</span>
@@ -341,10 +309,7 @@
                 <div class="field-row">
                     <label>
                         Environment
-                        <select id="inv-env">
-                            <option value="dev">DEV</option>
-                            <option value="prod">PROD</option>
-                        </select>
+                        <input value="PROD" disabled />
                     </label>
                     <label>
                         Limit
@@ -362,7 +327,7 @@
                         <span class="label">Run Inventory Sync</span>
                     </button>
                 </div>
-                <p class="hint">Calls /sync/&lt;env&gt;/sync-shopify-inventory with the options above.</p>
+                <p class="hint">Calls /sync/prod/sync-shopify-inventory with the options above.</p>
             </div>
 
             <div class="section">
@@ -417,13 +382,6 @@
         let currentPoll = null;
 
         const LONG_RUNNING_SYNC_PATHS = new Set([
-            '/sync/dev/sync-ebay-raw',
-            '/sync/dev/normalize-raw',
-            '/sync/dev/sync-shopify',
-            '/sync/dev/run-all',
-            '/sync/dev/sync-shopify-new',
-            '/sync/dev/sync-shopify-inventory',
-            '/sync/dev/purge-shopify',
             '/sync/prod/sync-ebay-raw',
             '/sync/prod/normalize-raw',
             '/sync/prod/sync-shopify',
@@ -600,7 +558,6 @@
         }
 
         function runInventorySync() {
-            const env = document.getElementById('inv-env').value;
             const limitVal = document.getElementById('inv-limit').value;
             const onlyZero = document.getElementById('inv-only-zero').checked;
             const dryRun = document.getElementById('inv-dry-run').checked;
@@ -611,7 +568,7 @@
             if (dryRun) params.set('dry_run', 'true');
 
             const qs = params.toString();
-            const endpoint = `/sync/${env}/sync-shopify-inventory` + (qs ? `?${qs}` : '');
+            const endpoint = `/sync/prod/sync-shopify-inventory` + (qs ? `?${qs}` : '');
             callApi(endpoint);
         }
 
@@ -638,11 +595,10 @@
             callApi(endpoint, { method, body });
         }
 
-        function runFullShopify(env) {
-            const prefix = env === 'prod' ? 'prod' : 'dev';
-            const newEl = document.getElementById(prefix + '-full-new');
-            const zeroEl = document.getElementById(prefix + '-full-zero');
-            const otherEl = document.getElementById(prefix + '-full-other');
+        function runFullShopify() {
+            const newEl = document.getElementById('prod-full-new');
+            const zeroEl = document.getElementById('prod-full-zero');
+            const otherEl = document.getElementById('prod-full-other');
 
             const body = {
                 new_products: newEl ? newEl.checked : true,
@@ -650,7 +606,7 @@
                 other_updates: otherEl ? otherEl.checked : true,
             };
 
-            callApi(`/sync/${env}/sync-shopify`, { method: 'POST', body });
+            callApi('/sync/prod/sync-shopify', { method: 'POST', body });
         }
     </script>
 </body>

@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings  # 👈 change this import
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     MONGO_URI: str
@@ -16,10 +16,6 @@ class Settings(BaseSettings):
     EBAY_OAUTH_TOKEN: str = ""
     # RuName from eBay Developer Portal (Auth Accepted URL name)
     EBAY_RUNAME: str = ""
-
-    SHOPIFY_API_KEY: str
-    SHOPIFY_PASSWORD: str
-    SHOPIFY_STORE_URL: str
 
     SHOPIFY_API_KEY_PROD: str
     SHOPIFY_PASSWORD_PROD: str
@@ -41,7 +37,9 @@ class Settings(BaseSettings):
     # When set, /admin, /reporting and related APIs require a passkey.
     ADMIN_PASSKEY: str | None = None
 
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore",
+    )
 
 settings = Settings()

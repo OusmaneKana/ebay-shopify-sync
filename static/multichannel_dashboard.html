@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multichannel Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-alt: #020617;
+      --card-bg: #020617;
+      --border: #1e293b;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.1);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --success: #4ade80;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 40%, #000 100%);
+      color: var(--text);
+    }
+
+    h1 { margin: 0 0 4px; font-size: 28px; }
+    .subheading { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+      align-items: center;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .section {
+      background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.92));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px 14px;
+      box-shadow: 0 18px 45px rgba(15,23,42,0.9);
+      margin-bottom: 12px;
+    }
+
+    .section h2 { margin: 0 0 8px; font-size: 18px; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .metric {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(2, 6, 23, 0.7);
+    }
+
+    .metric .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .metric .v { font-size: 22px; font-weight: 700; margin-top: 4px; }
+
+    button {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top left, rgba(15,23,42,1), rgba(15,23,42,0.96));
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 0.15s ease, transform 0.08s ease;
+    }
+
+    button.primary {
+      border-color: var(--accent);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.16), rgba(15,23,42,0.96));
+    }
+
+    button.danger {
+      border-color: var(--danger);
+      background: radial-gradient(circle at top left, rgba(248,113,113,0.12), rgba(15,23,42,0.96));
+    }
+
+    button:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+    input[type="text"], input[type="number"], select {
+      background: #020617;
+      color: var(--text);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      font-size: 12px;
+      min-width: 90px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 72px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #020617;
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .hint { color: var(--muted); font-size: 11px; margin-top: 6px; }
+
+    .table-wrap {
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: auto;
+      background: #020617;
+      max-height: 420px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #020617;
+      color: var(--muted);
+      z-index: 1;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      background: #020617;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      max-height: 420px;
+      overflow: auto;
+    }
+
+    @media (max-width: 1000px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Multichannel Inventory Dashboard</h1>
+  <p class="subheading">Canonical inventory controls, dead-letter replay, and per-SKU conflict policies.</p>
+
+  <div class="button-row">
+    <a href="/" style="text-decoration:none;"><button>Home</button></a>
+    <a href="/admin" style="text-decoration:none;"><button>Admin</button></a>
+    <a href="/reporting" style="text-decoration:none;"><button>Reporting</button></a>
+    <a href="/etsy-review" style="text-decoration:none;"><button>Etsy Review</button></a>
+    <a href="/channel-compare" style="text-decoration:none;"><button>Channel Compare</button></a>
+    <a href="/inventory-command-center" style="text-decoration:none;"><button>Command Center</button></a>
+    <button class="danger" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="layout">
+    <div>
+      <div class="section">
+        <h2>Overview</h2>
+        <div class="row">
+          <span class="hint">Production environment</span>
+          <button class="primary" onclick="refreshDashboard()">Refresh Dashboard</button>
+        </div>
+
+        <div class="metrics">
+          <div class="metric"><div class="k">Queued Jobs</div><div class="v" id="mQueued">-</div></div>
+          <div class="metric"><div class="k">Failed Jobs</div><div class="v" id="mFailed">-</div></div>
+          <div class="metric"><div class="k">Policies</div><div class="v" id="mPolicies">-</div></div>
+          <div class="metric"><div class="k">Shopify Drift Hint</div><div class="v" id="mDrift">-</div></div>
+        </div>
+        <p class="hint" id="lastRefresh">Not refreshed yet.</p>
+      </div>
+
+      <div class="section">
+        <h2>Worker Control</h2>
+        <div class="row">
+          <label>Batch size</label>
+          <input id="workerLimit" type="number" min="1" max="500" value="25" />
+          <button class="primary" onclick="runWorker()">Run Worker Batch</button>
+        </div>
+        <p class="hint">Processes queued/retry jobs and pushes inventory to channel adapters.</p>
+      </div>
+
+      <div class="section">
+        <h2>Dead-Letter Replay</h2>
+        <div class="row">
+          <label>Target channel</label>
+          <select id="replayChannel">
+            <option value="">all</option>
+            <option value="ebay">ebay</option>
+            <option value="etsy">etsy</option>
+            <option value="shopify">shopify</option>
+          </select>
+          <label>SKU</label>
+          <input id="replaySku" type="text" placeholder="optional" />
+        </div>
+        <div class="row">
+          <label>Error contains</label>
+          <input id="replayError" type="text" placeholder="optional substring" />
+          <label>Limit</label>
+          <input id="replayLimit" type="number" min="1" max="1000" value="200" />
+          <button class="primary" onclick="replayFailed()">Replay Failed Jobs</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Per-SKU Conflict Policy</h2>
+        <div class="row">
+          <label>SKU</label>
+          <input id="policySku" type="text" placeholder="required" />
+          <button onclick="loadPolicy()">Load Policy</button>
+        </div>
+        <div class="row">
+          <label>Priority channel</label>
+          <select id="policyChannel">
+            <option value="">none</option>
+            <option value="ebay">ebay</option>
+            <option value="etsy">etsy</option>
+            <option value="shopify">shopify</option>
+          </select>
+          <label>Max delta guard</label>
+          <input id="policyDelta" type="number" min="1" placeholder="optional" />
+          <label>Strict priority</label>
+          <select id="policyStrict">
+            <option value="false" selected>false</option>
+            <option value="true">true</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Note</label>
+          <input id="policyNote" type="text" style="min-width: 320px;" placeholder="optional note" />
+          <button class="primary" onclick="savePolicy()">Save Policy</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Manual Sale Event (Test)</h2>
+        <div class="row">
+          <label>Source</label>
+          <select id="saleSource">
+            <option value="ebay">ebay</option>
+            <option value="etsy">etsy</option>
+            <option value="manual" selected>manual</option>
+          </select>
+          <label>SKU</label>
+          <input id="saleSku" type="text" placeholder="required for manual" />
+          <label>Quantity sold</label>
+          <input id="saleQty" type="number" min="1" value="1" />
+          <button class="primary" onclick="ingestSale()">Ingest Sale Event</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Recent Jobs</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>SKU</th>
+                <th>Channel</th>
+                <th>Qty</th>
+                <th>Status</th>
+                <th>Attempts</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody id="jobsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section" style="position: sticky; top: 16px;">
+        <h2>Output</h2>
+        <div id="output" class="mono">Ready.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function envPrefix() {
+      return `/sync/prod`;
+    }
+
+    async function fetchJson(url, options = {}) {
+      const resp = await fetch(url, {
+        headers: { 'Content-Type': 'application/json' },
+        ...options,
+      });
+      const text = await resp.text();
+      let data;
+      try { data = text ? JSON.parse(text) : {}; } catch { data = { raw: text }; }
+      if (!resp.ok) {
+        throw new Error(JSON.stringify(data));
+      }
+      return data;
+    }
+
+    function setOutput(obj) {
+      const node = document.getElementById('output');
+      node.textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
+    }
+
+    function renderJobs(rows) {
+      const body = document.getElementById('jobsBody');
+      body.innerHTML = '';
+      for (const row of rows || []) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row._id || ''}</td>
+          <td>${row.sku || ''}</td>
+          <td>${row.target_channel || ''}</td>
+          <td>${row.target_qty ?? ''}</td>
+          <td>${row.status || ''}</td>
+          <td>${row.attempts ?? ''}</td>
+          <td>${row.error || ''}</td>
+        `;
+        body.appendChild(tr);
+      }
+    }
+
+    async function refreshDashboard() {
+      const data = await fetchJson(`${envPrefix()}/multichannel/dashboard?limit_recent_jobs=120`);
+      document.getElementById('mQueued').textContent = data.queued_jobs ?? 0;
+      document.getElementById('mFailed').textContent = (data.jobs_by_status || {}).failed || 0;
+      document.getElementById('mPolicies').textContent = data.policies_count ?? 0;
+      document.getElementById('mDrift').textContent = (data.mismatch_hints || {}).shopify_vs_canonical ?? 0;
+      document.getElementById('lastRefresh').textContent = `Updated: ${new Date().toLocaleString()}`;
+      renderJobs(data.recent_jobs || []);
+      setOutput(data);
+    }
+
+    async function runWorker() {
+      const limit = parseInt(document.getElementById('workerLimit').value || '25', 10);
+      const data = await fetchJson(`${envPrefix()}/multichannel/run-worker?limit=${encodeURIComponent(limit)}`, { method: 'POST' });
+      setOutput(data);
+      await refreshDashboard();
+    }
+
+    async function replayFailed() {
+      const payload = {
+        target_channel: document.getElementById('replayChannel').value || null,
+        sku: document.getElementById('replaySku').value || null,
+        error_contains: document.getElementById('replayError').value || null,
+        limit: parseInt(document.getElementById('replayLimit').value || '200', 10),
+      };
+      const data = await fetchJson(`${envPrefix()}/multichannel/replay-failed`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      setOutput(data);
+      await refreshDashboard();
+    }
+
+    async function loadPolicy() {
+      const sku = document.getElementById('policySku').value.trim();
+      if (!sku) {
+        setOutput('SKU is required to load policy.');
+        return;
+      }
+      const data = await fetchJson(`${envPrefix()}/multichannel/policy/${encodeURIComponent(sku)}`);
+      document.getElementById('policyChannel').value = data.priority_channel || '';
+      document.getElementById('policyDelta').value = data.max_delta_guard || '';
+      document.getElementById('policyStrict').value = String(!!data.strict_priority);
+      document.getElementById('policyNote').value = data.note || '';
+      setOutput(data);
+    }
+
+    async function savePolicy() {
+      const sku = document.getElementById('policySku').value.trim();
+      if (!sku) {
+        setOutput('SKU is required to save policy.');
+        return;
+      }
+      const payload = {
+        priority_channel: document.getElementById('policyChannel').value || null,
+        max_delta_guard: document.getElementById('policyDelta').value ? parseInt(document.getElementById('policyDelta').value, 10) : null,
+        strict_priority: document.getElementById('policyStrict').value === 'true',
+        note: document.getElementById('policyNote').value || null,
+      };
+      const data = await fetchJson(`${envPrefix()}/multichannel/policy/${encodeURIComponent(sku)}`, {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      });
+      setOutput(data);
+      await refreshDashboard();
+    }
+
+    async function ingestSale() {
+      const payload = {
+        source_channel: document.getElementById('saleSource').value,
+        sku: document.getElementById('saleSku').value || null,
+        quantity_sold: parseInt(document.getElementById('saleQty').value || '1', 10),
+      };
+      const data = await fetchJson(`${envPrefix()}/multichannel/ingest-sale`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      setOutput(data);
+      await refreshDashboard();
+    }
+
+    async function logout() {
+      await fetch('/auth/passkey/logout', { method: 'POST' }).catch(() => null);
+      window.location.href = '/login?next=/multichannel-dashboard';
+    }
+
+    refreshDashboard().catch((error) => setOutput(String(error)));
+  </script>
+</body>
+</html>
