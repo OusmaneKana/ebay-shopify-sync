@@ -20,7 +20,6 @@ from app.services.multichannel_sync_service import (
     get_conflict_policy,
     ingest_sale_event,
     replay_unresolved_etsy_receipt_events,
-    replay_unprocessed_ebay_fixed_price_transactions,
     replay_failed_jobs,
     run_worker_batch,
     set_conflict_policy,
@@ -414,16 +413,6 @@ async def multichannel_replay_unresolved_etsy_receipts_prod(payload: dict = Body
     """Replay unresolved Etsy sale events that reference receipt resource URLs (PROD)."""
     body = payload or {}
     return await replay_unresolved_etsy_receipt_events(
-        limit=int(body.get("limit") or 200),
-        event_id=body.get("event_id"),
-    )
-
-
-@prod_router.post("/multichannel/replay-unprocessed-ebay-transactions")
-async def multichannel_replay_unprocessed_ebay_transactions_prod(payload: dict = Body(None)):
-    """Re-process stored eBay FixedPriceTransaction notifications that were never ingested (PROD)."""
-    body = payload or {}
-    return await replay_unprocessed_ebay_fixed_price_transactions(
         limit=int(body.get("limit") or 200),
         event_id=body.get("event_id"),
     )

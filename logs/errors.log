@@ -23081,3 +23081,30 @@ requests.exceptions.SSLError: HTTPSConnectionPool(host='api.ebay.com', port=443)
 2026-04-30 00:38:54 - scripts.update_shopify_inventory_only - WARNING - [update_shopify_inventory_only.py:127] - [INVENTORY] Blocked zero update (safety) | sku=157861745655 | variant_id=52294819184921 | pass allow_zero_updates=True to permit
 2026-04-30 00:39:01 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'list.single_line_text_field' must be consistent with the definition's type: 'single_line_text_field'."]}} | Endpoint: metafields.json
 2026-04-30 00:39:21 - app.shopify.client - ERROR - [client.py:71] - Shopify POST Error 422: {"errors":{"type":["'list.single_line_text_field' must be consistent with the definition's type: 'single_line_text_field'."]}} | Endpoint: metafields.json
+2026-05-01 09:07:12 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=42 | receipt_id=54321
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://openapi.etsy.com/v3/application/shops/42/receipts/54321/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-01 09:07:12 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=42 | receipt_id=54321
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://openapi.etsy.com/v3/application/shops/42/receipts/54321/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-01 09:07:13 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=64623797 | receipt_id=4044417946
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://openapi.etsy.com/v3/application/shops/64623797/receipts/4044417946/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401

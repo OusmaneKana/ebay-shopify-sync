@@ -11,7 +11,13 @@ from app.services.channel_utils import get_shopify_field, set_shopify_fields_set
 logger = logging.getLogger(__name__)
 
 
-async def sync_to_shopify(shopify_client=None, *, allow_create: bool = True, adjust_inventory: bool = True):
+async def sync_to_shopify(
+    shopify_client=None,
+    *,
+    allow_create: bool = True,
+    adjust_inventory: bool = True,
+    skus: list[str] | None = None,
+):
     """Sync normalized products to Shopify.
 
     Parameters:
@@ -21,7 +27,11 @@ async def sync_to_shopify(shopify_client=None, *, allow_create: bool = True, adj
           is skipped during updates.
     """
 
-    logger.info("▶ Syncing normalized products to Shopify (no limit) ...")
+    target_skus = sorted({str(s).strip() for s in (skus or []) if str(s).strip()})
+    if target_skus:
+        logger.info("▶ Syncing normalized products to Shopify for %s SKU(s)...", len(target_skus))
+    else:
+        logger.info("▶ Syncing normalized products to Shopify (no limit) ...")
 
     batch_size = 500
     last_id = None
@@ -183,7 +193,12 @@ async def sync_to_shopify(shopify_client=None, *, allow_create: bool = True, adj
     while True:
         # Exclude blocked-tag items at query-time to reduce work.
         query = {"tags": {"$nin": list(BLOCKED_SHOPIFY_TAGS)}}
-        if last_id is not None:
+        if target_skus:
+            id_query: dict[str, object] = {"$in": target_skus}
+            if last_id is not None:
+                id_query["$gt"] = last_id
+            query["_id"] = id_query
+        elif last_id is not None:
             query["_id"] = {"$gt": last_id}
 
         # Always fetch full batches; overall dataset is bounded by Mongo query

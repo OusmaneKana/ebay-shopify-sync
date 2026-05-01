@@ -63,24 +63,14 @@ def _parse_ebay_xml_notification(raw: bytes) -> dict:
     data["_event_type"] = event_type
     data["_raw_event_tag"] = raw_tag
 
-    # Normalize sale events into the shape handle_ebay_order_webhook expects.
-    # eBay commonly delivers sale notifications as GetItemTransactions responses
-    # with NotificationEventName set to FixedPriceTransaction/AuctionCheckoutComplete.
-    notification_event = str(data.get("NotificationEventName") or "")
-    is_sale_event = event_type in ("FixedPriceTransaction", "AuctionCheckoutComplete") or (
-      event_type == "GetItemTransactions"
-      and notification_event in ("FixedPriceTransaction", "AuctionCheckoutComplete")
-    )
-    if is_sale_event:
-        # Item and TransactionArray are top-level in the GetItemTransactions notification
-        item = data.get("Item") or {}
-        tx_array = data.get("TransactionArray") or {}
-        tx = tx_array.get("Transaction") or {}
+    # Normalize sale events into the shape handle_ebay_order_webhook expects
+    if event_type in ("FixedPriceTransaction", "AuctionCheckoutComplete"):
+        tx = (data.get("NotificationDetails") or {}).get("Transaction") or {}
         if isinstance(tx, list):
             tx = tx[0]
+        item = tx.get("Item") or {}
+        sku = item.get("SKU") or item.get("ApplicationData") or ""
         item_id = item.get("ItemID") or ""
-        # SKU may not be set on eBay; fall back to ItemID (they match in this system)
-        sku = item.get("SKU") or item.get("ApplicationData") or item_id
         qty = tx.get("QuantityPurchased") or "1"
         order_id = (
             (tx.get("ContainingOrder") or {}).get("OrderID")

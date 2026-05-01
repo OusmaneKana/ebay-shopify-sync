@@ -750,7 +750,7 @@ def normalize_shipping(shipping_raw: dict) -> list[dict]:
     return options
 
 
-async def normalize_from_raw():
+async def normalize_from_raw(skus: list[str] | None = None):
     """
     Read product_raw, build Shopify-friendly normalized docs in product_normalized.
     Adds:
@@ -758,7 +758,11 @@ async def normalize_from_raw():
       - normalized["metafields"]["raw"]["attributes"] leftovers
       - normalized["metafields"]["system"]["domain"] inferred domain
     """
-    logger.info("▶ Normalizing RAW eBay products...")
+    target_skus = sorted({str(s).strip() for s in (skus or []) if str(s).strip()})
+    if target_skus:
+        logger.info("▶ Normalizing RAW products for %s SKU(s)...", len(target_skus))
+    else:
+        logger.info("▶ Normalizing RAW eBay products...")
 
     await db.product_normalized.create_index(
         "canonical_title_hash",
@@ -775,7 +779,12 @@ async def normalize_from_raw():
 
     while True:
         query = {}
-        if last_id is not None:
+        if target_skus:
+            id_query: dict[str, object] = {"$in": target_skus}
+            if last_id is not None:
+                id_query["$gt"] = last_id
+            query["_id"] = id_query
+        elif last_id is not None:
             query["_id"] = {"$gt": last_id}
 
         cursor = db.product_raw.find(query).limit(batch_size).sort("_id", 1)
