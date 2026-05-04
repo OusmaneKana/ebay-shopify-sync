@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Etsy Publish Prep</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-alt: #020617;
+      --card-bg: #020617;
+      --border: #1e293b;
+      --accent: #f59e0b;
+      --accent-soft: rgba(245, 158, 11, 0.18);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --success: #4ade80;
+      --warn: #facc15;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 22px;
+      background: radial-gradient(circle at 10% 5%, #2b1f0b 0, #111827 34%, #020617 65%, #000 100%);
+      color: var(--text);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    h1 { margin: 0; font-size: 28px; }
+    .sub { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+    .nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    a.btn, button {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top left, rgba(15,23,42,1), rgba(15,23,42,0.95));
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.15s ease, transform 0.08s ease;
+    }
+
+    a.btn.primary, button.primary {
+      border-color: var(--accent);
+      background: radial-gradient(circle at top left, var(--accent-soft), rgba(15,23,42,0.95));
+    }
+
+    a.btn:hover, button:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.9fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.9));
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 14px;
+      box-shadow: 0 12px 36px rgba(15,23,42,0.85);
+    }
+
+    .card h2 { margin: 0 0 10px; font-size: 16px; }
+
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+    input[type="text"] {
+      background: #020617;
+      color: var(--text);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      font-size: 13px;
+      width: 100%;
+    }
+
+    .small { color: var(--muted); font-size: 12px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.6);
+      white-space: nowrap;
+    }
+
+    .pill.ok { border-color: var(--success); color: var(--success); }
+    .pill.warn { border-color: var(--warn); color: var(--warn); }
+    .pill.bad { border-color: var(--danger); color: var(--danger); }
+
+    .table-wrap {
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: auto;
+      background: #020617;
+      max-height: 72vh;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #020617;
+      color: var(--muted);
+      text-align: left;
+      font-weight: 600;
+    }
+
+    tr:hover td { background: rgba(245, 158, 11, 0.08); }
+    tr.active td { background: rgba(245, 158, 11, 0.16); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(2, 6, 23, 0.55);
+    }
+
+    .hero img {
+      width: 100%;
+      height: 130px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #020617;
+    }
+
+    .compare-wrap {
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: auto;
+      max-height: 58vh;
+    }
+
+    .code {
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #020617;
+      padding: 10px;
+      max-height: 240px;
+      overflow: auto;
+      font-size: 12px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 1fr; }
+      .hero img { max-height: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>Etsy Publish Prep</h1>
+      <div class="sub">Find normalized items not linked to Etsy and check required create-listing fields before manual API submission.</div>
+    </div>
+    <div class="nav">
+      <a class="btn" href="/">Home</a>
+      <a class="btn" href="/reporting">Reporting</a>
+      <a class="btn" href="/channel-compare">Channel Compare</a>
+      <a class="btn primary" href="/etsy-review">Etsy Review</a>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <h2>Unlinked Normalized Products</h2>
+      <div class="row">
+        <input id="q" type="text" placeholder="Search SKU, title, category" />
+      </div>
+      <div class="row" style="margin-top: 8px;">
+        <button class="primary" onclick="loadList()">Refresh</button>
+      </div>
+      <div class="small" id="listMeta" style="margin-top: 8px;">Loading…</div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Current</th>
+              <th>Optimized</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Current State vs Etsy Optimization</h2>
+      <div class="small" id="detailMeta">Pick a product from the list.</div>
+
+      <div class="hero" style="margin-top: 10px;">
+        <img id="heroImage" alt="Product" style="display:none;" />
+        <div>
+          <div id="heroTitle" style="font-size:15px; font-weight:700;"></div>
+          <div class="small" id="heroSku" style="margin-top: 4px;"></div>
+          <div class="row" id="heroPills" style="margin-top: 8px;"></div>
+        </div>
+      </div>
+
+      <div class="compare-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Current State</th>
+              <th>Etsy Optimization</th>
+            </tr>
+          </thead>
+          <tbody id="requiredRows">
+            <tr><td colspan="3" class="small">No product selected.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 style="margin-top: 14px;">Draft Payload Preview</h2>
+      <div class="small">Use this as a manual starting payload for Etsy create listing API.</div>
+      <div class="code" id="payloadPreview">{}</div>
+    </div>
+  </div>
+
+  <script>
+    let selectedSku = null;
+
+    const esc = (v) => {
+      if (v === null || v === undefined) return '';
+      return String(v)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    };
+
+    const fmt = (v) => {
+      if (v === null || v === undefined) return '—';
+      if (Array.isArray(v)) return v.length ? esc(v.join(', ')) : '—';
+      if (typeof v === 'object') return esc(JSON.stringify(v));
+      const txt = String(v);
+      return txt.length ? esc(txt) : '—';
+    };
+
+    function pillsForRow(item) {
+      const currentMissing = item.required_missing_current || [];
+      const optimizedMissing = item.required_missing_optimized || [];
+      const currentPill = currentMissing.length
+        ? `<span class="pill bad">missing ${currentMissing.length}</span>`
+        : '<span class="pill ok">ready</span>';
+      const optimizedPill = optimizedMissing.length
+        ? `<span class="pill warn">missing ${optimizedMissing.length}</span>`
+        : '<span class="pill ok">ready</span>';
+      return [currentPill, optimizedPill];
+    }
+
+    function renderRows(items) {
+      const tbody = document.getElementById('rows');
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="3" class="small">No unlinked products found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = items.map((item) => {
+        const [currentPill, optimizedPill] = pillsForRow(item);
+        return `
+          <tr class="${selectedSku === item.sku ? 'active' : ''}" onclick="loadDetail('${esc(item.sku)}')">
+            <td>
+              <div>${esc(item.sku || '')}</div>
+              <div class="small">${esc(item.title || '')}</div>
+            </td>
+            <td>${currentPill}</td>
+            <td>${optimizedPill}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function loadList() {
+      const q = document.getElementById('q').value.trim();
+      const params = new URLSearchParams();
+      if (q) params.set('q', q);
+      params.set('limit', '250');
+
+      const r = await fetch(`/reporting/etsy-publish/queue?${params.toString()}`);
+      const d = await r.json();
+      if (!r.ok) {
+        document.getElementById('listMeta').textContent = d.detail || 'Failed loading queue';
+        return;
+      }
+
+      document.getElementById('listMeta').textContent = `${d.count} loaded / ${d.total} total unlinked`;
+      renderRows(d.items || []);
+    }
+
+    function setHero(detail) {
+      document.getElementById('heroTitle').textContent = detail.title || 'Untitled';
+      document.getElementById('heroSku').textContent = `SKU: ${detail.sku || '—'}`;
+
+      const img = document.getElementById('heroImage');
+      if (detail.image) {
+        img.src = detail.image;
+        img.style.display = 'block';
+      } else {
+        img.removeAttribute('src');
+        img.style.display = 'none';
+      }
+
+      const missingCurrent = detail.required_missing_current || [];
+      const missingOptimized = detail.required_missing_optimized || [];
+      const pills = [
+        missingCurrent.length
+          ? `<span class="pill bad">Current missing: ${missingCurrent.join(', ')}</span>`
+          : '<span class="pill ok">Current ready</span>',
+        missingOptimized.length
+          ? `<span class="pill warn">Optimized missing: ${missingOptimized.join(', ')}</span>`
+          : '<span class="pill ok">Optimized ready</span>',
+      ];
+      document.getElementById('heroPills').innerHTML = pills.join(' ');
+    }
+
+    function renderRequiredRows(detail) {
+      const rows = detail.required_fields || [];
+      const tbody = document.getElementById('requiredRows');
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="3" class="small">No required field data.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map((row) => {
+        const missingBadge = row.current_missing
+          ? '<span class="pill bad">missing</span>'
+          : '<span class="pill ok">ok</span>';
+        const currentBadge = row.informational
+          ? (row.current_missing ? '<span class="pill warn">not set</span>' : '<span class="pill ok">ok</span>')
+          : missingBadge;
+        const optimizedBadge = row.informational
+          ? (row.optimized_missing ? '<span class="pill warn">not set</span>' : '<span class="pill ok">ok</span>')
+          : (row.optimized_missing ? '<span class="pill warn">missing</span>' : '<span class="pill ok">ok</span>');
+
+        return `
+          <tr>
+            <td>${esc(row.label || row.key || '')}<div class="small">${esc(row.key || '')}</div></td>
+            <td>${currentBadge}<div style="margin-top:6px;">${fmt(row.current)}</div></td>
+            <td>${optimizedBadge}<div style="margin-top:6px;">${fmt(row.optimized)}</div></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderPayload(detail) {
+      const optimized = detail.etsy_optimized || {};
+      const payload = {
+        title: optimized.title || null,
+        description: optimized.description || null,
+        type: optimized.type || 'physical',
+        price: optimized.price,
+        quantity: optimized.quantity,
+        who_made: optimized.who_made || null,
+        when_made: optimized.when_made || null,
+        taxonomy_id: optimized.taxonomy_id,
+        shipping_profile_id: optimized.shipping_profile_id,
+        return_policy_id: optimized.return_policy_id,
+        tags: optimized.tags || [],
+        materials: optimized.materials || [],
+        images: optimized.images || [],
+      };
+      document.getElementById('payloadPreview').textContent = JSON.stringify(payload, null, 2);
+    }
+
+    async function loadDetail(sku) {
+      selectedSku = sku;
+      await loadList();
+
+      const r = await fetch(`/reporting/etsy-publish/${encodeURIComponent(sku)}`);
+      const d = await r.json();
+      if (!r.ok) {
+        document.getElementById('detailMeta').textContent = d.detail || 'Failed loading detail';
+        return;
+      }
+
+      document.getElementById('detailMeta').textContent = `Selected ${d.sku}`;
+      setHero(d);
+      renderRequiredRows(d);
+      renderPayload(d);
+    }
+
+    document.getElementById('q').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') loadList();
+    });
+
+    async function logout() {
+      try {
+        await fetch('/auth/logout', { method: 'POST' });
+      } finally {
+        window.location.href = '/login?next=/etsy-publish-prep';
+      }
+    }
+
+    loadList();
+  </script>
+</body>
+</html>

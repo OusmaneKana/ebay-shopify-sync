@@ -16,6 +16,7 @@ from app.config import settings
 from app.database.mongo import db
 from app.ebay.client import EbayClient
 from app.services.channel_utils import get_channel, get_shopify_field
+from app.services.etsy_auth_service import get_valid_token as get_valid_etsy_token
 from app.shopify.client import ShopifyClient
 from app.shopify.update_inventory import set_inventory_from_mongo
 
@@ -146,11 +147,9 @@ async def _fetch_etsy_state_count(
 
 
 async def _fetch_etsy_counts() -> tuple[dict[str, int] | None, str | None]:
-    token = settings.ETSY_TOKEN
-    if not token:
-        token_doc = await db["etsy_oauth_tokens"].find_one({"_id": "primary"}, {"access_token": 1})
-        token = token_doc.get("access_token") if token_doc else None
-    if not token:
+    try:
+        token = await get_valid_etsy_token()
+    except ValueError:
         return None, "missing_etsy_token"
 
     api_key = _resolve_etsy_api_key()
@@ -932,12 +931,10 @@ async def _resolve_sku_from_etsy_listing_id(listing_id: Any) -> str | None:
 
 
 async def _get_etsy_access_token() -> str | None:
-    token = settings.ETSY_TOKEN
-    if token:
-        return token
-
-    token_doc = await db["etsy_oauth_tokens"].find_one({"_id": "primary"}, {"access_token": 1})
-    return token_doc.get("access_token") if token_doc else None
+    try:
+        return await get_valid_etsy_token()
+    except ValueError:
+        return None
 
 
 async def get_etsy_receipt_transactions_from_payload(payload: dict[str, Any]) -> list[dict[str, Any]]:
@@ -1378,12 +1375,9 @@ async def _push_etsy_quantity(doc: dict[str, Any], target_qty: int) -> tuple[boo
     if not listing_id or not shop_id:
         return False, "missing_etsy_link"
 
-    token = settings.ETSY_TOKEN
-    if not token:
-        token_doc = await db["etsy_oauth_tokens"].find_one({"_id": "primary"}, {"access_token": 1})
-        token = token_doc.get("access_token") if token_doc else None
-
-    if not token:
+    try:
+        token = await get_valid_etsy_token()
+    except ValueError:
         return False, "missing_etsy_token"
 
     if settings.ETSY_CLIENT_ID and settings.ETSY_CLIENT_SECRET:

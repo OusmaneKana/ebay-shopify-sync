@@ -1,14 +1,14 @@
 {
-  "audit_timestamp": "2026-04-30T07:41:25.570885+00:00",
+  "audit_timestamp": "2026-05-02T19:45:36.206565+00:00",
   "audit_scope": "ACTIVE Etsy listings only",
   "note": "Archived, draft, and sold-out listings are excluded from all counts",
   "summary": {
-    "total_active_etsy_listings": 822,
+    "total_active_etsy_listings": 819,
     "total_linked_normalized": 970,
-    "matched_pairs": 814,
+    "matched_pairs": 811,
     "quantity_mismatches": 21,
     "unlinked_active_etsy": 8,
-    "orphaned_normalized_links": 156
+    "orphaned_normalized_links": 159
   },
   "quantity_mismatches_sample": [
     {

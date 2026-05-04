@@ -23108,3 +23108,100 @@ Traceback (most recent call last):
     raise HTTPStatusError(message, request=request, response=self)
 httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://openapi.etsy.com/v3/application/shops/64623797/receipts/4044417946/transactions?limit=100&offset=0'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-01 09:10:35 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=42 | receipt_id=54321
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://openapi.etsy.com/v3/application/shops/42/receipts/54321/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-01 09:10:36 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=42 | receipt_id=54321
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://openapi.etsy.com/v3/application/shops/42/receipts/54321/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-01 09:10:36 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=64623797 | receipt_id=4044417946
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://openapi.etsy.com/v3/application/shops/64623797/receipts/4044417946/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-01 09:10:45 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=42 | receipt_id=54321
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://openapi.etsy.com/v3/application/shops/42/receipts/54321/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-01 09:10:45 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=42 | receipt_id=54321
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://openapi.etsy.com/v3/application/shops/42/receipts/54321/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-01 09:10:46 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=64623797 | receipt_id=4044417946
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://openapi.etsy.com/v3/application/shops/64623797/receipts/4044417946/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+2026-05-01 09:10:58 - app.services.multichannel_sync_service - WARNING - [multichannel_sync_service.py:957] - Cannot resolve Etsy receipt transactions: missing auth | shop_id=42 | receipt_id=54321
+2026-05-01 09:10:58 - app.services.multichannel_sync_service - WARNING - [multichannel_sync_service.py:957] - Cannot resolve Etsy receipt transactions: missing auth | shop_id=42 | receipt_id=54321
+2026-05-01 09:10:58 - app.services.multichannel_sync_service - WARNING - [multichannel_sync_service.py:957] - Cannot resolve Etsy receipt transactions: missing auth | shop_id=64623797 | receipt_id=4044417946
+2026-05-01 09:11:45 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=42 | receipt_id=54321
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '403 Forbidden' for url 'https://openapi.etsy.com/v3/application/shops/42/receipts/54321/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403
+2026-05-01 09:11:46 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:988] - Failed to fetch Etsy receipt transactions | shop_id=42 | receipt_id=54321
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 979, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '403 Forbidden' for url 'https://openapi.etsy.com/v3/application/shops/42/receipts/54321/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403
+2026-05-02 12:07:45 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:985] - Failed to fetch Etsy receipt transactions | shop_id=42 | receipt_id=54321
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 976, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '403 Forbidden' for url 'https://openapi.etsy.com/v3/application/shops/42/receipts/54321/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403
+2026-05-02 12:07:46 - app.services.multichannel_sync_service - ERROR - [multichannel_sync_service.py:985] - Failed to fetch Etsy receipt transactions | shop_id=42 | receipt_id=54321
+Traceback (most recent call last):
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/app/services/multichannel_sync_service.py", line 976, in get_etsy_receipt_transactions_from_payload
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/administrator/Desktop/Dev/ebay-shopify-sync/venv/lib/python3.14/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '403 Forbidden' for url 'https://openapi.etsy.com/v3/application/shops/42/receipts/54321/transactions?limit=100&offset=0'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403
+2026-05-02 12:09:34 - app.services.multichannel_sync_service - WARNING - [multichannel_sync_service.py:1447] - eBay EndFixedPriceItem failed for SKU=EB-157343722805 item=157343722805: ebay_ack_Failure:The auction has already been closed.
+2026-05-02 12:09:36 - app.services.multichannel_sync_service - WARNING - [multichannel_sync_service.py:1447] - eBay EndFixedPriceItem failed for SKU=156922513908 item=156922513908: ebay_ack_Failure:The auction has already been closed.
+2026-05-02 12:12:33 - app.main - WARNING - [main.py:75] - Etsy: no DB token found - using ETSY_TOKEN env fallback. Visit /auth/etsy/login to authorize and store a refresh token.
+2026-05-02 12:17:21 - app.main - WARNING - [main.py:75] - Etsy: no DB token found - using ETSY_TOKEN env fallback. Visit /auth/etsy/login to authorize and store a refresh token.

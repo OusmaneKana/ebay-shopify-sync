@@ -14,6 +14,7 @@ from openpyxl import load_workbook
 
 from app.config import settings
 from app.database.mongo import close_mongo_client, db
+from app.services.etsy_auth_service import get_valid_token as get_valid_etsy_token
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_REPORT_PATH = ROOT / "logs" / "zero_qty_exact_title_matches_20260426_024121.xlsx"
@@ -238,12 +239,10 @@ def _validate_docs(row: ReportRow, old_doc: dict[str, Any] | None, new_doc: dict
 
 
 async def _resolve_etsy_auth_headers() -> dict[str, str]:
-    token = settings.ETSY_TOKEN
-    if not token:
-        token_doc = await db["etsy_oauth_tokens"].find_one({"_id": "primary"}, {"access_token": 1})
-        token = token_doc.get("access_token") if token_doc else None
-    if not token:
-        raise MigrationError("missing_etsy_token")
+    try:
+        token = await get_valid_etsy_token()
+    except ValueError as exc:
+        raise MigrationError("missing_etsy_token") from exc
 
     if settings.ETSY_CLIENT_ID and settings.ETSY_CLIENT_SECRET:
         api_key = f"{settings.ETSY_CLIENT_ID}:{settings.ETSY_CLIENT_SECRET}"

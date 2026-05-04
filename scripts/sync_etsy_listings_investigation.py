@@ -11,10 +11,9 @@ sys.path.append(ROOT)
 
 from app.config import settings
 from app.database.mongo import db, close_mongo_client
+from app.services.etsy_auth_service import get_valid_token as get_valid_etsy_token
 
 BASE_URL = "https://openapi.etsy.com/v3/application"
-TOKEN_COLLECTION = "etsy_oauth_tokens"
-TOKEN_DOC_ID = "primary"
 TARGET_COLLECTION = "etsy_listings_investigation"
 
 # Etsy listing states commonly used by the listings endpoint.
@@ -24,18 +23,10 @@ LISTING_STATES = ["active", "inactive", "draft", "sold_out", "expired"]
 async def resolve_access_token(explicit_token: str | None) -> str:
     if explicit_token:
         return explicit_token
-
-    token_from_env = settings.ETSY_TOKEN
-    if token_from_env:
-        return token_from_env
-
-    token_doc = await db[TOKEN_COLLECTION].find_one({"_id": TOKEN_DOC_ID}, {"access_token": 1})
-    if token_doc and token_doc.get("access_token"):
-        return token_doc["access_token"]
-
-    raise RuntimeError(
-        "No Etsy access token found. Provide --token, set ETSY_TOKEN, or complete OAuth first."
-    )
+    try:
+        return await get_valid_etsy_token()
+    except ValueError as exc:
+        raise RuntimeError(str(exc)) from exc
 
 
 def resolve_api_key(explicit_api_key: str | None) -> str:

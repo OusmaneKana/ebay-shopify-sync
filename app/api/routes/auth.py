@@ -11,7 +11,9 @@ from app.services.ebay_auth_service import (
 )
 from app.services.etsy_auth_service import (
     exchange_code_for_tokens as exchange_etsy_code_for_tokens,
+    get_authorization_url as get_etsy_authorization_url,
     get_token_status as get_etsy_token_status,
+    refresh_access_token as refresh_etsy_access_token,
 )
 
 router = APIRouter()
@@ -142,7 +144,33 @@ async def etsy_callback(
         return JSONResponse({"ok": False, "error": str(e), "state": state}, status_code=400)
 
 
+@router.get("/etsy/login")
+async def etsy_login(state: str | None = None):
+    """Redirect the browser to Etsy OAuth authorization."""
+    try:
+        url = get_etsy_authorization_url(state=state)
+    except ValueError as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
+    return RedirectResponse(url=url)
+
+
 @router.get("/etsy/status")
 async def etsy_token_status():
     """Check the current Etsy token health (valid / expired / missing)."""
     return await get_etsy_token_status()
+
+
+@router.post("/etsy/refresh")
+async def etsy_force_refresh():
+    """Force an immediate Etsy token refresh using the stored refresh token."""
+    try:
+        new_token = await refresh_etsy_access_token()
+        status = await get_etsy_token_status()
+        return {
+            "ok": True,
+            "message": "Etsy access token refreshed successfully.",
+            "token_preview": new_token[:12] + "...",
+            **status,
+        }
+    except ValueError as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=400)

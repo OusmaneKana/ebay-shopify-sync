@@ -11,6 +11,7 @@ from fastapi import APIRouter, Query, HTTPException
 
 from app.database.mongo import db
 from app.config import settings
+from app.services.etsy_auth_service import get_valid_token as get_valid_etsy_token
 from app.shopify.client import ShopifyClient
 router = APIRouter()
 
@@ -22,6 +23,40 @@ EXCEL_REVIEW_PATTERNS = [
     "active_etsy_no_ebay_match_*.xlsx",
 ]
 ETSY_BASE_URL = "https://openapi.etsy.com/v3/application"
+ETSY_REQUIRED_CREATE_FIELDS = [
+    ("title", "Title"),
+    ("description", "Description"),
+    ("price", "Price"),
+    ("quantity", "Quantity"),
+    ("type", "Listing Type"),
+    ("who_made", "Who Made"),
+    ("when_made", "When Made"),
+    ("taxonomy_id", "Taxonomy ID"),
+    ("shipping_profile_id", "Shipping Profile ID (physical only)"),
+    ("return_policy_id", "Return Policy ID"),
+]
+
+ETSY_ALLOWED_LISTING_TYPES = {"physical", "digital"}
+
+ETSY_ALLOWED_WHO_MADE = {"i_did", "collective", "someone_else"}
+ETSY_ALLOWED_WHEN_MADE = {
+    "made_to_order",
+    "2020_2026",
+    "2010_2019",
+    "2000_2009",
+    "before_2000",
+    "1990s",
+    "1980s",
+    "1970s",
+    "1960s",
+    "1950s",
+    "1940s",
+    "1930s",
+    "1920s",
+    "1910s",
+    "1900_1909",
+    "before_1900",
+}
 
 
 def _ensure_utc(dt: datetime | None) -> datetime | None:
@@ -119,12 +154,10 @@ def _extract_etsy_image_from_doc(etsy_doc: dict | None) -> str | None:
 
 
 async def _resolve_etsy_auth_headers_for_review() -> dict[str, str]:
-    token = settings.ETSY_TOKEN
-    if not token:
-        token_doc = await db["etsy_oauth_tokens"].find_one({"_id": "primary"}, {"access_token": 1})
-        token = token_doc.get("access_token") if token_doc else None
-    if not token:
-        raise HTTPException(status_code=400, detail="Missing Etsy token")
+    try:
+        token = await get_valid_etsy_token()
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     if settings.ETSY_CLIENT_ID and settings.ETSY_CLIENT_SECRET:
         api_key = f"{settings.ETSY_CLIENT_ID}:{settings.ETSY_CLIENT_SECRET}"
@@ -337,6 +370,300 @@ def _cmp_values(left: object, right: object, *, numeric: bool = False) -> str:
         return "same" if abs(left_f - right_f) < 0.01 else "diff"
 
     return "same" if str(left).strip() == str(right).strip() else "diff"
+
+
+def _strip_html(text: str) -> str:
+    return re.sub(r"<[^>]+>", " ", text)
+
+
+def _clean_text(value: object) -> str | None:
+    if value is None:
+        return None
+    txt = str(value).strip()
+    if not txt:
+        return None
+    txt = _strip_html(txt)
+    txt = re.sub(r"\s+", " ", txt).strip()
+    return txt or None
+
+
+def _clean_list(value: object, *, limit: int | None = None) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    out: list[str] = []
+    seen: set[str] = set()
+    for raw in value:
+        txt = _clean_text(raw)
+        if not txt:
+            continue
+        key = txt.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(txt)
+        if limit is not None and len(out) >= limit:
+            break
+    return out
+
+
+def _first_attr(attrs: dict, keys: list[str]) -> object:
+    if not isinstance(attrs, dict):
+        return None
+    lowered = {str(k).strip().lower(): v for k, v in attrs.items()}
+    for key in keys:
+        if key in lowered:
+            return lowered[key]
+    return None
+
+
+def _extract_materials(attrs: dict, fallback_tags: list[str]) -> list[str]:
+    raw = _first_attr(attrs, ["material", "materials", "primary material", "primary materials"])
+    if isinstance(raw, list):
+        materials = _clean_list(raw, limit=13)
+    elif raw is None:
+        materials = []
+    else:
+        parts = re.split(r"[,/;|]", str(raw))
+        materials = _clean_list(parts, limit=13)
+
+    if materials:
+        return materials[:13]
+
+    candidates = [t for t in fallback_tags if len(t) <= 20]
+    return candidates[:5]
+
+
+def _coerce_etsy_enum(value: object, allowed: set[str]) -> str | None:
+    txt = _clean_text(value)
+    if not txt:
+        return None
+    txt = txt.lower().replace("-", "_").replace(" ", "_")
+    return txt if txt in allowed else None
+
+
+def _guess_who_made(attrs: dict) -> str | None:
+    direct = _coerce_etsy_enum(_first_attr(attrs, ["who made", "who_made", "maker"]), ETSY_ALLOWED_WHO_MADE)
+    if direct:
+        return direct
+
+    handmade = _clean_text(_first_attr(attrs, ["handmade", "is handmade", "is_handmade"]))
+    if handmade and handmade.lower() in {"yes", "true", "1"}:
+        return "i_did"
+    return None
+
+
+def _guess_when_made(attrs: dict) -> str | None:
+    direct = _coerce_etsy_enum(_first_attr(attrs, ["when made", "when_made"]), ETSY_ALLOWED_WHEN_MADE)
+    if direct:
+        return direct
+
+    year_raw = _clean_text(_first_attr(attrs, ["year made", "year_made", "year", "era"]))
+    if not year_raw:
+        return None
+    m = re.search(r"(18\d{2}|19\d{2}|20\d{2})", year_raw)
+    if not m:
+        return None
+    year = int(m.group(1))
+    if year >= 2020:
+        return "2020_2026"
+    if year >= 2010:
+        return "2010_2019"
+    if year >= 2000:
+        return "2000_2009"
+    if year < 1900:
+        return "before_1900"
+    if 1900 <= year <= 1909:
+        return "1900_1909"
+    decade = (year // 10) * 10
+    return f"{decade}s"
+
+
+def _is_missing_etsy_required(key: str, value: object, *, listing_type: str | None = None) -> bool:
+    if key in {"title", "description", "who_made", "when_made"}:
+        txt = _clean_text(value)
+        if not txt:
+            return True
+        if key == "who_made":
+            return txt not in ETSY_ALLOWED_WHO_MADE
+        if key == "when_made":
+            return txt not in ETSY_ALLOWED_WHEN_MADE
+        return False
+
+    if key == "type":
+        txt = _clean_text(value)
+        return not txt or txt not in ETSY_ALLOWED_LISTING_TYPES
+
+    if key == "price":
+        v = _to_float(value)
+        return v is None or v <= 0
+    if key == "quantity":
+        v = _to_int(value)
+        return v is None or v <= 0
+
+    # shipping_profile_id only required for physical listings
+    if key == "shipping_profile_id":
+        if listing_type == "digital":
+            return False
+        v = _to_int(value)
+        return v is None or v <= 0
+
+    if key in {"taxonomy_id", "return_policy_id"}:
+        v = _to_int(value)
+        return v is None or v <= 0
+
+    return value is None
+
+
+def _fmt_measure(m: dict | None) -> str | None:
+    if not isinstance(m, dict):
+        return None
+    val = m.get("value") or m.get("amount")
+    unit = m.get("unit")
+    if val is None:
+        return None
+    return f"{val} {unit}" if unit else str(val)
+
+
+def _fmt_weight(weight: dict | None) -> str | None:
+    if not isinstance(weight, dict):
+        return None
+    major = _fmt_measure(weight.get("major"))
+    minor = _fmt_measure(weight.get("minor"))
+    parts = [p for p in [major, minor] if p]
+    return " ".join(parts) if parts else None
+
+
+def _fmt_dimensions(dims: dict | None) -> str | None:
+    if not isinstance(dims, dict):
+        return None
+    parts = []
+    for key in ("length", "width", "height"):
+        v = _fmt_measure(dims.get(key))
+        if v:
+            parts.append(f"{key[0].upper()}: {v}")
+    return ", ".join(parts) if parts else None
+
+
+def _build_etsy_publish_comparison(doc: dict) -> dict:
+    channels = doc.get("channels") or {}
+    etsy = channels.get("etsy") or {}
+    attrs = doc.get("attributes") or {}
+    package = doc.get("package") or {}
+
+    tags = _clean_list((doc.get("tags") or etsy.get("tags") or []), limit=13)
+    materials = _clean_list(etsy.get("materials") or [], limit=13) or _extract_materials(attrs, tags)
+    images = _clean_list(doc.get("images") or [], limit=10)
+
+    weight_display = _fmt_weight(package.get("weight"))
+    dimensions_display = _fmt_dimensions(package.get("dimensions"))
+
+    listing_type_current = _coerce_etsy_enum(etsy.get("type"), ETSY_ALLOWED_LISTING_TYPES) or settings.ETSY_DEFAULT_LISTING_TYPE
+
+    current = {
+        "title": _clean_text(doc.get("title")),
+        "description": _clean_text(doc.get("description")),
+        "price": _to_float(doc.get("price")),
+        "quantity": _to_int(doc.get("quantity")),
+        "type": _coerce_etsy_enum(etsy.get("type"), ETSY_ALLOWED_LISTING_TYPES),
+        "who_made": _coerce_etsy_enum(etsy.get("who_made"), ETSY_ALLOWED_WHO_MADE),
+        "when_made": _coerce_etsy_enum(etsy.get("when_made"), ETSY_ALLOWED_WHEN_MADE),
+        "taxonomy_id": _to_int(etsy.get("taxonomy_id")),
+        "shipping_profile_id": _to_int(etsy.get("shipping_profile_id")),
+        "return_policy_id": _to_int(etsy.get("return_policy_id")),
+        "tags": _clean_list(etsy.get("tags") or [], limit=13),
+        "materials": _clean_list(etsy.get("materials") or [], limit=13),
+        "images": images,
+        "weight": weight_display,
+        "dimensions": dimensions_display,
+    }
+
+    optimized_type = current.get("type") or settings.ETSY_DEFAULT_LISTING_TYPE
+
+    optimized = {
+        "title": (_clean_text(doc.get("title")) or "")[:140] or None,
+        "description": _clean_text(doc.get("description")),
+        "price": _to_float(doc.get("price")),
+        "quantity": _to_int(doc.get("quantity")),
+        "type": optimized_type,
+        "who_made": current.get("who_made") or _guess_who_made(attrs) or settings.ETSY_DEFAULT_WHO_MADE,
+        "when_made": current.get("when_made") or _guess_when_made(attrs) or settings.ETSY_DEFAULT_WHEN_MADE,
+        "taxonomy_id": current.get("taxonomy_id"),
+        "shipping_profile_id": current.get("shipping_profile_id") or settings.ETSY_SHIPPING_PROFILE_ID,
+        "return_policy_id": current.get("return_policy_id") or settings.ETSY_RETURN_POLICY_ID,
+        "tags": tags,
+        "materials": materials,
+        "images": images,
+        "weight": weight_display,
+        "dimensions": dimensions_display,
+    }
+
+    # Informational (non-required) shipping fields shown in the comparison table
+    info_fields = [
+        {"key": "weight", "label": "Weight"},
+        {"key": "dimensions", "label": "Dimensions (L×W×H)"},
+    ]
+
+    required_fields = []
+    missing_current: list[str] = []
+    missing_optimized: list[str] = []
+    for key, label in ETSY_REQUIRED_CREATE_FIELDS:
+        cur_val = current.get(key)
+        opt_val = optimized.get(key)
+        cur_missing = _is_missing_etsy_required(key, cur_val, listing_type=listing_type_current)
+        opt_missing = _is_missing_etsy_required(key, opt_val, listing_type=optimized_type)
+        if cur_missing:
+            missing_current.append(key)
+        if opt_missing:
+            missing_optimized.append(key)
+
+        required_fields.append(
+            {
+                "key": key,
+                "label": label,
+                "current": cur_val,
+                "optimized": opt_val,
+                "current_missing": cur_missing,
+                "optimized_missing": opt_missing,
+                "informational": False,
+            }
+        )
+
+    for info in info_fields:
+        key = info["key"]
+        val = current.get(key)
+        required_fields.append(
+            {
+                "key": key,
+                "label": info["label"],
+                "current": val,
+                "optimized": val,
+                "current_missing": val is None,
+                "optimized_missing": val is None,
+                "informational": True,
+            }
+        )
+
+    return {
+        "sku": doc.get("_id") or doc.get("sku"),
+        "title": doc.get("title"),
+        "etsy_linked": bool((etsy.get("listing_id") or "").strip()) if isinstance(etsy.get("listing_id"), str) else bool(etsy.get("listing_id")),
+        "etsy_listing_id": etsy.get("listing_id"),
+        "last_normalized_at": doc.get("last_normalized_at"),
+        "image": images[0] if images else None,
+        "current": current,
+        "etsy_optimized": optimized,
+        "required_fields": required_fields,
+        "required_missing_current": missing_current,
+        "required_missing_optimized": missing_optimized,
+        "required_ready_current": len(missing_current) == 0,
+        "required_ready_optimized": len(missing_optimized) == 0,
+        "package": {
+            "weight_display": weight_display,
+            "dimensions_display": dimensions_display,
+            "weight": package.get("weight"),
+            "dimensions": package.get("dimensions"),
+        },
+    }
 
 
 async def _fetch_shopify_snapshot(shopify_id: object) -> dict | None:
@@ -1136,6 +1463,107 @@ async def etsy_match_excel_deny(payload: dict):
         upsert=True,
     )
     return {"ok": True}
+
+
+@router.get("/etsy-publish/queue")
+async def etsy_publish_queue(
+    q: str | None = Query(default=None, description="Search SKU/title/category"),
+    limit: int = Query(default=100, ge=1, le=500),
+):
+    query: dict = {
+        "quantity": {"$gte": 1},
+        "$or": [
+            {"channels.etsy.listing_id": {"$exists": False}},
+            {"channels.etsy.listing_id": None},
+            {"channels.etsy.listing_id": ""},
+        ]
+    }
+    if q:
+        rx = _rx(q)
+        query["$and"] = [
+            {
+                "$or": [
+                    {"_id": rx},
+                    {"sku": rx},
+                    {"title": rx},
+                    {"category": rx},
+                ]
+            }
+        ]
+
+    projection = {
+        "_id": 1,
+        "sku": 1,
+        "title": 1,
+        "description": 1,
+        "price": 1,
+        "quantity": 1,
+        "tags": 1,
+        "images": 1,
+        "attributes": 1,
+        "category": 1,
+        "package": 1,
+        "shipping": 1,
+        "channels.etsy": 1,
+        "last_normalized_at": 1,
+    }
+
+    total = await db.product_normalized.count_documents(query)
+    docs = await db.product_normalized.find(query, projection).sort("last_normalized_at", -1).to_list(length=limit)
+
+    items: list[dict] = []
+    for doc in docs:
+        detail = _build_etsy_publish_comparison(doc)
+        items.append(
+            {
+                "sku": detail.get("sku"),
+                "title": detail.get("title"),
+                "category": doc.get("category"),
+                "image": detail.get("image"),
+                "required_missing_current": detail.get("required_missing_current"),
+                "required_missing_optimized": detail.get("required_missing_optimized"),
+                "required_ready_current": detail.get("required_ready_current"),
+                "required_ready_optimized": detail.get("required_ready_optimized"),
+                "last_normalized_at": detail.get("last_normalized_at"),
+            }
+        )
+
+    return {
+        "count": len(items),
+        "total": int(total),
+        "items": items,
+    }
+
+
+@router.get("/etsy-publish/{sku}")
+async def etsy_publish_detail(sku: str):
+    projection = {
+        "_id": 1,
+        "sku": 1,
+        "title": 1,
+        "description": 1,
+        "price": 1,
+        "quantity": 1,
+        "tags": 1,
+        "images": 1,
+        "attributes": 1,
+        "category": 1,
+        "package": 1,
+        "shipping": 1,
+        "channels.etsy": 1,
+        "last_normalized_at": 1,
+    }
+    doc = await db.product_normalized.find_one({"$or": [{"_id": sku}, {"sku": sku}]}, projection)
+    if not doc:
+        raise HTTPException(status_code=404, detail="SKU not found")
+
+    detail = _build_etsy_publish_comparison(doc)
+    detail["required_field_help"] = {
+        "type": sorted(ETSY_ALLOWED_LISTING_TYPES),
+        "who_made": sorted(ETSY_ALLOWED_WHO_MADE),
+        "when_made": sorted(ETSY_ALLOWED_WHEN_MADE),
+    }
+    return detail
 
 
 @router.get("/channel-compare/list")

@@ -8,6 +8,7 @@ from app.api.router import api_router
 from app.services.scheduler import start_scheduler
 from app.security.passkey import is_authorized, passkey_enabled
 from app.database.mongo import close_mongo_client
+from app.services.etsy_auth_service import get_token_status as get_etsy_token_status
 
 # Create logs directory if it doesn't exist
 logs_dir = Path("logs")
@@ -60,6 +61,44 @@ app = FastAPI(title="eBay → Shopify Sync Middleware")
 # async def startup_event():
 #     start_scheduler()
 
+_startup_logger = logging.getLogger(__name__)
+
+@app.on_event("startup")
+async def check_etsy_token_health():
+    try:
+        status = await get_etsy_token_status()
+        token_status = status.get("status")
+        has_refresh = status.get("has_refresh_token", False)
+        if token_status == "no_db_token":
+            env_fallback = status.get("env_fallback_active", False)
+            if env_fallback:
+                _startup_logger.warning(
+                    "Etsy: no DB token found - using ETSY_TOKEN env fallback. "
+                    "Visit /auth/etsy/login to authorize and store a refresh token."
+                )
+            else:
+                _startup_logger.warning(
+                    "Etsy: no token configured. Visit /auth/etsy/login to authorize."
+                )
+        elif token_status == "expired" and not has_refresh:
+            _startup_logger.warning(
+                "Etsy: access token is expired and no refresh token is stored. "
+                "Visit /auth/etsy/login to re-authorize."
+            )
+        elif not has_refresh:
+            _startup_logger.warning(
+                "Etsy: token is valid but no refresh token stored. "
+                "Re-authorize via /auth/etsy/login with offline_access scope to enable auto-refresh."
+            )
+        else:
+            seconds_left = status.get("seconds_until_expiry")
+            _startup_logger.info(
+                "Etsy token OK (status=%s, has_refresh_token=%s, expires_in=%ss)",
+                token_status, has_refresh, seconds_left,
+            )
+    except Exception as exc:
+        _startup_logger.warning("Etsy token health check failed at startup: %s", exc)
+
 app.include_router(api_router)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -92,6 +131,13 @@ async def reporting_page(request: Request):
 @app.get("/etsy-review", response_class=FileResponse)
 async def etsy_review_page(request: Request):
     return FileResponse("static/etsy_match_review.html")
+
+
+@app.get("/etsy-publish-prep", response_class=FileResponse)
+async def etsy_publish_prep_page(request: Request):
+    if passkey_enabled() and not is_authorized(request):
+        return RedirectResponse(url="/login?next=/etsy-publish-prep")
+    return FileResponse("static/etsy_publish_prep.html")
 
 
 @app.get("/channel-compare", response_class=FileResponse)
