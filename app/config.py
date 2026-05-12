@@ -35,10 +35,11 @@ class Settings(BaseSettings):
 
     # Etsy store-wide listing defaults (same for every product)
     ETSY_DEFAULT_WHO_MADE: str = "someone_else"
-    ETSY_DEFAULT_WHEN_MADE: str = "before_1990"
+    ETSY_DEFAULT_WHEN_MADE: str = "before_2007"
     ETSY_DEFAULT_LISTING_TYPE: str = "physical"
     ETSY_SHIPPING_PROFILE_ID: int | None = None
     ETSY_RETURN_POLICY_ID: int | None = None
+    ETSY_READINESS_STATE_ID: int | None = None
 
     # Minimal UI/API protection for non-public deployments.
     # When set, /admin, /reporting and related APIs require a passkey.

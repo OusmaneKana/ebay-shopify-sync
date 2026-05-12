@@ -88,6 +88,71 @@
 
     .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 
+    .edit-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .field input,
+    .field select {
+      background: #020617;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 8px;
+      font-size: 12px;
+      width: 100%;
+    }
+
+    .inline-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .suggestions {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .suggestion-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(2, 6, 23, 0.8);
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .suggestion-title {
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .suggestion-meta {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
     input[type="text"] {
       background: #020617;
       color: var(--text);
@@ -195,6 +260,7 @@
       .layout { grid-template-columns: 1fr; }
       .hero { grid-template-columns: 1fr; }
       .hero img { max-height: 220px; }
+      .edit-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -241,6 +307,7 @@
     <div class="card">
       <h2>Current State vs Etsy Optimization</h2>
       <div class="small" id="detailMeta">Pick a product from the list.</div>
+      <div class="small" id="seoInsights" style="margin-top: 6px;">AI SEO insights will appear after selecting a product.</div>
 
       <div class="hero" style="margin-top: 10px;">
         <img id="heroImage" alt="Product" style="display:none;" />
@@ -268,12 +335,81 @@
 
       <h2 style="margin-top: 14px;">Draft Payload Preview</h2>
       <div class="small">Use this as a manual starting payload for Etsy create listing API.</div>
+
+      <div class="edit-grid">
+        <div class="field">
+          <label for="ovType">Listing Type</label>
+          <select id="ovType"></select>
+        </div>
+        <div class="field">
+          <label for="ovWhoMade">Who Made</label>
+          <select id="ovWhoMade"></select>
+        </div>
+        <div class="field">
+          <label for="ovWhenMade">When Made</label>
+          <select id="ovWhenMade"></select>
+        </div>
+        <div class="field">
+          <label for="ovTaxonomyId">Taxonomy ID</label>
+          <div class="inline-actions">
+            <input id="ovTaxonomyId" type="number" min="1" step="1" placeholder="e.g. 1234" />
+            <button id="suggestTaxonomyBtn" type="button" onclick="suggestTaxonomyForSelected()">Suggest</button>
+          </div>
+          <div id="taxonomySuggestions" class="suggestions small">No suggestions loaded.</div>
+        </div>
+        <div class="field">
+          <label for="ovShippingProfileId">Shipping Profile ID</label>
+          <input id="ovShippingProfileId" type="number" min="1" step="1" placeholder="e.g. 5678" />
+        </div>
+        <div class="field">
+          <label for="ovReturnPolicyId">Return Policy ID</label>
+          <input id="ovReturnPolicyId" type="number" min="1" step="1" placeholder="e.g. 9012" />
+        </div>
+      </div>
+
       <div class="code" id="payloadPreview">{}</div>
+
+      <div class="row" style="margin-top: 10px;">
+        <button id="createDraftBtn" class="primary" onclick="createDraftOnEtsy()" disabled>Create Draft on Etsy</button>
+      </div>
+
+      <h2 style="margin-top: 14px;">Etsy API Response</h2>
+      <div class="small">Shows the exact backend response from your Etsy draft-create call, including status and error payload.</div>
+      <div class="code" id="draftResponse">No call made yet.</div>
     </div>
   </div>
 
   <script>
     let selectedSku = null;
+    let selectedDetail = null;
+    let selectedOverrides = {};
+    let taxonomySuggestions = [];
+
+    const FALLBACK_HELP = {
+      type: ['digital', 'physical'],
+      who_made: ['collective', 'i_did', 'someone_else'],
+      when_made: [
+        'before_1700',
+        '1700s',
+        '1800s',
+        '1900s',
+        '1910s',
+        '1920s',
+        '1930s',
+        '1940s',
+        '1950s',
+        '1960s',
+        '1970s',
+        '1980s',
+        '1990s',
+        'before_2007',
+        '2000_2006',
+        '2007_2009',
+        '2010_2019',
+        '2020_2026',
+        'made_to_order',
+      ],
+    };
 
     const esc = (v) => {
       if (v === null || v === undefined) return '';
@@ -370,6 +506,31 @@
       document.getElementById('heroPills').innerHTML = pills.join(' ');
     }
 
+    function renderSeoInsights(detail) {
+      const el = document.getElementById('seoInsights');
+      const seo = detail.seo_optimization || {};
+      const optimized = detail.etsy_optimized || {};
+
+      const seoTitle = optimized.title || seo.seo_title || '';
+      const whenMade = optimized.when_made || seo.when_made || '';
+      const badges = [];
+      if (seo.ai_used) {
+        badges.push('<span class="pill ok">AI SEO title</span>');
+        badges.push('<span class="pill ok">AI when_made</span>');
+      } else {
+        badges.push('<span class="pill warn">AI fallback</span>');
+      }
+
+      const reason = seo.reason ? `<div class="small" style="margin-top:4px;">Reason: ${esc(seo.reason)}</div>` : '';
+
+      el.innerHTML = `
+        <div>${badges.join(' ')}</div>
+        <div class="small" style="margin-top:4px;"><strong>SEO Title:</strong> ${esc(seoTitle || '—')}</div>
+        <div class="small" style="margin-top:2px;"><strong>When Made:</strong> ${esc(whenMade || '—')}</div>
+        ${reason}
+      `;
+    }
+
     function renderRequiredRows(detail) {
       const rows = detail.required_fields || [];
       const tbody = document.getElementById('requiredRows');
@@ -399,41 +560,262 @@
       }).join('');
     }
 
-    function renderPayload(detail) {
+    function parseOptionalInt(value) {
+      if (value === null || value === undefined) return null;
+      const txt = String(value).trim();
+      if (!txt) return null;
+      const num = Number(txt);
+      if (!Number.isFinite(num) || num <= 0) return null;
+      return Math.trunc(num);
+    }
+
+    function buildPayload(detail) {
       const optimized = detail.etsy_optimized || {};
       const payload = {
         title: optimized.title || null,
         description: optimized.description || null,
-        type: optimized.type || 'physical',
+        type: selectedOverrides.type || optimized.type || 'physical',
         price: optimized.price,
         quantity: optimized.quantity,
-        who_made: optimized.who_made || null,
-        when_made: optimized.when_made || null,
-        taxonomy_id: optimized.taxonomy_id,
-        shipping_profile_id: optimized.shipping_profile_id,
-        return_policy_id: optimized.return_policy_id,
+        who_made: selectedOverrides.who_made || optimized.who_made || null,
+        when_made: selectedOverrides.when_made || optimized.when_made || null,
+        taxonomy_id: parseOptionalInt(selectedOverrides.taxonomy_id) || optimized.taxonomy_id,
+        shipping_profile_id: parseOptionalInt(selectedOverrides.shipping_profile_id) || optimized.shipping_profile_id,
+        return_policy_id: parseOptionalInt(selectedOverrides.return_policy_id) || optimized.return_policy_id,
+        readiness_state_id: optimized.readiness_state_id || null,
         tags: optimized.tags || [],
         materials: optimized.materials || [],
         images: optimized.images || [],
       };
+
+      if (payload.type === 'digital') {
+        payload.shipping_profile_id = null;
+        payload.readiness_state_id = null;
+      }
+
+      return payload;
+    }
+
+    function renderPayload(detail) {
+      const payload = buildPayload(detail);
       document.getElementById('payloadPreview').textContent = JSON.stringify(payload, null, 2);
+      return payload;
+    }
+
+    function setDraftResponse(value) {
+      document.getElementById('draftResponse').textContent = value;
+    }
+
+    function applyTaxonomySuggestion(taxonomyId) {
+      if (!selectedDetail) return;
+      const value = String(taxonomyId || '').trim();
+      document.getElementById('ovTaxonomyId').value = value;
+      selectedOverrides.taxonomy_id = value;
+      renderPayload(selectedDetail);
+    }
+
+    function renderTaxonomySuggestions(items, aiChoice) {
+      const el = document.getElementById('taxonomySuggestions');
+      taxonomySuggestions = Array.isArray(items) ? items : [];
+      if (!taxonomySuggestions.length) {
+        el.innerHTML = '<div class="small">No suggestions found.</div>';
+        return;
+      }
+
+      const aiTaxonomyId = aiChoice && aiChoice.taxonomy_id ? Number(aiChoice.taxonomy_id) : null;
+      el.innerHTML = taxonomySuggestions.map((item) => {
+        const aiSelected = aiTaxonomyId && Number(item.taxonomy_id) === aiTaxonomyId;
+        const aiConfidence = item.ai_confidence != null ? `AI ${(Number(item.ai_confidence) * 100).toFixed(0)}%` : null;
+        const badges = [
+          `<span class="pill">ID ${esc(item.taxonomy_id)}</span>`,
+          `<span class="pill">score ${esc(item.local_score)}</span>`,
+          item.leaf ? '<span class="pill ok">leaf</span>' : '<span class="pill warn">branch</span>',
+          aiSelected ? '<span class="pill ok">AI pick</span>' : '',
+          aiSelected && aiConfidence ? `<span class="pill ok">${esc(aiConfidence)}</span>` : '',
+        ].filter(Boolean).join(' ');
+        const aiReason = aiSelected && item.ai_reason ? `<div class="small">${esc(item.ai_reason)}</div>` : '';
+        return `
+          <div class="suggestion-item">
+            <div class="suggestion-title">${esc(item.full_path || item.name || '')}</div>
+            <div class="suggestion-meta">${badges}</div>
+            ${aiReason}
+            <div>
+              <button type="button" onclick="applyTaxonomySuggestion(${Number(item.taxonomy_id)})">Use This Taxonomy</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function populateSelect(id, values, selectedValue) {
+      const el = document.getElementById(id);
+      const normalizedValues = Array.isArray(values) ? [...values] : [];
+      if (selectedValue && !normalizedValues.includes(selectedValue)) {
+        normalizedValues.unshift(selectedValue);
+      }
+      const opts = ['<option value="">(auto)</option>'];
+      for (const v of normalizedValues) {
+        const safe = esc(v);
+        const selected = selectedValue === v ? ' selected' : '';
+        opts.push(`<option value="${safe}"${selected}>${safe}</option>`);
+      }
+      el.innerHTML = opts.join('');
+    }
+
+    function bindOverrides(detail) {
+      const help = detail.required_field_help || {};
+      const optimized = detail.etsy_optimized || {};
+
+      populateSelect('ovType', help.type || FALLBACK_HELP.type, selectedOverrides.type || optimized.type || 'physical');
+      populateSelect('ovWhoMade', help.who_made || FALLBACK_HELP.who_made, selectedOverrides.who_made || optimized.who_made || '');
+      populateSelect('ovWhenMade', help.when_made || FALLBACK_HELP.when_made, selectedOverrides.when_made || optimized.when_made || '');
+
+      document.getElementById('ovTaxonomyId').value = selectedOverrides.taxonomy_id || (optimized.taxonomy_id || '');
+      document.getElementById('ovShippingProfileId').value = selectedOverrides.shipping_profile_id || (optimized.shipping_profile_id || '');
+      document.getElementById('ovReturnPolicyId').value = selectedOverrides.return_policy_id || (optimized.return_policy_id || '');
+
+      const syncShippingField = () => {
+        const typeValue = document.getElementById('ovType').value || optimized.type || 'physical';
+        const shippingInput = document.getElementById('ovShippingProfileId');
+        const isDigital = typeValue === 'digital';
+        shippingInput.disabled = isDigital;
+        if (isDigital) {
+          shippingInput.value = '';
+          selectedOverrides.shipping_profile_id = '';
+        }
+      };
+
+      const onChange = () => {
+        selectedOverrides = {
+          type: document.getElementById('ovType').value,
+          who_made: document.getElementById('ovWhoMade').value,
+          when_made: document.getElementById('ovWhenMade').value,
+          taxonomy_id: document.getElementById('ovTaxonomyId').value,
+          shipping_profile_id: document.getElementById('ovShippingProfileId').value,
+          return_policy_id: document.getElementById('ovReturnPolicyId').value,
+        };
+        syncShippingField();
+        renderPayload(detail);
+      };
+
+      ['ovType', 'ovWhoMade', 'ovWhenMade', 'ovTaxonomyId', 'ovShippingProfileId', 'ovReturnPolicyId'].forEach((id) => {
+        const el = document.getElementById(id);
+        el.onchange = onChange;
+        el.oninput = onChange;
+      });
+
+      syncShippingField();
+      renderPayload(detail);
     }
 
     async function loadDetail(sku) {
       selectedSku = sku;
+      selectedDetail = null;
+      selectedOverrides = {};
       await loadList();
 
       const r = await fetch(`/reporting/etsy-publish/${encodeURIComponent(sku)}`);
       const d = await r.json();
       if (!r.ok) {
         document.getElementById('detailMeta').textContent = d.detail || 'Failed loading detail';
+        document.getElementById('createDraftBtn').disabled = true;
         return;
       }
 
       document.getElementById('detailMeta').textContent = `Selected ${d.sku}`;
+      selectedDetail = d;
       setHero(d);
+      renderSeoInsights(d);
       renderRequiredRows(d);
-      renderPayload(d);
+      bindOverrides(d);
+      renderTaxonomySuggestions([], null);
+      document.getElementById('taxonomySuggestions').innerHTML = '<div class="small">Loading suggestions...</div>';
+      setDraftResponse('No call made yet.');
+      document.getElementById('createDraftBtn').disabled = false;
+      document.getElementById('suggestTaxonomyBtn').disabled = false;
+      void suggestTaxonomyForSelected();
+    }
+
+    async function suggestTaxonomyForSelected() {
+      if (!selectedSku || !selectedDetail) {
+        renderTaxonomySuggestions([], null);
+        return;
+      }
+
+      const btn = document.getElementById('suggestTaxonomyBtn');
+      const requestedSku = selectedSku;
+      btn.disabled = true;
+      btn.textContent = 'Suggesting...';
+
+      try {
+        const r = await fetch(`/reporting/etsy-publish/${encodeURIComponent(requestedSku)}/suggest-taxonomy`);
+        const d = await r.json();
+        if (requestedSku !== selectedSku) {
+          return;
+        }
+        if (!r.ok) {
+          const msg = d && d.detail ? JSON.stringify(d.detail, null, 2) : 'Failed to load suggestions.';
+          document.getElementById('taxonomySuggestions').innerHTML = `<div class="small">${esc(msg)}</div>`;
+          return;
+        }
+        renderTaxonomySuggestions(d.suggestions || [], d.ai_choice || null);
+        if (d.best_match && d.best_match.taxonomy_id) {
+          applyTaxonomySuggestion(d.best_match.taxonomy_id);
+        }
+      } catch (err) {
+        document.getElementById('taxonomySuggestions').innerHTML = `<div class="small">${esc(String(err))}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Suggest';
+      }
+    }
+
+    async function createDraftOnEtsy() {
+      if (!selectedSku || !selectedDetail) {
+        setDraftResponse('Select a product first.');
+        return;
+      }
+
+      const btn = document.getElementById('createDraftBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      const payload = renderPayload(selectedDetail);
+      let statusCode = null;
+      let responseBody = null;
+
+      try {
+        const r = await fetch(`/reporting/etsy-publish/${encodeURIComponent(selectedSku)}/create-draft`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ payload }),
+        });
+        statusCode = r.status;
+        const txt = await r.text();
+        try {
+          responseBody = txt ? JSON.parse(txt) : {};
+        } catch {
+          responseBody = txt;
+        }
+      } catch (err) {
+        responseBody = { error: String(err) };
+      }
+
+      const debug = {
+        sent_at: new Date().toISOString(),
+        sku: selectedSku,
+        http_status: statusCode,
+        response: responseBody,
+      };
+      setDraftResponse(JSON.stringify(debug, null, 2));
+
+      btn.disabled = false;
+      btn.textContent = 'Create Draft on Etsy';
+
+      if (responseBody && typeof responseBody === 'object' && responseBody.ok) {
+        document.getElementById('detailMeta').textContent = `Draft created for ${selectedSku} (listing_id=${responseBody.linked_listing_id || 'n/a'})`;
+        await loadList();
+      }
     }
 
     document.getElementById('q').addEventListener('keydown', (e) => {
@@ -449,6 +831,7 @@
     }
 
     loadList();
+    document.getElementById('suggestTaxonomyBtn').disabled = true;
   </script>
 </body>
 </html>

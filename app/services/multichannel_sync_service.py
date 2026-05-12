@@ -425,6 +425,8 @@ async def get_item_timeline(*, sku: str, limit: int = 100) -> dict[str, Any]:
             "attempts": 1,
             "error": 1,
             "reason": 1,
+            "etsy_state_target": 1,
+            "sync_note": 1,
             "created_at": 1,
             "started_at": 1,
             "finished_at": 1,
@@ -477,6 +479,8 @@ async def get_item_timeline(*, sku: str, limit: int = 100) -> dict[str, Any]:
                     "attempts": job.get("attempts"),
                     "error": job.get("error"),
                     "reason": job.get("reason"),
+                    "etsy_state_target": job.get("etsy_state_target"),
+                    "sync_note": job.get("sync_note"),
                 },
                 "raw": job,
             }
@@ -1367,6 +1371,75 @@ async def _push_shopify_quantity(doc: dict[str, Any], target_qty: int) -> tuple[
     return bool(ok), None if ok else "shopify_inventory_update_failed"
 
 
+def _etsy_price_to_float(value: Any) -> float:
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, dict):
+        amount = value.get("amount")
+        divisor = value.get("divisor")
+        if amount is None or divisor in (None, 0):
+            raise ValueError(f"invalid_etsy_money_value:{value!r}")
+        return float(amount) / float(divisor)
+    raise ValueError(f"unsupported_etsy_price_value:{value!r}")
+
+
+def _build_etsy_inventory_payload_for_quantity(
+    *,
+    inventory: dict[str, Any],
+    sku: str,
+    target_qty: int,
+) -> dict[str, Any]:
+    products = inventory.get("products") or []
+    if not products:
+        raise ValueError("etsy_inventory_missing_products")
+
+    # Keep listing structure intact and only adjust quantities.
+    payload_products: list[dict[str, Any]] = []
+    normalized_target = max(0, int(target_qty))
+
+    for product in products:
+        offerings = product.get("offerings") or []
+        if not offerings:
+            raise ValueError("etsy_inventory_product_missing_offerings")
+
+        payload_offerings: list[dict[str, Any]] = []
+        for offering in offerings:
+            payload_offerings.append(
+                {
+                    "price": _etsy_price_to_float(offering.get("price")),
+                    "quantity": 0,
+                    "is_enabled": bool(offering.get("is_enabled")),
+                    "readiness_state_id": offering.get("readiness_state_id"),
+                }
+            )
+
+        if normalized_target > 0:
+            first_enabled_index = next(
+                (index for index, item in enumerate(payload_offerings) if item.get("is_enabled")),
+                0,
+            )
+            payload_offerings[first_enabled_index]["quantity"] = normalized_target
+
+        payload_product: dict[str, Any] = {
+            "sku": str(sku),
+            "offerings": payload_offerings,
+        }
+
+        property_values = product.get("property_values") or []
+        if property_values:
+            payload_product["property_values"] = property_values
+
+        payload_products.append(payload_product)
+
+    return {
+        "products": payload_products,
+        "price_on_property": inventory.get("price_on_property") or [],
+        "quantity_on_property": inventory.get("quantity_on_property") or [],
+        "sku_on_property": inventory.get("sku_on_property") or [],
+        "readiness_state_on_property": inventory.get("readiness_state_on_property") or [],
+    }
+
+
 async def _push_etsy_quantity(doc: dict[str, Any], target_qty: int) -> tuple[bool, str | None]:
     etsy_channel = get_channel(doc, "etsy")
     listing_id = etsy_channel.get("listing_id")
@@ -1392,17 +1465,44 @@ async def _push_etsy_quantity(doc: dict[str, Any], target_qty: int) -> tuple[boo
         "Authorization": f"Bearer {token}",
         "x-api-key": api_key,
         "Accept": "application/json",
+        "Content-Type": "application/json",
     }
 
-    # Etsy requires PATCH on listing resource for quantity updates in this setup.
-    url = f"https://openapi.etsy.com/v3/application/shops/{shop_id}/listings/{listing_id}"
-    payload = {"quantity": int(target_qty)}
+    sku = str(doc.get("_id") or "").strip()
+    if not sku:
+        return False, "missing_sku"
+
+    inventory_url = f"https://openapi.etsy.com/v3/application/listings/{listing_id}/inventory"
 
     async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.patch(url, headers=headers, data=payload)
+        get_response = await client.get(
+            inventory_url,
+            headers=headers,
+            params={"show_deleted": "true"},
+        )
 
-    if response.status_code >= 400:
-        return False, f"etsy_update_failed:{response.status_code}"
+        if get_response.status_code >= 400:
+            return False, f"etsy_inventory_get_failed:{get_response.status_code}"
+
+        inventory_payload = get_response.json() if get_response.content else {}
+        try:
+            update_payload = _build_etsy_inventory_payload_for_quantity(
+                inventory=inventory_payload,
+                sku=sku,
+                target_qty=int(target_qty),
+            )
+        except Exception as exc:
+            return False, f"etsy_inventory_payload_error:{exc}"
+
+        put_response = await client.put(
+            inventory_url,
+            headers=headers,
+            content=json.dumps(update_payload),
+        )
+
+    if put_response.status_code >= 400:
+        return False, f"etsy_inventory_put_failed:{put_response.status_code}"
+
     return True, None
 
 
@@ -1504,6 +1604,12 @@ async def process_single_job(job_id: str) -> dict[str, Any]:
 
     ok = False
     error: str | None = None
+    etsy_state_target: str | None = None
+    sync_note: str | None = None
+
+    if target_channel == "etsy" and target_qty <= 0:
+        etsy_state_target = "sold_out"
+        sync_note = "etsy_marked_sold_out"
 
     if target_channel == "shopify":
         ok, error = await _push_shopify_quantity(doc, target_qty)
@@ -1523,10 +1629,19 @@ async def process_single_job(job_id: str) -> dict[str, Any]:
                     "status": "completed",
                     "finished_at": _utc_now(),
                     "error": None,
+                    "etsy_state_target": etsy_state_target,
+                    "sync_note": sync_note,
                 }
             },
         )
-        return {"job_id": job_id, "status": "completed", "channel": target_channel, "sku": sku}
+        return {
+            "job_id": job_id,
+            "status": "completed",
+            "channel": target_channel,
+            "sku": sku,
+            "etsy_state_target": etsy_state_target,
+            "sync_note": sync_note,
+        }
 
     attempts = _safe_int(job.get("attempts"), 1)
     next_status = "failed" if attempts >= MAX_JOB_ATTEMPTS else "retry"
@@ -1537,6 +1652,8 @@ async def process_single_job(job_id: str) -> dict[str, Any]:
                 "status": next_status,
                 "error": error,
                 "finished_at": _utc_now(),
+                "etsy_state_target": etsy_state_target,
+                "sync_note": sync_note,
             }
         },
     )
@@ -1546,6 +1663,8 @@ async def process_single_job(job_id: str) -> dict[str, Any]:
         "channel": target_channel,
         "sku": sku,
         "error": error,
+        "etsy_state_target": etsy_state_target,
+        "sync_note": sync_note,
     }
 
 
@@ -1594,6 +1713,8 @@ async def get_sync_dashboard(limit_recent_jobs: int = 50) -> dict[str, Any]:
             "status": 1,
             "attempts": 1,
             "error": 1,
+            "etsy_state_target": 1,
+            "sync_note": 1,
             "created_at": 1,
             "finished_at": 1,
         },
