@@ -1,0 +1,2235 @@
+{
+  "generated_at": "2026-07-03T06:15:50.388696+00:00",
+  "source": "etsy_sold_on_ebay_audit_report.json",
+  "scope": "Full Etsy sold-on-eBay report cross-checked with product_normalized for Shopify availability and title-duplicate patterns",
+  "summary": {
+    "rows_checked_total": 76,
+    "rows_from_sku_link": 55,
+    "rows_from_title_exact": 21,
+    "rows_with_any_available_shopify_match_by_title": 18,
+    "rows_with_duplicate_title_in_normalized": 26,
+    "sku_link_rows_where_reported_sold_sku_is_still_available": 0
+  },
+  "rows": [
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4465780967,
+      "etsy_title": "Antique 1920&#39;s WM Rogers Louis XV Sterling Handle Carving Set In Original Box.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4465780967/antique-1920s-wm-rogers-louis-xv",
+      "reported_sold_sku": "157721572219",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10288740270361,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "158014777889",
+          "title": "Antique 1920's WM Rogers Louis XV Sterling Handle Carving Set In Original Box.",
+          "quantity": 1,
+          "shopify_id": 10674186649881,
+          "shopify_variant_id": 52660010221849,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157721572219",
+          "title": "Antique 1920's WM Rogers Louis XV Sterling Handle Carving Set In Original Box.",
+          "quantity": 0,
+          "shopify_id": 10288740270361,
+          "shopify_variant_id": 52065317454105,
+          "etsy_listing_id": 4465780967,
+          "etsy_url": "https://www.etsy.com/listing/4465780967/antique-1920s-wm-rogers-louis-xv"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485310723,
+      "etsy_title": "Capodimonte Benacchio Triade La Pietat De Michelangelo porcelain statue Signed.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485310723/capodimonte-benacchio-triade-la-pietat",
+      "reported_sold_sku": "EB-157009132542",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537412",
+          "title": "Capodimonte Benacchio Triade La Pietat De Michelangelo porcelain statue Signed.",
+          "quantity": 1,
+          "shopify_id": 10313799303449,
+          "shopify_variant_id": 52188839936281,
+          "etsy_listing_id": 4458607834,
+          "etsy_url": "https://www.etsy.com/listing/4458607834/capodimonte-benacchio-triade-la-pietat"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157009132542",
+          "title": "Capodimonte Benacchio Triade La Pietat De Michelangelo porcelain statue Signed.",
+          "quantity": 0,
+          "shopify_id": 10225338384665,
+          "shopify_variant_id": 51800628494617,
+          "etsy_listing_id": 4458607834,
+          "etsy_url": "https://www.etsy.com/listing/4458607834/capodimonte-benacchio-triade-la-pietat"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485310901,
+      "etsy_title": "Vintage 1960s Italy Giuseppe Capodimonte, The Promenada, Hand Painted Porcelain",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485310901/vintage-1960s-italy-giuseppe-capodimonte",
+      "reported_sold_sku": "EB-156422796233",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537448",
+          "title": "Vintage 1960s Italy  Giuseppe Capodimonte, The Promenada, Hand Painted Porcelain",
+          "quantity": 1,
+          "shopify_id": 10313800352025,
+          "shopify_variant_id": 52188841541913,
+          "etsy_listing_id": 4462056359,
+          "etsy_url": "https://www.etsy.com/listing/4462056359/vintage-1960s-italy-giuseppe-capodimonte"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-156422796233",
+          "title": "Vintage 1960s Italy  Giuseppe Capodimonte, The Promenada, Hand Painted Porcelain",
+          "quantity": 0,
+          "shopify_id": 10225327636761,
+          "shopify_variant_id": 51800551457049,
+          "etsy_listing_id": 4462056359,
+          "etsy_url": "https://www.etsy.com/listing/4462056359/vintage-1960s-italy-giuseppe-capodimonte"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485310905,
+      "etsy_title": "Vintage Sabino Glass Medium Chicken Hen Figurine Opalescent Signed 3 1/2&quot;",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485310905/vintage-sabino-glass-medium-chicken-hen",
+      "reported_sold_sku": "EB-157337026952",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537419",
+          "title": "Vintage Sabino Glass Medium Chicken Hen Figurine Opalescent Signed 3 1/2\"",
+          "quantity": 1,
+          "shopify_id": 10313799434521,
+          "shopify_variant_id": 52188840100121,
+          "etsy_listing_id": 4458695677,
+          "etsy_url": "https://www.etsy.com/listing/4458695677/vintage-sabino-glass-medium-chicken-hen"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157337026952",
+          "title": "Vintage Sabino Glass Medium Chicken Hen Figurine Opalescent Signed 3 1/2\"",
+          "quantity": 0,
+          "shopify_id": 10225352704281,
+          "shopify_variant_id": 51800671027481,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485311027,
+      "etsy_title": "Rare Collectible Japanese Vintage Hand Carved Wooden Noh Mask &quot;Sake&quot; Kagura Mask",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485311027/rare-collectible-japanese-vintage-hand",
+      "reported_sold_sku": "EB-156374603330",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537447",
+          "title": "Rare Collectible Japanese Vintage Hand Carved Wooden Noh Mask \"Sake\" Kagura Mask",
+          "quantity": 1,
+          "shopify_id": 10313800450329,
+          "shopify_variant_id": 52188841640217,
+          "etsy_listing_id": 4462053017,
+          "etsy_url": "https://www.etsy.com/listing/4462053017/rare-collectible-japanese-vintage-hand"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-156374603330",
+          "title": "Rare Collectible Japanese Vintage Hand Carved Wooden Noh Mask \"Sake\" Kagura Mask",
+          "quantity": 0,
+          "shopify_id": 10225327374617,
+          "shopify_variant_id": 51800550539545,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485311195,
+      "etsy_title": "Lot Of 40 Authentic Antique Original Native American Arrowheads In Display Tray.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485311195/lot-of-40-authentic-antique-original",
+      "reported_sold_sku": "EB-157402428077",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537428",
+          "title": "Lot Of 40 Authentic Antique Original Native American Arrowheads In Display Tray.",
+          "quantity": 1,
+          "shopify_id": 10313799794969,
+          "shopify_variant_id": 52188840427801,
+          "etsy_listing_id": 4458528264,
+          "etsy_url": "https://www.etsy.com/listing/4458528264/lot-of-40-authentic-antique-original"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157402428077",
+          "title": "Lot Of 40 Authentic Antique Original Native American Arrowheads In Display Tray.",
+          "quantity": 0,
+          "shopify_id": 10225476174105,
+          "shopify_variant_id": 51801147736345,
+          "etsy_listing_id": 4458528264,
+          "etsy_url": "https://www.etsy.com/listing/4458528264/lot-of-40-authentic-antique-original"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485311569,
+      "etsy_title": "Rare Antique Collectible Japanese Wooden Ebisu Noh Mask Theater Kabuki Kyogen",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485311569/rare-antique-collectible-japanese-wooden",
+      "reported_sold_sku": "EB-156374598439",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537456",
+          "title": "Rare Antique Collectible Japanese  Wooden Ebisu Noh Mask Theater Kabuki Kyogen",
+          "quantity": 1,
+          "shopify_id": 10313800778009,
+          "shopify_variant_id": 52188842361113,
+          "etsy_listing_id": 4462053103,
+          "etsy_url": "https://www.etsy.com/listing/4462053103/rare-antique-collectible-japanese-wooden"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-156374598439",
+          "title": "Rare Antique Collectible Japanese  Wooden Ebisu Noh Mask Theater Kabuki Kyogen",
+          "quantity": 0,
+          "shopify_id": 10225327341849,
+          "shopify_variant_id": 51800550506777,
+          "etsy_listing_id": 4462053103,
+          "etsy_url": "https://www.etsy.com/listing/4462053103/rare-antique-collectible-japanese-wooden"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485311613,
+      "etsy_title": "Rare Vintage Pair CAPODIMONTE Vase Water Well Multicolored Flowers 6&quot;x12&quot; Italy.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485311613/rare-vintage-pair-capodimonte-vase-water",
+      "reported_sold_sku": "EB-157254735076",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537426",
+          "title": "Rare Vintage Pair CAPODIMONTE Vase Water Well Multicolored Flowers 6\"x12\" Italy.",
+          "quantity": 1,
+          "shopify_id": 10313799631129,
+          "shopify_variant_id": 52188840296729,
+          "etsy_listing_id": 4458619330,
+          "etsy_url": "https://www.etsy.com/listing/4458619330/rare-vintage-pair-capodimonte-vase-water"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157254735076",
+          "title": "Rare Vintage Pair CAPODIMONTE Vase Water Well Multicolored Flowers 6\"x12\" Italy.",
+          "quantity": 0,
+          "shopify_id": 10225343430937,
+          "shopify_variant_id": 51800656970009,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485311739,
+      "etsy_title": "1880s-1890s Grover Cleveland 22nd & 24th U.S. President Decorative Calling Card",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485311739/1880s-1890s-grover-cleveland-22nd-24th",
+      "reported_sold_sku": "EB-157406254359",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537414",
+          "title": "1880s-1890s Grover Cleveland 22nd & 24th U.S. President Decorative Calling Card",
+          "quantity": 1,
+          "shopify_id": 10313799205145,
+          "shopify_variant_id": 52188839837977,
+          "etsy_listing_id": 4458528462,
+          "etsy_url": "https://www.etsy.com/listing/4458528462/1880s-1890s-grover-cleveland-22nd-24th"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157406254359",
+          "title": "1880s-1890s Grover Cleveland 22nd & 24th U.S. President Decorative Calling Card",
+          "quantity": 0,
+          "shopify_id": 10225476501785,
+          "shopify_variant_id": 51801148129561,
+          "etsy_listing_id": 4458528462,
+          "etsy_url": "https://www.etsy.com/listing/4458528462/1880s-1890s-grover-cleveland-22nd-24th"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485312009,
+      "etsy_title": "Rare Men&#39;s wristwatch Studio Made by Vulcain 60s Gold-Plated Swiss Made. Working",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485312009/rare-mens-wristwatch-studio-made-by",
+      "reported_sold_sku": "EB-157259512717",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537439",
+          "title": "Rare Men's wristwatch Studio Made by Vulcain 60s Gold-Plated Swiss Made. Working",
+          "quantity": 1,
+          "shopify_id": 10313800155417,
+          "shopify_variant_id": 52188841214233,
+          "etsy_listing_id": 4458692601,
+          "etsy_url": "https://www.etsy.com/listing/4458692601/rare-mens-wristwatch-studio-made-by"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157259512717",
+          "title": "Rare Men's wristwatch Studio Made by Vulcain 60s Gold-Plated Swiss Made. Working",
+          "quantity": 0,
+          "shopify_id": 10225343856921,
+          "shopify_variant_id": 51800657887513,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485312095,
+      "etsy_title": "Set Of 2 Keramos Capodimonte Italy Cherub Centerpiece Vase Lidded Pedestal Bowls",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485312095/set-of-2-keramos-capodimonte-italy",
+      "reported_sold_sku": "EB-157254715727",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537443",
+          "title": "Set Of 2 Keramos Capodimonte Italy Cherub Centerpiece Vase Lidded Pedestal Bowls",
+          "quantity": 1,
+          "shopify_id": 10313800417561,
+          "shopify_variant_id": 52188841607449,
+          "etsy_listing_id": 4458614983,
+          "etsy_url": "https://www.etsy.com/listing/4458614983/set-of-2-keramos-capodimonte-italy"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157254715727",
+          "title": "Set Of 2 Keramos Capodimonte Italy Cherub Centerpiece Vase Lidded Pedestal Bowls",
+          "quantity": 0,
+          "shopify_id": 10225343365401,
+          "shopify_variant_id": 51800656904473,
+          "etsy_listing_id": 4458614983,
+          "etsy_url": "https://www.etsy.com/listing/4458614983/set-of-2-keramos-capodimonte-italy"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485316072,
+      "etsy_title": "Rare 1800&#39;s Antique Chinese Gilt Lacquered Tea Caddy w/ Pewter Containers.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485316072/rare-1800s-antique-chinese-gilt",
+      "reported_sold_sku": "EB-156180400582",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537457",
+          "title": "Rare 1800's Antique Chinese Gilt Lacquered Tea Caddy w/ Pewter Containers.",
+          "quantity": 1,
+          "shopify_id": 10313800941849,
+          "shopify_variant_id": 52188842688793,
+          "etsy_listing_id": 4470705234,
+          "etsy_url": "https://www.etsy.com/listing/4470705234/rare-1800s-antique-chinese-gilt"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-156180400582",
+          "title": "Rare 1800's Antique Chinese Gilt Lacquered Tea Caddy w/ Pewter Containers.",
+          "quantity": 0,
+          "shopify_id": 10225326555417,
+          "shopify_variant_id": 51800548802841,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485316412,
+      "etsy_title": "Antique 1920&#39;s French Dog Meerschaum & Amber Cigarette Holder W Original Case.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485316412/antique-1920s-french-dog-meerschaum",
+      "reported_sold_sku": "EB-156912762830",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537416",
+          "title": "Antique 1920's French Dog Meerschaum & Amber Cigarette Holder W Original Case.",
+          "quantity": 1,
+          "shopify_id": 10313799270681,
+          "shopify_variant_id": 52188839903513,
+          "etsy_listing_id": 4458592252,
+          "etsy_url": "https://www.etsy.com/listing/4458592252/antique-1920s-french-dog-meerschaum"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-156912762830",
+          "title": "Antique 1920's French Dog Meerschaum & Amber Cigarette Holder W Original Case.",
+          "quantity": 0,
+          "shopify_id": 10225335599385,
+          "shopify_variant_id": 51800593826073,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485316568,
+      "etsy_title": "Ultra Rare Antique 19th C Drop Down Firefighting Station Clip On Horse Harness.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485316568/ultra-rare-antique-19th-c-drop-down",
+      "reported_sold_sku": "EB-157334733925",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537434",
+          "title": "Ultra Rare Antique 19th C Drop Down Firefighting Station Clip On Horse Harness.",
+          "quantity": 1,
+          "shopify_id": 10313799958809,
+          "shopify_variant_id": 52188840788249,
+          "etsy_listing_id": 4458695329,
+          "etsy_url": "https://www.etsy.com/listing/4458695329/ultra-rare-antique-19th-c-drop-down"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157334733925",
+          "title": "Ultra Rare Antique 19th C Drop Down Firefighting Station Clip On Horse Harness.",
+          "quantity": 0,
+          "shopify_id": 10225346904345,
+          "shopify_variant_id": 51800665227545,
+          "etsy_listing_id": 4458695329,
+          "etsy_url": "https://www.etsy.com/listing/4458695329/ultra-rare-antique-19th-c-drop-down"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485316744,
+      "etsy_title": "Antique 19th C Horse Theme German Meerschaum Cigarette Holder W Original Case.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485316744/antique-19th-c-horse-theme-german",
+      "reported_sold_sku": "EB-156912768110",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537438",
+          "title": "Antique 19th C Horse Theme German Meerschaum Cigarette Holder W Original Case.",
+          "quantity": 1,
+          "shopify_id": 10313800122649,
+          "shopify_variant_id": 52188841181465,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-156912768110",
+          "title": "Antique 19th C Horse Theme German Meerschaum Cigarette Holder W Original Case.",
+          "quantity": 0,
+          "shopify_id": 10225335664921,
+          "shopify_variant_id": 51800593858841,
+          "etsy_listing_id": 4458587781,
+          "etsy_url": "https://www.etsy.com/listing/4458587781/antique-19th-c-horse-theme-german"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485317104,
+      "etsy_title": "Set Of 2 Lalique Crystal Glass Partridge Quail Bird Ring Holder Trinket Dish",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485317104/set-of-2-lalique-crystal-glass-partridge",
+      "reported_sold_sku": "EB-157186059391",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537430",
+          "title": "Set Of 2 Lalique Crystal Glass Partridge Quail Bird Ring Holder Trinket Dish",
+          "quantity": 1,
+          "shopify_id": 10313799696665,
+          "shopify_variant_id": 52188840329497,
+          "etsy_listing_id": 4458610567,
+          "etsy_url": "https://www.etsy.com/listing/4458610567/set-of-2-lalique-crystal-glass-partridge"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157186059391",
+          "title": "Set Of 2 Lalique Crystal Glass Partridge Quail Bird Ring Holder Trinket Dish",
+          "quantity": 0,
+          "shopify_id": 10225342120217,
+          "shopify_variant_id": 51800645468441,
+          "etsy_listing_id": 4458610567,
+          "etsy_url": "https://www.etsy.com/listing/4458610567/set-of-2-lalique-crystal-glass-partridge"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485317210,
+      "etsy_title": "Antique 19th C ECHT German Meerschaum & Amber Pipe Horse Theme W Original Case.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485317210/antique-19th-c-echt-german-meerschaum",
+      "reported_sold_sku": "EB-156912746630",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537421",
+          "title": "Antique 19th C ECHT German Meerschaum & Amber Pipe Horse Theme W Original Case.",
+          "quantity": 1,
+          "shopify_id": 10313799500057,
+          "shopify_variant_id": 52188840165657,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-156912746630",
+          "title": "Antique 19th C ECHT German Meerschaum & Amber Pipe Horse Theme W Original Case.",
+          "quantity": 0,
+          "shopify_id": 10225335533849,
+          "shopify_variant_id": 51800593727769,
+          "etsy_listing_id": 4458587383,
+          "etsy_url": "https://www.etsy.com/listing/4458587383/antique-19th-c-echt-german-meerschaum"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485317610,
+      "etsy_title": "Hensoldt Jagdt-Dialyt 6x42. Sharp, Clear w. Original Case. ABK Prisms. 6 x 42",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485317610/hensoldt-jagdt-dialyt-6x42-sharp-clear-w",
+      "reported_sold_sku": "EB-156143895121",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [
+        {
+          "sku": "157800537461",
+          "title": "Hensoldt Jagdt-Dialyt 6x42. Sharp, Clear w. Original Case. ABK Prisms. 6 x 42",
+          "quantity": 1,
+          "shopify_id": 10313800876313,
+          "shopify_variant_id": 52188842590489,
+          "etsy_listing_id": 4462049216,
+          "etsy_url": "https://www.etsy.com/listing/4462049216/hensoldt-jagdt-dialyt-6x42-sharp-clear-w"
+        }
+      ],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-156143895121",
+          "title": "Hensoldt Jagdt-Dialyt 6x42. Sharp, Clear w. Original Case. ABK Prisms. 6 x 42",
+          "quantity": 0,
+          "shopify_id": 10225326162201,
+          "shopify_variant_id": 51800548245785,
+          "etsy_listing_id": 4462049216,
+          "etsy_url": "https://www.etsy.com/listing/4462049216/hensoldt-jagdt-dialyt-6x42-sharp-clear-w"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4462543410,
+      "etsy_title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4462543410/vintage-dunhill-rollagas-gold-tone-made",
+      "reported_sold_sku": "EB-156504277292",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225328324889,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 6,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156504277292",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10225267212569,
+          "shopify_variant_id": 51800301306137,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        },
+        {
+          "sku": "156504279011",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10225267245337,
+          "shopify_variant_id": 51800301338905,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        },
+        {
+          "sku": "156504330110",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10235453767961,
+          "shopify_variant_id": 51838765826329,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        },
+        {
+          "sku": "EB-156504277292",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10225328324889,
+          "shopify_variant_id": 51800552472857,
+          "etsy_listing_id": 4462543410,
+          "etsy_url": "https://www.etsy.com/listing/4462543410/vintage-dunhill-rollagas-gold-tone-made"
+        },
+        {
+          "sku": "EB-156504279011",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10225328357657,
+          "shopify_variant_id": 51800552505625,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        },
+        {
+          "sku": "EB-156504330110",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10225328390425,
+          "shopify_variant_id": 51800552538393,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4462541539,
+      "etsy_title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4462541539/vintage-dunhill-rollagas-gold-tone-made",
+      "reported_sold_sku": "EB-156504277292;EB-156504279011;EB-156504330110;156504277292;156504279011;156504330110",
+      "reported_sold_ebay_qty": "0;0;0;0;0;0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 6,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156504277292",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10225267212569,
+          "shopify_variant_id": 51800301306137,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        },
+        {
+          "sku": "156504279011",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10225267245337,
+          "shopify_variant_id": 51800301338905,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        },
+        {
+          "sku": "156504330110",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10235453767961,
+          "shopify_variant_id": 51838765826329,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        },
+        {
+          "sku": "EB-156504277292",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10225328324889,
+          "shopify_variant_id": 51800552472857,
+          "etsy_listing_id": 4462543410,
+          "etsy_url": "https://www.etsy.com/listing/4462543410/vintage-dunhill-rollagas-gold-tone-made"
+        },
+        {
+          "sku": "EB-156504279011",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10225328357657,
+          "shopify_variant_id": 51800552505625,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        },
+        {
+          "sku": "EB-156504330110",
+          "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+          "quantity": 0,
+          "shopify_id": 10225328390425,
+          "shopify_variant_id": 51800552538393,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458545279,
+      "etsy_title": "Vtg 1940 Parker 51 Fountain Pen Black Barrel Sterling Silver Cap Gold Arrow Clip",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458545279/vtg-1940-parker-51-fountain-pen-black",
+      "reported_sold_sku": "157800537418",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10313799368985,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157800537418",
+          "title": "Vtg 1940 Parker 51 Fountain Pen Black Barrel Sterling Silver Cap Gold Arrow Clip",
+          "quantity": 0,
+          "shopify_id": 10313799368985,
+          "shopify_variant_id": 52188840034585,
+          "etsy_listing_id": 4458545279,
+          "etsy_url": "https://www.etsy.com/listing/4458545279/vtg-1940-parker-51-fountain-pen-black"
+        },
+        {
+          "sku": "EB-157399251361",
+          "title": "Vtg 1940 Parker 51 Fountain Pen Black Barrel Sterling Silver Cap Gold Arrow Clip",
+          "quantity": 0,
+          "shopify_id": 10225475191065,
+          "shopify_variant_id": 51801145147673,
+          "etsy_listing_id": 4458545279,
+          "etsy_url": "https://www.etsy.com/listing/4458545279/vtg-1940-parker-51-fountain-pen-black"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4462052709,
+      "etsy_title": "Rare Vintage Japanese Singed Wood, Lacquer Noh Mask Of Omoikane-no-mikoto",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4462052709/rare-vintage-japanese-singed-wood",
+      "reported_sold_sku": "157800537458",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10313800843545,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157800537458",
+          "title": "Rare Vintage Japanese Singed Wood, Lacquer Noh Mask Of Omoikane-no-mikoto",
+          "quantity": 0,
+          "shopify_id": 10313800843545,
+          "shopify_variant_id": 52188842557721,
+          "etsy_listing_id": 4462052709,
+          "etsy_url": "https://www.etsy.com/listing/4462052709/rare-vintage-japanese-singed-wood"
+        },
+        {
+          "sku": "EB-156374584452",
+          "title": "Rare Vintage Japanese Singed Wood, Lacquer Noh Mask Of Omoikane-no-mikoto",
+          "quantity": 0,
+          "shopify_id": 10225327276313,
+          "shopify_variant_id": 51800550211865,
+          "etsy_listing_id": 4462052709,
+          "etsy_url": "https://www.etsy.com/listing/4462052709/rare-vintage-japanese-singed-wood"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4462069458,
+      "etsy_title": "Vintage 1950 Zodiac Hermetic Swiss Black Dial Gilt Numerals Manual Watch. Works",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4462069458/vintage-1950-zodiac-hermetic-swiss-black",
+      "reported_sold_sku": "157697439540",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10284070764825,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157597077849",
+          "title": "Vintage 1950 Zodiac Hermetic Swiss Black Dial Gilt Numerals Manual Watch. Works",
+          "quantity": 0,
+          "shopify_id": 10235470151961,
+          "shopify_variant_id": 51838813995289,
+          "etsy_listing_id": 4462069458,
+          "etsy_url": "https://www.etsy.com/listing/4462069458/vintage-1950-zodiac-hermetic-swiss-black"
+        },
+        {
+          "sku": "157697439540",
+          "title": "Vintage 1950 Zodiac Hermetic Swiss Black Dial Gilt Numerals Manual Watch. Works",
+          "quantity": 0,
+          "shopify_id": 10284070764825,
+          "shopify_variant_id": 52043887149337,
+          "etsy_listing_id": 4462069458,
+          "etsy_url": "https://www.etsy.com/listing/4462069458/vintage-1950-zodiac-hermetic-swiss-black"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4476253651,
+      "etsy_title": "Rare Vtg Seiko Lot Of 5 Collector World Digital Timer Alarm Quartz Watches Read",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4476253651/rare-vtg-seiko-lot-of-5-collector-world",
+      "reported_sold_sku": "157761583986",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10300997533977,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157761583986",
+          "title": "Rare Vtg Seiko Lot Of 5 Collector World Digital Timer Alarm Quartz Watches Read",
+          "quantity": 0,
+          "shopify_id": 10300997533977,
+          "shopify_variant_id": 52135490519321,
+          "etsy_listing_id": 4476253651,
+          "etsy_url": "https://www.etsy.com/listing/4476253651/rare-vtg-seiko-lot-of-5-collector-world"
+        },
+        {
+          "sku": "157800537433",
+          "title": "Rare Vtg Seiko Lot Of 5 Collector World Digital Timer Alarm Quartz Watches Read",
+          "quantity": 0,
+          "shopify_id": 10313799762201,
+          "shopify_variant_id": 52188840395033,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4462053387,
+      "etsy_title": "Original Antique 1860 John Adams. Engraving by J. Stephenson after J.S. Copley",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4462053387/original-antique-1860-john-adams",
+      "reported_sold_sku": "156696716826;156377819863",
+      "reported_sold_ebay_qty": "0;0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156377819863",
+          "title": "Original Antique 1860 John Adams. Engraving by J. Stephenson after J.S. Copley",
+          "quantity": 0,
+          "shopify_id": 10225259741465,
+          "shopify_variant_id": 51800283971865,
+          "etsy_listing_id": null,
+          "etsy_url": null
+        },
+        {
+          "sku": "156696716826",
+          "title": "Original Antique 1860 John Adams. Engraving by J. Stephenson after J.S. Copley",
+          "quantity": 0,
+          "shopify_id": 10225278746905,
+          "shopify_variant_id": 51800399675673,
+          "etsy_listing_id": 4458580367,
+          "etsy_url": "https://www.etsy.com/listing/4458580367/original-antique-1860-john-adams"
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4485316714,
+      "etsy_title": "Rare Vintage Handmade Bust Of Princess Meritaten Of The Anciant Egyptian Dynasty",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4485316714/rare-vintage-handmade-bust-of-princess",
+      "reported_sold_sku": "EB-157406247003;157800537450",
+      "reported_sold_ebay_qty": "0;0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": true,
+      "normalized_match_count_for_title": 2,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157800537450",
+          "title": "Rare Vintage Handmade Bust Of Princess Meritaten Of The Anciant Egyptian Dynasty",
+          "quantity": 0,
+          "shopify_id": 10313800679705,
+          "shopify_variant_id": 52188842066201,
+          "etsy_listing_id": 4458523339,
+          "etsy_url": "https://www.etsy.com/listing/4458523339/rare-vintage-handmade-bust-of-princess"
+        },
+        {
+          "sku": "EB-157406247003",
+          "title": "Rare Vintage Handmade Bust Of Princess Meritaten Of The Anciant Egyptian Dynasty",
+          "quantity": 0,
+          "shopify_id": 10225476469017,
+          "shopify_variant_id": 51801148096793,
+          "etsy_listing_id": 4458523339,
+          "etsy_url": "https://www.etsy.com/listing/4458523339/rare-vintage-handmade-bust-of-princess"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458526271,
+      "etsy_title": "Rare Post- WW2 AAF Technical Observer Wing Badge. Sterling Silver. VG Cond.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458526271/rare-post-ww2-aaf-technical-observer",
+      "reported_sold_sku": "157429414434",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157429414434",
+          "title": "Rare Post- WW2 AAF Technical Observer Wing Badge. Sterling Silver. VG Cond.",
+          "quantity": 0,
+          "shopify_id": null,
+          "shopify_variant_id": null,
+          "etsy_listing_id": 4458526271,
+          "etsy_url": "https://www.etsy.com/listing/4458526271/rare-post-ww2-aaf-technical-observer"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458529384,
+      "etsy_title": "Rare Antique Baroque Victorian Ornate Gilt Brass Oval Frame Vanity Mirror/frame.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458529384/rare-antique-baroque-victorian-ornate",
+      "reported_sold_sku": "157418943829",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225312891161,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157418943829",
+          "title": "Rare Antique Baroque Victorian Ornate Gilt Brass Oval Frame Vanity Mirror/frame.",
+          "quantity": 0,
+          "shopify_id": 10225312891161,
+          "shopify_variant_id": 51800519868697,
+          "etsy_listing_id": 4458529384,
+          "etsy_url": "https://www.etsy.com/listing/4458529384/rare-antique-baroque-victorian-ornate"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458530300,
+      "etsy_title": "Antique Swiss Silver Pocket Watch c1890 ECHAPPEMENT CYLINDRE RUBIS Working",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458530300/antique-swiss-silver-pocket-watch-c1890",
+      "reported_sold_sku": "157427814168",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225314267417,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157427814168",
+          "title": "Antique Swiss Silver Pocket Watch c1890 ECHAPPEMENT CYLINDRE RUBIS Working",
+          "quantity": 0,
+          "shopify_id": 10225314267417,
+          "shopify_variant_id": 51800523440409,
+          "etsy_listing_id": 4458530300,
+          "etsy_url": "https://www.etsy.com/listing/4458530300/antique-swiss-silver-pocket-watch-c1890"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458534259,
+      "etsy_title": "Antique Capodimonte Boy and Girl Porcelain Figurine Romantic Scene W 5”",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458534259/antique-capodimonte-boy-and-girl",
+      "reported_sold_sku": "157538992731",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225322361113,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157538992731",
+          "title": "Antique Capodimonte Boy and Girl Porcelain Figurine Romantic Scene W 5”",
+          "quantity": 0,
+          "shopify_id": 10225322361113,
+          "shopify_variant_id": 51800542249241,
+          "etsy_listing_id": 4458534259,
+          "etsy_url": "https://www.etsy.com/listing/4458534259/antique-capodimonte-boy-and-girl"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458534418,
+      "etsy_title": "Vintage Celadon Cast Bronze Porcelain Birds Flowers Tree Candle Holder Figurine",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458534418/vintage-celadon-cast-bronze-porcelain",
+      "reported_sold_sku": "157489183190",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225317183769,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157489183190",
+          "title": "Vintage Celadon Cast Bronze Porcelain Birds Flowers Tree  Candle Holder Figurine",
+          "quantity": 0,
+          "shopify_id": 10225317183769,
+          "shopify_variant_id": 51800529142041,
+          "etsy_listing_id": 4458534418,
+          "etsy_url": "https://www.etsy.com/listing/4458534418/vintage-celadon-cast-bronze-porcelain"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458534498,
+      "etsy_title": "RARE Giuseppe Armani Carmen 1532C Limited Ed Sculpture Italy 239/5000 W COA",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458534498/rare-giuseppe-armani-carmen-1532c",
+      "reported_sold_sku": "157489202771",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225317314841,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157489202771",
+          "title": "RARE Giuseppe Armani Carmen 1532C  Limited Ed Sculpture Italy 239/5000 W COA",
+          "quantity": 0,
+          "shopify_id": 10225317314841,
+          "shopify_variant_id": 51800529436953,
+          "etsy_listing_id": 4458534498,
+          "etsy_url": "https://www.etsy.com/listing/4458534498/rare-giuseppe-armani-carmen-1532c"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458535259,
+      "etsy_title": "Helbros &quot;Invincible&quot; 34mm Beige Dial Gold Plated Manual Wind Men Watch. Working.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458535259/helbros-invincible-34mm-beige-dial-gold",
+      "reported_sold_sku": "157544167800",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225322918169,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157544167800",
+          "title": "Helbros \"Invincible\" 34mm Beige Dial Gold Plated Manual Wind Men Watch. Working.",
+          "quantity": 0,
+          "shopify_id": 10225322918169,
+          "shopify_variant_id": 51800543101209,
+          "etsy_listing_id": 4458535259,
+          "etsy_url": "https://www.etsy.com/listing/4458535259/helbros-invincible-34mm-beige-dial-gold"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458536262,
+      "etsy_title": "Vintage Swarvoski SCS Arctic Hare Event Piece 2011 #1055005. Ltd Ed.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458536262/vintage-swarvoski-scs-arctic-hare-event",
+      "reported_sold_sku": "157517702119",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225319641369,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157517702119",
+          "title": "Vintage Swarvoski SCS Arctic Hare Event Piece 2011  #1055005. Ltd Ed.",
+          "quantity": 0,
+          "shopify_id": 10225319641369,
+          "shopify_variant_id": 51800535531801,
+          "etsy_listing_id": 4458536262,
+          "etsy_url": "https://www.etsy.com/listing/4458536262/vintage-swarvoski-scs-arctic-hare-event"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458536343,
+      "etsy_title": "Antique OOAK Mid Century Ornate Hand Made Capodimonte Italy Large Vase No Chips",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458536343/antique-ooak-mid-century-ornate-hand",
+      "reported_sold_sku": "EB-157225496465",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225342447897,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157225496465",
+          "title": "Antique OOAK Mid Century Ornate Hand Made Capodimonte Italy Large Vase No Chips",
+          "quantity": 0,
+          "shopify_id": 10225342447897,
+          "shopify_variant_id": 51800655298841,
+          "etsy_listing_id": 4458536343,
+          "etsy_url": "https://www.etsy.com/listing/4458536343/antique-ooak-mid-century-ornate-hand"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458537510,
+      "etsy_title": "Rare Vintage Flamant France XL Crystal Decanter Ribbed Cut Glass w Stopper 15”",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458537510/rare-vintage-flamant-france-xl-crystal",
+      "reported_sold_sku": "157522794517",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225320853785,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157522794517",
+          "title": "Rare Vintage Flamant France XL Crystal Decanter Ribbed Cut Glass w Stopper 15”",
+          "quantity": 0,
+          "shopify_id": 10225320853785,
+          "shopify_variant_id": 51800539234585,
+          "etsy_listing_id": 4458537510,
+          "etsy_url": "https://www.etsy.com/listing/4458537510/rare-vintage-flamant-france-xl-crystal"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458541538,
+      "etsy_title": "BULOVA 23 Sunburst Self Winding Watch. 23 Jewels 10BPAC Automatic 1950’s. Works.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458541538/bulova-23-sunburst-self-winding-watch-23",
+      "reported_sold_sku": "157550716168",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225323901209,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157550716168",
+          "title": "BULOVA 23 Sunburst Self Winding Watch. 23 Jewels 10BPAC Automatic 1950’s. Works.",
+          "quantity": 0,
+          "shopify_id": 10225323901209,
+          "shopify_variant_id": 51800544936217,
+          "etsy_listing_id": 4458541538,
+          "etsy_url": "https://www.etsy.com/listing/4458541538/bulova-23-sunburst-self-winding-watch-23"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458544204,
+      "etsy_title": "MSA Cairns 1044 2015 Yellow Firefighter Helmet Front Visor. Seen Fire Action.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458544204/msa-cairns-1044-2015-yellow-firefighter",
+      "reported_sold_sku": "157578149673",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10235458683161,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157578149673",
+          "title": "MSA Cairns 1044 2015 Yellow Firefighter Helmet Front Visor. Seen Fire Action.",
+          "quantity": 0,
+          "shopify_id": 10235458683161,
+          "shopify_variant_id": 51838777721113,
+          "etsy_listing_id": 4458544204,
+          "etsy_url": "https://www.etsy.com/listing/4458544204/msa-cairns-1044-2015-yellow-firefighter"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458577595,
+      "etsy_title": "Vintage Collectible Royal Dux Seated Lady W Dog Porcelain Figurine Bohemia 10&quot;",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458577595/vintage-collectible-royal-dux-seated",
+      "reported_sold_sku": "156650740922",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225277305113,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156650740922",
+          "title": "Vintage Collectible Royal Dux Seated Lady W Dog Porcelain Figurine Bohemia 10\"",
+          "quantity": 0,
+          "shopify_id": 10225277305113,
+          "shopify_variant_id": 51800397152537,
+          "etsy_listing_id": 4458577595,
+          "etsy_url": "https://www.etsy.com/listing/4458577595/vintage-collectible-royal-dux-seated"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458578237,
+      "etsy_title": "Antique Wm. Rogers & Son &quot;Spring Flower&quot; Silver Plated Tea/Coffee Pot.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458578237/antique-wm-rogers-son-spring-flower",
+      "reported_sold_sku": "156654274366",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225277534489,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156654274366",
+          "title": "Antique Wm. Rogers & Son \"Spring Flower\" Silver Plated Tea/Coffee Pot.",
+          "quantity": 0,
+          "shopify_id": 10225277534489,
+          "shopify_variant_id": 51800397512985,
+          "etsy_listing_id": 4458578237,
+          "etsy_url": "https://www.etsy.com/listing/4458578237/antique-wm-rogers-son-spring-flower"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458579304,
+      "etsy_title": "Disney Women Spring Pop Up Tigger Brown Leather Strap Quartz Watch 7 1/4&quot;",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458579304/disney-women-spring-pop-up-tigger-brown",
+      "reported_sold_sku": "156611486096",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225273274649,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156611486096",
+          "title": "Disney Women Spring Pop Up Tigger Brown Leather Strap Quartz Watch 7 1/4\"",
+          "quantity": 0,
+          "shopify_id": 10225273274649,
+          "shopify_variant_id": 51800388927769,
+          "etsy_listing_id": 4458579304,
+          "etsy_url": "https://www.etsy.com/listing/4458579304/disney-women-spring-pop-up-tigger-brown"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458580219,
+      "etsy_title": "Vintage France Line Infantry Drummer 1812 Year 1/32 Scale Unpainted Tin Figure",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458580219/vintage-france-line-infantry-drummer",
+      "reported_sold_sku": "156696656030",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225278484761,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156696656030",
+          "title": "Vintage France Line Infantry Drummer 1812 Year 1/32 Scale Unpainted Tin Figure",
+          "quantity": 0,
+          "shopify_id": 10225278484761,
+          "shopify_variant_id": 51800399216921,
+          "etsy_listing_id": 4458580219,
+          "etsy_url": "https://www.etsy.com/listing/4458580219/vintage-france-line-infantry-drummer"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458582852,
+      "etsy_title": "Lladro &#39;Boy With Snails&#39; Figure 4896 Retired Beutiful Condition Made In Spain",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458582852/lladro-boy-with-snails-figure-4896",
+      "reported_sold_sku": "EB-156654233396",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225330159897,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-156654233396",
+          "title": "Lladro 'Boy With Snails' Figure 4896 Retired Beutiful Condition Made In Spain",
+          "quantity": 0,
+          "shopify_id": 10225330159897,
+          "shopify_variant_id": 51800554864921,
+          "etsy_listing_id": 4458582852,
+          "etsy_url": "https://www.etsy.com/listing/4458582852/lladro-boy-with-snails-figure-4896"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458585223,
+      "etsy_title": "Rare Antique Chinese Cloisonne Enamel Inlaid Small Trinket, Jewelry Box.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458585223/rare-antique-chinese-cloisonne-enamel",
+      "reported_sold_sku": "156858279276",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225282547993,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156858279276",
+          "title": "Rare Antique Chinese Cloisonne Enamel Inlaid Small Trinket, Jewelry Box.",
+          "quantity": 0,
+          "shopify_id": 10225282547993,
+          "shopify_variant_id": 51800405180697,
+          "etsy_listing_id": 4458585223,
+          "etsy_url": "https://www.etsy.com/listing/4458585223/rare-antique-chinese-cloisonne-enamel"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458586257,
+      "etsy_title": "Rare Antique Late 19th C Pair Of Original Mattatuck Co. USA Handcuffs. No Key.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458586257/rare-antique-late-19th-c-pair-of",
+      "reported_sold_sku": "156874441226",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225283399961,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156874441226",
+          "title": "Rare Antique Late 19th C Pair Of Original Mattatuck Co. USA Handcuffs. No Key.",
+          "quantity": 0,
+          "shopify_id": 10225283399961,
+          "shopify_variant_id": 51800410292505,
+          "etsy_listing_id": 4458586257,
+          "etsy_url": "https://www.etsy.com/listing/4458586257/rare-antique-late-19th-c-pair-of"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458604631,
+      "etsy_title": "Antique C 1830&#39;s Victorian Silver Plate & Cut Glass Vanity Box / Soap Holder.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458604631/antique-c-1830s-victorian-silver-plate",
+      "reported_sold_sku": "157026423822",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225299882265,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157026423822",
+          "title": "Antique C 1830's Victorian Silver Plate & Cut Glass Vanity Box / Soap Holder.",
+          "quantity": 0,
+          "shopify_id": 10225299882265,
+          "shopify_variant_id": 51800445223193,
+          "etsy_listing_id": 4458604631,
+          "etsy_url": "https://www.etsy.com/listing/4458604631/antique-c-1830s-victorian-silver-plate"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458696053,
+      "etsy_title": "Vtg Fratelli Toso Murano Millefiori Art Glass Vase Pitcher Colorful Floral Italy",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458696053/vtg-fratelli-toso-murano-millefiori-art",
+      "reported_sold_sku": "EB-157348585770",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225471226137,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157348585770",
+          "title": "Vtg Fratelli Toso Murano Millefiori Art Glass Vase Pitcher Colorful Floral Italy",
+          "quantity": 0,
+          "shopify_id": 10225471226137,
+          "shopify_variant_id": 51801139773721,
+          "etsy_listing_id": 4458696053,
+          "etsy_url": "https://www.etsy.com/listing/4458696053/vtg-fratelli-toso-murano-millefiori-art"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458697421,
+      "etsy_title": "Citizen GN-4-S Chronograph 100M Two-Tone Blue Dial Quartz Men’s Watch. Working",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458697421/citizen-gn-4-s-chronograph-100m-two-tone",
+      "reported_sold_sku": "157362894564",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225310728473,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157362894564",
+          "title": "Citizen GN-4-S Chronograph 100M Two-Tone Blue Dial Quartz Men’s Watch. Working",
+          "quantity": 0,
+          "shopify_id": 10225310728473,
+          "shopify_variant_id": 51800513216793,
+          "etsy_listing_id": 4458697421,
+          "etsy_url": "https://www.etsy.com/listing/4458697421/citizen-gn-4-s-chronograph-100m-two-tone"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458697778,
+      "etsy_title": "Vintage Orrefors Crystal Grizzly Bear Sculpture Paperweight Signed Swedish Mint",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458697778/vintage-orrefors-crystal-grizzly-bear",
+      "reported_sold_sku": "EB-157284983033",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225344577817,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157284983033",
+          "title": "Vintage Orrefors Crystal Grizzly Bear Sculpture Paperweight Signed Swedish Mint",
+          "quantity": 0,
+          "shopify_id": 10225344577817,
+          "shopify_variant_id": 51800658903321,
+          "etsy_listing_id": 4458697778,
+          "etsy_url": "https://www.etsy.com/listing/4458697778/vintage-orrefors-crystal-grizzly-bear"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458700084,
+      "etsy_title": "Antique British Bentima Westminster Clock, Art Deco. Working. Read.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458700084/antique-british-bentima-westminster",
+      "reported_sold_sku": "157348594618",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225309909273,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157348594618",
+          "title": "Antique British Bentima Westminster Clock, Art Deco. Working. Read.",
+          "quantity": 0,
+          "shopify_id": 10225309909273,
+          "shopify_variant_id": 51800510333209,
+          "etsy_listing_id": 4458700084,
+          "etsy_url": "https://www.etsy.com/listing/4458700084/antique-british-bentima-westminster"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458700854,
+      "etsy_title": "Vintage Waterford Crystal Blue Butterfly Figurine: Ribbed Pedestal Paperweight",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458700854/vintage-waterford-crystal-blue-butterfly",
+      "reported_sold_sku": "EB-157355225616",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225471717657,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157355225616",
+          "title": "Vintage Waterford Crystal Blue Butterfly Figurine: Ribbed Pedestal Paperweight",
+          "quantity": 0,
+          "shopify_id": 10225471717657,
+          "shopify_variant_id": 51801140396313,
+          "etsy_listing_id": 4458700854,
+          "etsy_url": "https://www.etsy.com/listing/4458700854/vintage-waterford-crystal-blue-butterfly"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4462061850,
+      "etsy_title": "Rare Antique Mrs. Potts No. 1 Sad Iron with Removable Wood Handle. Complete.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4462061850/rare-antique-mrs-potts-no-1-sad-iron",
+      "reported_sold_sku": "156455970335",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225264427289,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156455970335",
+          "title": "Rare Antique Mrs. Potts No. 1 Sad Iron with Removable Wood Handle. Complete.",
+          "quantity": 0,
+          "shopify_id": 10225264427289,
+          "shopify_variant_id": 51800295211289,
+          "etsy_listing_id": 4462061850,
+          "etsy_url": "https://www.etsy.com/listing/4462061850/rare-antique-mrs-potts-no-1-sad-iron"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4462070388,
+      "etsy_title": "Vintage 1972 TISSOT Seastar Men&#39;s Automatic Swiss Watch Day Date. Working Cond.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4462070388/vintage-1972-tissot-seastar-mens",
+      "reported_sold_sku": "157635909812",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10255197536537,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157635909812",
+          "title": "Vintage 1972 TISSOT Seastar Men's Automatic Swiss Watch Day Date. Working Cond.",
+          "quantity": 0,
+          "shopify_id": 10255197536537,
+          "shopify_variant_id": 51923247202585,
+          "etsy_listing_id": 4462070388,
+          "etsy_url": "https://www.etsy.com/listing/4462070388/vintage-1972-tissot-seastar-mens"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4462545100,
+      "etsy_title": "Rare Vintage Original Perko USCG Ships Masthead Light W Original Cable. Untested",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4462545100/rare-vintage-original-perko-uscg-ships",
+      "reported_sold_sku": "EB-156558522183",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225328685337,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-156558522183",
+          "title": "Rare Vintage Original Perko USCG Ships Masthead Light W Original Cable. Untested",
+          "quantity": 0,
+          "shopify_id": 10225328685337,
+          "shopify_variant_id": 51800552931609,
+          "etsy_listing_id": 4462545100,
+          "etsy_url": "https://www.etsy.com/listing/4462545100/rare-vintage-original-perko-uscg-ships"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4465781039,
+      "etsy_title": "Antique X Large Vintage European Cut Crystal Rose Bowl Globe 3 Footed. 9&quot; High.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4465781039/antique-x-large-vintage-european-cut",
+      "reported_sold_sku": "157721576689",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157721576689",
+          "title": "Antique X Large Vintage European Cut Crystal Rose Bowl Globe 3 Footed. 9\" High.",
+          "quantity": 0,
+          "shopify_id": null,
+          "shopify_variant_id": null,
+          "etsy_listing_id": 4465781039,
+          "etsy_url": "https://www.etsy.com/listing/4465781039/antique-x-large-vintage-european-cut"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4470696501,
+      "etsy_title": "Rare Antique Fillery’s Toy Drum Major Toffee Tin Can Birmingham England Guard",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4470696501/rare-antique-fillerys-toy-drum-major",
+      "reported_sold_sku": "157734048557",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10292090470681,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157734048557",
+          "title": "Rare Antique Fillery’s Toy Drum Major Toffee Tin Can Birmingham England Guard",
+          "quantity": 0,
+          "shopify_id": 10292090470681,
+          "shopify_variant_id": 52080924819737,
+          "etsy_listing_id": 4470696501,
+          "etsy_url": "https://www.etsy.com/listing/4470696501/rare-antique-fillerys-toy-drum-major"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4470698981,
+      "etsy_title": "Vintage Royal Worcester “Canopic” Porcelain Plates 10.5&quot;. Hand Painted.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4470698981/vintage-royal-worcester-canopic",
+      "reported_sold_sku": "156180381523",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225255907609,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "156180381523",
+          "title": "Vintage Royal Worcester “Canopic” Porcelain Plates 10.5\". Hand Painted.",
+          "quantity": 0,
+          "shopify_id": 10225255907609,
+          "shopify_variant_id": 51800276238617,
+          "etsy_listing_id": 4470698981,
+          "etsy_url": "https://www.etsy.com/listing/4470698981/vintage-royal-worcester-canopic"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4470702910,
+      "etsy_title": "Rare Antique Bronze Lion Amsterdam Coat of Arms Double Candle Holder Candelabra",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4470702910/rare-antique-bronze-lion-amsterdam-coat",
+      "reported_sold_sku": "EB-157353154574",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225471521049,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "EB-157353154574",
+          "title": "Rare Antique Bronze Lion Amsterdam Coat of Arms Double Candle Holder Candelabra",
+          "quantity": 0,
+          "shopify_id": 10225471521049,
+          "shopify_variant_id": 51801140199705,
+          "etsy_listing_id": 4470702910,
+          "etsy_url": "https://www.etsy.com/listing/4470702910/rare-antique-bronze-lion-amsterdam-coat"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4476253907,
+      "etsy_title": "V. S. Johnson Sterling Silver Needlepoint Turquoise Zuni Ladies Ring Size 8 1/4",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4476253907/v-s-johnson-sterling-silver-needlepoint",
+      "reported_sold_sku": "157761644835",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10300997337369,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157761644835",
+          "title": "V. S. Johnson Sterling Silver Needlepoint Turquoise Zuni Ladies Ring Size 8 1/4",
+          "quantity": 0,
+          "shopify_id": 10300997337369,
+          "shopify_variant_id": 52135490289945,
+          "etsy_listing_id": 4476253907,
+          "etsy_url": "https://www.etsy.com/listing/4476253907/v-s-johnson-sterling-silver-needlepoint"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4476264316,
+      "etsy_title": "Antique C 1920&#39;s Picnic Basket 1&quot; Woven Slats Naturally Aged Patina Handles Lid",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4476264316/antique-c-1920s-picnic-basket-1-woven",
+      "reported_sold_sku": "157778000629",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10305400570137,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157778000629",
+          "title": "Antique C 1920's Picnic Basket 1\" Woven Slats Naturally Aged Patina  Handles Lid",
+          "quantity": 0,
+          "shopify_id": 10305400570137,
+          "shopify_variant_id": 52148604797209,
+          "etsy_listing_id": 4476264316,
+          "etsy_url": "https://www.etsy.com/listing/4476264316/antique-c-1920s-picnic-basket-1-woven"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4480402913,
+      "etsy_title": "Antique 14K Solid Gold Marquise Ring Filigree Bypass Setting Size 7.5 W Box.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4480402913/antique-14k-solid-gold-marquise-ring",
+      "reported_sold_sku": "157796573947",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10313797632281,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157796573947",
+          "title": "Antique 14K Solid Gold Marquise Ring Filigree Bypass Setting Size 7.5 W Box.",
+          "quantity": 0,
+          "shopify_id": 10313797632281,
+          "shopify_variant_id": 52188835545369,
+          "etsy_listing_id": 4480402913,
+          "etsy_url": "https://www.etsy.com/listing/4480402913/antique-14k-solid-gold-marquise-ring"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4480408584,
+      "etsy_title": "Antique Chelsea Clock Company US Army Clock Message Center M2 12/24 Hour. Works",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4480408584/antique-chelsea-clock-company-us-army",
+      "reported_sold_sku": "157794427389",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157794427389",
+          "title": "Antique Chelsea Clock Company US Army Clock Message Center M2 12/24 Hour. Works",
+          "quantity": 0,
+          "shopify_id": null,
+          "shopify_variant_id": null,
+          "etsy_listing_id": 4480408584,
+          "etsy_url": "https://www.etsy.com/listing/4480408584/antique-chelsea-clock-company-us-army"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4480409712,
+      "etsy_title": "Antique 14K Solid Gold Blue Topaz Marquise Ring Filigree Estate Size 8 W Box.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4480409712/antique-14k-solid-gold-blue-topaz",
+      "reported_sold_sku": "157796554705",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10313797468441,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157796554705",
+          "title": "Antique 14K Solid Gold Blue Topaz Marquise Ring Filigree Estate Size 8 W Box.",
+          "quantity": 0,
+          "shopify_id": 10313797468441,
+          "shopify_variant_id": 52188835447065,
+          "etsy_listing_id": 4480409712,
+          "etsy_url": "https://www.etsy.com/listing/4480409712/antique-14k-solid-gold-blue-topaz"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4515602119,
+      "etsy_title": "Vintage Hand Blown Murano Style Multi-Color Confetti Art Glass Rooster Large!",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4515602119/vintage-hand-blown-murano-style-multi",
+      "reported_sold_sku": "157839519981",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10594363736345,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157839519981",
+          "title": "Vintage Hand Blown Murano Style Multi-Color Confetti Art Glass Rooster Large!",
+          "quantity": 0,
+          "shopify_id": 10594363736345,
+          "shopify_variant_id": 52250789347609,
+          "etsy_listing_id": 4515602119,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4515603115,
+      "etsy_title": "Reflections Royal Doulton Debut HN3046 Porcelain Figurine 1985. Hand Signed.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4515603115/reflections-royal-doulton-debut-hn3046",
+      "reported_sold_sku": "157861741235",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10602367910169,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157861741235",
+          "title": "Reflections Royal Doulton Debut HN3046 Porcelain Figurine 1985. Hand Signed.",
+          "quantity": 0,
+          "shopify_id": 10602367910169,
+          "shopify_variant_id": 52294819119385,
+          "etsy_listing_id": 4515603115,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4517548168,
+      "etsy_title": "Antique Miniature Islamic Quran Istanbul Folding Manuscript In Case Arabic 40 Ft",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4517548168/antique-miniature-islamic-quran-istanbul",
+      "reported_sold_sku": "157934246802",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10635498946841,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157934246802",
+          "title": "Antique Miniature Islamic Quran Istanbul Folding Manuscript In Case Arabic 40 Ft",
+          "quantity": 0,
+          "shopify_id": 10635498946841,
+          "shopify_variant_id": 52426427171097,
+          "etsy_listing_id": 4517548168,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4517552065,
+      "etsy_title": "Vintage 1950’s Jefferson “The Golden Hour” Mystery Clock 580-101 True MCM Works",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4517552065/vintage-1950s-jefferson-the-golden-hour",
+      "reported_sold_sku": "157917407068",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10627585278233,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157917407068",
+          "title": "Vintage 1950’s Jefferson “The Golden Hour” Mystery Clock 580-101 True MCM Works",
+          "quantity": 0,
+          "shopify_id": 10627585278233,
+          "shopify_variant_id": 52402891948313,
+          "etsy_listing_id": 4517552065,
+          "etsy_url": null
+        }
+      ]
+    },
+    {
+      "source_bucket": "title_exact",
+      "listing_id": 4458699147,
+      "etsy_title": "Rare Antique Baroque Victorian Ornate Gilt Brass Oval Frame Vanity Mirror/frame.",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458699147/rare-antique-baroque-victorian-ornate",
+      "reported_sold_sku": "157418943829",
+      "reported_sold_ebay_qty": "0",
+      "reported_sold_shopify_id": null,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 1,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": [
+        {
+          "sku": "157418943829",
+          "title": "Rare Antique Baroque Victorian Ornate Gilt Brass Oval Frame Vanity Mirror/frame.",
+          "quantity": 0,
+          "shopify_id": 10225312891161,
+          "shopify_variant_id": 51800519868697,
+          "etsy_listing_id": 4458529384,
+          "etsy_url": "https://www.etsy.com/listing/4458529384/rare-antique-baroque-victorian-ornate"
+        }
+      ]
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458528056,
+      "etsy_title": "Antique Baccarat Crystal Candlestick, Dolphin Form, 24 Inch",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458528056/antique-baccarat-crystal-candlestick",
+      "reported_sold_sku": "EB-157401494855",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10288083075353,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 0,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": []
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458588320,
+      "etsy_title": "XL Lladro Don Quixote Figurine #1030 – Vintage Glazed Porcelain, Spain",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458588320/xl-lladro-don-quixote-figurine-1030",
+      "reported_sold_sku": "EB-156831364143",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225334026521,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 0,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": []
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458609228,
+      "etsy_title": "Vintage Emerald Green Glass Pitcher Set, Ornate Hand-Blown 1950s Barware",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458609228/vintage-emerald-green-glass-pitcher-set",
+      "reported_sold_sku": "157670015306",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10269784604953,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 0,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": []
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458611475,
+      "etsy_title": "Vintage Cortebert Mechanical Watch, Rose Gold Stainless Steel, 1960s Men&#39;s Timepiece",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458611475/vintage-cortebert-mechanical-watch-rose",
+      "reported_sold_sku": "157228149269",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225304863001,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 0,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": []
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4458696506,
+      "etsy_title": "1960s Zodiac Automatic Gold Plated Men&#39;s Watch - Vintage Timepiece",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4458696506/1960s-zodiac-automatic-gold-plated-mens",
+      "reported_sold_sku": "EB-157259499690",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225343791385,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 0,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": []
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4480408586,
+      "etsy_title": "Antique 19th C Crucifix: Metal Jesus, Wood Cross, Memento Mori Skull",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4480408586/antique-19th-c-crucifix-metal-jesus-wood",
+      "reported_sold_sku": "157794423427",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10311444660505,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 0,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": []
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4501287286,
+      "etsy_title": "Antique 19th Century Ansonia Royal Bonn Porcelain Floral Shelf Clock Mechanical Wind Up",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4501287286/antique-19th-century-ansonia-royal-bonn",
+      "reported_sold_sku": "157871944601",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10604867715353,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 0,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": []
+    },
+    {
+      "source_bucket": "sku_link",
+      "listing_id": 4516153284,
+      "etsy_title": "Vintage Lladro Figurine 4972 Girl With Calla Lilies Sitting Retired 1991",
+      "etsy_qty": 1,
+      "etsy_url": "https://www.etsy.com/listing/4516153284/vintage-lladro-figurine-4972-girl-with",
+      "reported_sold_sku": "EB-157069974537",
+      "reported_sold_ebay_qty": 0,
+      "reported_sold_shopify_id": 10225340547353,
+      "reported_sold_exists_in_normalized": true,
+      "reported_sold_still_available_on_shopify": false,
+      "duplicate_title_in_normalized": false,
+      "normalized_match_count_for_title": 0,
+      "available_shopify_matches_by_title": [],
+      "sold_or_unavailable_matches_by_title": []
+    }
+  ]
+}

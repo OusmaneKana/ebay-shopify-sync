@@ -1,0 +1,3588 @@
+{
+  "generated_at": "2026-07-03T06:22:30.709453+00:00",
+  "shop_id": "64623797",
+  "source": "etsy_urgent_deactivate_listings.csv",
+  "requested_count": 58,
+  "ok_count": 44,
+  "fail_count": 14,
+  "ok_listing_ids": [
+    4462543410,
+    4458545279,
+    4462052709,
+    4485316714,
+    4458529384,
+    4458534259,
+    4458534418,
+    4458534498,
+    4458535259,
+    4458536262,
+    4458536343,
+    4458537510,
+    4458541538,
+    4458577595,
+    4458578237,
+    4458580219,
+    4458582852,
+    4458585223,
+    4458586257,
+    4458696053,
+    4458697778,
+    4458700084,
+    4462061850,
+    4462070388,
+    4462545100,
+    4465781039,
+    4470702910,
+    4476253907,
+    4480402913,
+    4480408584,
+    4480409712,
+    4515602119,
+    4515603115,
+    4517548168,
+    4517552065,
+    4458699147,
+    4458528056,
+    4458588320,
+    4458609228,
+    4458611475,
+    4458696506,
+    4480408586,
+    4501287286,
+    4516153284
+  ],
+  "failed_listing_ids": [
+    4462541539,
+    4462069458,
+    4476253651,
+    4462053387,
+    4458526271,
+    4458530300,
+    4458544204,
+    4458579304,
+    4458604631,
+    4458697421,
+    4458700854,
+    4470696501,
+    4470698981,
+    4476264316
+  ],
+  "results": [
+    {
+      "listing_id": 4462543410,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4462543410,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.",
+            "description": "This vintage Dunhill Rollagas lighter is a true gem for collectors. Crafted in Switzerland, it boasts a stunning gold tone finish that is sure to catch the eye. The lighter has not been tested and is being sold untested, but it is considered a very clean piece.\n\nWith its iconic Dunhill brand and intricate design, this lighter is a must-have for any tobacco enthusiast or collector. Its compact size and rollagas design make it easy to use and transport. Don&#39;t miss out on the opportunity to add this unique piece to your collection.",
+            "state": "edit",
+            "creation_timestamp": 1772472775,
+            "created_timestamp": 1772472775,
+            "ending_timestamp": 1783009975,
+            "original_creation_timestamp": 1771965483,
+            "last_modified_timestamp": 1783059751,
+            "updated_timestamp": 1783059751,
+            "state_timestamp": 1779840656,
+            "quantity": 1,
+            "shop_section_id": 57493773,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4462543410/vintage-dunhill-rollagas-gold-tone-made",
+            "num_favorers": 5,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 8,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 18199,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1867,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4462541539,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458545279,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458545279,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vtg 1940 Parker 51 Fountain Pen Black Barrel Sterling Silver Cap Gold Arrow Clip",
+            "description": "The product is a vintage 1940 Parker 51 Fountain Pen with a black barrel and a sterling silver cap adorned with a gold arrow clip. This classic pen features the iconic Parker design and is a sought-after collector&#39;s item for those who appreciate high-quality writing instruments. With its distinctive features and historical significance, this fountain pen is a timeless piece that exudes elegance and style.\n\nDry ink. Untested.",
+            "state": "edit",
+            "creation_timestamp": 1781715127,
+            "created_timestamp": 1781715127,
+            "ending_timestamp": 1792255927,
+            "original_creation_timestamp": 1771263257,
+            "last_modified_timestamp": 1783059753,
+            "updated_timestamp": 1783059753,
+            "state_timestamp": 1781715127,
+            "quantity": 1,
+            "shop_section_id": 58032529,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458545279/vtg-1940-parker-51-fountain-pen-black",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 8,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 26199,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 80,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4462052709,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4462052709,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Rare Vintage Japanese Singed Wood, Lacquer Noh Mask Of Omoikane-no-mikoto",
+            "description": "This is a rare vintage Japanese Noh mask of Omoikane-no-mikoto, signed by the artist and crafted from high-quality wood and lacquer. The mask&#39;s intricate design and attention to detail make it a true work of art. Its origins can be traced back to Japan, where it was created using traditional techniques.\n\nThe mask is perfect for collectors of Asian antiques and those who appreciate the beauty and uniqueness of Noh theater. Its unique features include a wooden base, intricate carvings, and a lacquer finish. This item is a true treasure and a must-have for anyone who appreciates the beauty of Japanese art.",
+            "state": "edit",
+            "creation_timestamp": 1772472907,
+            "created_timestamp": 1772472907,
+            "ending_timestamp": 1783010107,
+            "original_creation_timestamp": 1771885604,
+            "last_modified_timestamp": 1783059754,
+            "updated_timestamp": 1783059754,
+            "state_timestamp": 1777172808,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4462052709/rare-vintage-japanese-singed-wood",
+            "num_favorers": 0,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 32,
+            "item_weight_unit": "oz",
+            "item_length": 14,
+            "item_width": 12,
+            "item_height": 9,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 26299,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1834,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4462069458,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4476253651,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4462053387,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4485316714,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4485316714,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Rare Vintage Handmade Bust Of Princess Meritaten Of The Anciant Egyptian Dynasty",
+            "description": "This rare vintage handmade bust of Princess Meritaten from the ancient Egyptian dynasty is a unique and intricate collectible piece. Crafted with precision and attention to detail, this item showcases the rich culture and history of Egypt. Made in Egypt, this bust reflects the artistry and craftsmanship of the Egyptian culture, making it a valuable and sought-after piece for collectors and enthusiasts of Egyptian artifacts.",
+            "state": "edit",
+            "creation_timestamp": 1780469801,
+            "created_timestamp": 1780469801,
+            "ending_timestamp": 1791010601,
+            "original_creation_timestamp": 1775668451,
+            "last_modified_timestamp": 1783059757,
+            "updated_timestamp": 1783059757,
+            "state_timestamp": 1780968561,
+            "quantity": 1,
+            "shop_section_id": null,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4485316714/rare-vintage-handmade-bust-of-princess",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 28,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 7,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 22999,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 2313,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458526271,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458529384,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458529384,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Rare Antique Baroque Victorian Ornate Gilt Brass Oval Frame Vanity Mirror/frame.",
+            "description": "This product is a rare antique Baroque Victorian ornate gilt brass oval frame vanity mirror. It features a floral pattern in a gold color, with a Victorian style and romantic theme. The frame is made of brass and has a gilted finish, adding an elegant touch to any tabletop stand setting. Measuring 11 x 14 inches, this original piece is perfect for displaying a single photo or serving as a decorative collectible for those who appreciate antique and vintage decor.\n\nFrame Only. No mirror or picture glass.",
+            "state": "edit",
+            "creation_timestamp": 1781718732,
+            "created_timestamp": 1781718732,
+            "ending_timestamp": 1792259532,
+            "original_creation_timestamp": 1771260539,
+            "last_modified_timestamp": 1783059759,
+            "updated_timestamp": 1783059759,
+            "state_timestamp": 1781718732,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458529384/rare-antique-baroque-victorian-ornate",
+            "num_favorers": 4,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 76,
+            "item_weight_unit": "oz",
+            "item_length": 15,
+            "item_width": 14,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 16799,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 2279,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458530300,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458534259,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458534259,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique Capodimonte Boy and Girl Porcelain Figurine Romantic Scene W 5”",
+            "description": "The Antique Capodimonte Boy and Girl Porcelain Figurine depicts a romantic scene, making it a charming addition to any collection. Crafted of porcelain in a multicolor design, this 5-inch figurine embodies the classic collection by Capodimonte. With its romantic theme and Italian origins from the 1950s, this antique piece exudes a timeless elegance that is perfect for all occasions.",
+            "state": "edit",
+            "creation_timestamp": 1781718740,
+            "created_timestamp": 1781718740,
+            "ending_timestamp": 1792259540,
+            "original_creation_timestamp": 1771261791,
+            "last_modified_timestamp": 1783059760,
+            "updated_timestamp": 1783059760,
+            "state_timestamp": 1781718740,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458534259/antique-capodimonte-boy-and-girl",
+            "num_favorers": 2,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 12,
+            "item_weight_unit": "oz",
+            "item_length": 14,
+            "item_width": 12,
+            "item_height": 9,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 20799,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 69,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458534418,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458534418,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage Celadon Cast Bronze Porcelain Birds Flowers Tree Candle Holder Figurine",
+            "description": "This vintage candle holder figurine features a unique combination of celadon and bronze materials, with intricate details depicting birds, flowers, and a tree. The Art Nouveau style adds a touch of elegance to this original piece from France. The maker, WL, is known for producing high-quality antiques that showcase craftsmanship and beauty. This candle holder would make a delightful addition to any antique collection or home decor, its multi-color design adding a whimsical and vintage touch to any space.\n\nSmall chip on the base. Otherwise in excellent condition.",
+            "state": "edit",
+            "creation_timestamp": 1781718735,
+            "created_timestamp": 1781718735,
+            "ending_timestamp": 1792259535,
+            "original_creation_timestamp": 1771261155,
+            "last_modified_timestamp": 1783059761,
+            "updated_timestamp": 1783059761,
+            "state_timestamp": 1781718735,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458534418/vintage-celadon-cast-bronze-porcelain",
+            "num_favorers": 15,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 80,
+            "item_weight_unit": "oz",
+            "item_length": 16,
+            "item_width": 16,
+            "item_height": 12,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 58199,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 67,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458534498,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458534498,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "RARE Giuseppe Armani Carmen 1532C Limited Ed Sculpture Italy 239/5000 W COA",
+            "description": "The product is a rare Giuseppe Armani Carmen 1532C limited edition sculpture from Italy. Hand-painted with a multi-finish, this large Italian-themed sculpture features a woman as the subject. Signed by the artist and part of a limited edition of 239/5000, this collectible piece is a beautiful addition to any room. Made of porcelain and weighing 6 lbs, this sculpture comes in its original packaging and is a true work of art from the late 20th century.",
+            "state": "edit",
+            "creation_timestamp": 1781718735,
+            "created_timestamp": 1781718735,
+            "ending_timestamp": 1792259535,
+            "original_creation_timestamp": 1771261165,
+            "last_modified_timestamp": 1783059762,
+            "updated_timestamp": 1783059762,
+            "state_timestamp": 1781718735,
+            "quantity": 1,
+            "shop_section_id": 58017212,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458534498/rare-giuseppe-armani-carmen-1532c",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 107,
+            "item_weight_unit": "oz",
+            "item_length": 16,
+            "item_width": 12,
+            "item_height": 16,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 135599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 69,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458535259,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458535259,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Helbros &quot;Invincible&quot; 34mm Beige Dial Gold Plated Manual Wind Men Watch. Working.",
+            "description": "The Helbros &quot;Invincible&quot; 34mm Beige Dial Gold Plated Manual Wind Men Watch from the 1960s is a vintage timepiece with a classic round shape and a polished gold plated case. Featuring a beige dial with a logo pattern, this watch has a mechanical manual movement with 17 jewels for precision. With features such as a 12-hour dial, push/pull crown, and day indicator, this stylish watch is perfect for casual wear. Made in France, this Helbros watch is a timeless piece with a touch of luxury and nostalgia.",
+            "state": "edit",
+            "creation_timestamp": 1781718735,
+            "created_timestamp": 1781718735,
+            "ending_timestamp": 1792259535,
+            "original_creation_timestamp": 1771261919,
+            "last_modified_timestamp": 1783059763,
+            "updated_timestamp": 1783059763,
+            "state_timestamp": 1781718735,
+            "quantity": 1,
+            "shop_section_id": 58017212,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458535259/helbros-invincible-34mm-beige-dial-gold",
+            "num_favorers": 2,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 8,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 13199,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 6075,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458536262,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458536262,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage Swarvoski SCS Arctic Hare Event Piece 2011 #1055005. Ltd Ed.",
+            "description": "The Vintage Swarovski SCS Arctic Hare Event Piece from 2011 is a limited edition figurine made of clear crystal. This all-occasion collectible features an all-over pattern of a hare design, perfect for animal and dinosaur-themed collections. Crafted in Austria, this Swarovski piece is a contemporary style sculpture that appeals to teens, adults, and kids alike, making it a unique and eye-catching addition to any decor.",
+            "state": "edit",
+            "creation_timestamp": 1781718735,
+            "created_timestamp": 1781718735,
+            "ending_timestamp": 1792259535,
+            "original_creation_timestamp": 1771261387,
+            "last_modified_timestamp": 1783059764,
+            "updated_timestamp": 1783059764,
+            "state_timestamp": 1781718735,
+            "quantity": 1,
+            "shop_section_id": 58017212,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458536262/vintage-swarvoski-scs-arctic-hare-event",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 13,
+            "item_weight_unit": "oz",
+            "item_length": 8,
+            "item_width": 6,
+            "item_height": 5,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 14599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 69,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458536343,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458536343,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique OOAK Mid Century Ornate Hand Made Capodimonte Italy Large Vase No Chips",
+            "description": "This Antique OOAK Mid Century Ornate Hand Made Capodimonte Italy Large Vase is a stunning piece of Italian porcelain artistry from the 1950s. The vase features a beautiful floral pattern with a white color and intricate rose design, embodying the Art Deco style popular during that time period. Crafted with meticulous attention to detail, this vase is a unique and one-of-a-kind piece that exudes elegance and charm, making it a perfect addition to any collection or decorative display.",
+            "state": "edit",
+            "creation_timestamp": 1781718744,
+            "created_timestamp": 1781718744,
+            "ending_timestamp": 1792259544,
+            "original_creation_timestamp": 1771262061,
+            "last_modified_timestamp": 1783059765,
+            "updated_timestamp": 1783059765,
+            "state_timestamp": 1781718744,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458536343/antique-ooak-mid-century-ornate-hand",
+            "num_favorers": 3,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 140,
+            "item_weight_unit": "oz",
+            "item_length": 18,
+            "item_width": 12,
+            "item_height": 12,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 46799,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1026,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458537510,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458537510,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Rare Vintage Flamant France XL Crystal Decanter Ribbed Cut Glass w Stopper 15”",
+            "description": "The Rare Vintage Flamant France XL Crystal Decanter is a stunning piece of barware that exudes elegance and sophistication. This ribbed cut glass decanter, measuring a generous 15 inches in height, features a round shape and a clear color that allows the intricate design to truly shine. With its French style and original production, this decanter is not only a functional addition to any home bar but also a unique and eye-catching collectible item for enthusiasts of fine crystalware.",
+            "state": "edit",
+            "creation_timestamp": 1781718737,
+            "created_timestamp": 1781718737,
+            "ending_timestamp": 1792259537,
+            "original_creation_timestamp": 1771261553,
+            "last_modified_timestamp": 1783059767,
+            "updated_timestamp": 1783059767,
+            "state_timestamp": 1781718737,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458537510/rare-vintage-flamant-france-xl-crystal",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 64,
+            "item_weight_unit": "oz",
+            "item_length": 18,
+            "item_width": 12,
+            "item_height": 9,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 19599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1064,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458541538,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458541538,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "BULOVA 23 Sunburst Self Winding Watch. 23 Jewels 10BPAC Automatic 1950’s. Works.",
+            "description": "The BULOVA 23 Sunburst Self Winding Watch from the 1950s is a vintage timepiece with a classic design. Featuring a silver stainless steel case and band, this men&#39;s watch has a unique sunburst dial pattern with Arabic numerals. With its self-winding mechanical movement and 23 jewels, this Bulova watch is a stylish and functional choice for any occasion. This iconic piece of jewelry is a timeless accessory that showcases the brand&#39;s quality and craftsmanship.",
+            "state": "edit",
+            "creation_timestamp": 1781718741,
+            "created_timestamp": 1781718741,
+            "ending_timestamp": 1792259541,
+            "original_creation_timestamp": 1771262104,
+            "last_modified_timestamp": 1783059768,
+            "updated_timestamp": 1783059768,
+            "state_timestamp": 1781718741,
+            "quantity": 1,
+            "shop_section_id": 58017212,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458541538/bulova-23-sunburst-self-winding-watch-23",
+            "num_favorers": 3,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 8,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 33799,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 6075,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458544204,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458577595,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458577595,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage Collectible Royal Dux Seated Lady W Dog Porcelain Figurine Bohemia 10&quot;",
+            "description": "This vintage Royal Dux figurine features a seated lady with a dog, made of multicolor hand-painted porcelain in Bohemian style. The figurine is medium-sized with a glossy finish, measuring 10 inches in width. The Royal Dux brand is known for its craftsmanship and attention to detail, making this piece a collectible item for adults who appreciate fine art and unique decor. This handmade figurine would be an elegant addition to any room, showcasing the beauty and charm of the Bohemian artistic tradition.\n\nTip of one of the fingers broken.",
+            "state": "edit",
+            "creation_timestamp": 1781722373,
+            "created_timestamp": 1781722373,
+            "ending_timestamp": 1792263173,
+            "original_creation_timestamp": 1771267373,
+            "last_modified_timestamp": 1783059769,
+            "updated_timestamp": 1783059769,
+            "state_timestamp": 1781722373,
+            "quantity": 1,
+            "shop_section_id": 57478656,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458577595/vintage-collectible-royal-dux-seated",
+            "num_favorers": 2,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 26,
+            "item_weight_unit": "oz",
+            "item_length": 11,
+            "item_width": 7,
+            "item_height": 5,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 8599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 69,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458578237,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458578237,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique Wm. Rogers & Son &quot;Spring Flower&quot; Silver Plated Tea/Coffee Pot.",
+            "description": "This antique Wm. Rogers & Son &quot;Spring Flower&quot; tea/coffee pot is a silver plated piece with a Victorian style. The intricate design of the &quot;Spring Flower&quot; pattern adds a touch of elegance to this vintage piece, making it a charming addition to any collection. With its origin from a well-known brand like Wm. Rogers & Son, this silver plated pot reflects the craftsmanship and beauty of Victorian era silverware.",
+            "state": "edit",
+            "creation_timestamp": 1781722345,
+            "created_timestamp": 1781722345,
+            "ending_timestamp": 1792263145,
+            "original_creation_timestamp": 1771267453,
+            "last_modified_timestamp": 1783059770,
+            "updated_timestamp": 1783059770,
+            "state_timestamp": 1781722345,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458578237/antique-wm-rogers-son-spring-flower",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 29,
+            "item_weight_unit": "oz",
+            "item_length": 8,
+            "item_width": 8,
+            "item_height": 8,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 7599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 2311,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458579304,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458580219,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458580219,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage France Line Infantry Drummer 1812 Year 1/32 Scale Unpainted Tin Figure",
+            "description": "The vintage France Line Infantry Drummer 1812 figure is a 1/32 scale unpainted tin toy soldier. This toy soldier represents a drummer from the infantry and was manufactured in France. The detailed craftsmanship and historical accuracy make it a valuable collectible for toy soldier enthusiasts.",
+            "state": "edit",
+            "creation_timestamp": 1781722363,
+            "created_timestamp": 1781722363,
+            "ending_timestamp": 1792263163,
+            "original_creation_timestamp": 1771267686,
+            "last_modified_timestamp": 1783059772,
+            "updated_timestamp": 1783059772,
+            "state_timestamp": 1781722363,
+            "quantity": 1,
+            "shop_section_id": 58032529,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458580219/vintage-france-line-infantry-drummer",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 8,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 1999,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1584,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458582852,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458582852,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Lladro &#39;Boy With Snails&#39; Figure 4896 Retired Beutiful Condition Made In Spain",
+            "description": "The Lladro &#39;Boy With Snails&#39; Figure 4896 is a medium-sized ceramic and porcelain figurine manufactured in Spain in 1990. This beautiful multicolored figurine features a boy holding snails and is a part of the Lladró brand known for its intricate sculptures. With a Spanish style and a matte finish, this original piece is ideal for collectors of decorative figurines, especially those interested in retired Lladro pieces from the 1990s. Perfect for any room, this figurine captures a timeless charm that appeals to all ages.",
+            "state": "edit",
+            "creation_timestamp": 1781722358,
+            "created_timestamp": 1781722358,
+            "ending_timestamp": 1792263158,
+            "original_creation_timestamp": 1771267434,
+            "last_modified_timestamp": 1783059773,
+            "updated_timestamp": 1783059773,
+            "state_timestamp": 1781722358,
+            "quantity": 1,
+            "shop_section_id": 57478656,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458582852/lladro-boy-with-snails-figure-4896",
+            "num_favorers": 0,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 32,
+            "item_weight_unit": "oz",
+            "item_length": 14,
+            "item_width": 12,
+            "item_height": 9,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 11599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 69,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458585223,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458585223,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Rare Antique Chinese Cloisonne Enamel Inlaid Small Trinket, Jewelry Box.",
+            "description": "This rare antique Chinese cloisonne enamel trinket box and jewelry box is a unique piece originating from China between 1850-1899. The intricate multi-color enamel inlay on the cloisonne material showcases the craftsmanship and artistry of Chinese artisans from that era. With its original antique design and historical significance, this small trinket box would make a valuable addition to any collection of Asian antiques or antique jewelry.",
+            "state": "edit",
+            "creation_timestamp": 1781722369,
+            "created_timestamp": 1781722369,
+            "ending_timestamp": 1792263169,
+            "original_creation_timestamp": 1771268298,
+            "last_modified_timestamp": 1783059775,
+            "updated_timestamp": 1783059775,
+            "state_timestamp": 1781722369,
+            "quantity": 1,
+            "shop_section_id": 58032531,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458585223/rare-antique-chinese-cloisonne-enamel",
+            "num_favorers": 7,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 16,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 9299,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 6102,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458586257,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458586257,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Rare Antique Late 19th C Pair Of Original Mattatuck Co. USA Handcuffs. No Key.",
+            "description": "The product is a rare pair of original handcuffs from the late 19th century by Mattatuck Co. in the United States. These handcuffs are historical memorabilia from the police era and are a unique collectible item. Despite being from the 1890s, the handcuffs are not signed, adding to their mystery and authenticity. Perfect for collectors or those interested in police history, these handcuffs offer a glimpse into a bygone era.",
+            "state": "edit",
+            "creation_timestamp": 1781722362,
+            "created_timestamp": 1781722362,
+            "ending_timestamp": 1792263162,
+            "original_creation_timestamp": 1771268418,
+            "last_modified_timestamp": 1783059776,
+            "updated_timestamp": 1783059776,
+            "state_timestamp": 1781722362,
+            "quantity": 1,
+            "shop_section_id": 58032529,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458586257/rare-antique-late-19th-c-pair-of",
+            "num_favorers": 4,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 16,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 18399,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 71,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458604631,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458696053,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458696053,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vtg Fratelli Toso Murano Millefiori Art Glass Vase Pitcher Colorful Floral Italy",
+            "description": "This vintage Fratelli Toso Murano Millefiori art glass vase pitcher is a colorful and whimsical piece of decorative pottery and glassware. Made in Italy, this vase features a colorful floral pattern in a multicolor design, typical of the Art Deco style. The intricate Millefiori technique adds a unique touch to this abstract art piece, making it a standout addition to any collection of art glass. The Fratelli Toso brand and Italian craftsmanship add to the appeal and authenticity of this beautiful vase.",
+            "state": "edit",
+            "creation_timestamp": 1781829119,
+            "created_timestamp": 1781829119,
+            "ending_timestamp": 1792369919,
+            "original_creation_timestamp": 1771283146,
+            "last_modified_timestamp": 1783059778,
+            "updated_timestamp": 1783059778,
+            "state_timestamp": 1781829119,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458696053/vtg-fratelli-toso-murano-millefiori-art",
+            "num_favorers": 2,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 28,
+            "item_weight_unit": "oz",
+            "item_length": 11,
+            "item_width": 8,
+            "item_height": 6,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 21599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1026,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458697421,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458697778,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458697778,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage Orrefors Crystal Grizzly Bear Sculpture Paperweight Signed Swedish Mint",
+            "description": "The Vintage Orrefors Crystal Grizzly Bear Sculpture Paperweight is a stunning piece of art glass from the late 20th century. Made in Sweden, this clear crystal paperweight features a beautifully crafted grizzly bear design, signed by the renowned brand Orrefors. A rare find from the 1960s, this unique piece adds a touch of elegance and charm to any collection of decorative pottery and glassware.",
+            "state": "edit",
+            "creation_timestamp": 1781829120,
+            "created_timestamp": 1781829120,
+            "ending_timestamp": 1792369920,
+            "original_creation_timestamp": 1771282777,
+            "last_modified_timestamp": 1783059780,
+            "updated_timestamp": 1783059780,
+            "state_timestamp": 1781829120,
+            "quantity": 1,
+            "shop_section_id": 58017212,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458697778/vintage-orrefors-crystal-grizzly-bear",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 32,
+            "item_weight_unit": "oz",
+            "item_length": 8,
+            "item_width": 8,
+            "item_height": 8,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 11599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 2783,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458700084,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458700084,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique British Bentima Westminster Clock, Art Deco. Working. Read.",
+            "description": "The Antique British Bentima Westminster Clock is a beautifully crafted desk clock from the mid 20th century, featuring a classic Art Deco style. Made of wood, glass, and metal, this clock is a vintage piece that exudes elegance and sophistication. With a mechanical movement and powered by wind-up, this clock is not only functional but also adds a touch of vintage charm to any space. Its distinctive chime sequence, Westminster, adds to its nostalgic appeal, making it a desirable collectible for clock enthusiasts and collectors alike.\n\nThe clock works great, but missing pendulum and hour hand. Otherwise its in excellent condition.",
+            "state": "edit",
+            "creation_timestamp": 1781829116,
+            "created_timestamp": 1781829116,
+            "ending_timestamp": 1792369916,
+            "original_creation_timestamp": 1771283169,
+            "last_modified_timestamp": 1783059781,
+            "updated_timestamp": 1783059781,
+            "state_timestamp": 1781829116,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458700084/antique-british-bentima-westminster",
+            "num_favorers": 4,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 80,
+            "item_weight_unit": "oz",
+            "item_length": 14,
+            "item_width": 12,
+            "item_height": 9,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 19399,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1016,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458700854,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4462061850,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4462061850,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Rare Antique Mrs. Potts No. 1 Sad Iron with Removable Wood Handle. Complete.",
+            "description": "This antique Mrs. Potts No. 1 Sad Iron is a rare find for any collector or enthusiast. The iron is made of durable metal and has a brown finish. It comes with a removable wood handle and cordless design, making it easy to use and transport.\n\nThis sad iron is suitable for garment ironing and has a unit quantity of 1. It weighs less than 10 lbs and does not include any custom bundles. The item is made in the United States and has a Power Source of Coal. It is a great addition to any kitchen or collection.",
+            "state": "edit",
+            "creation_timestamp": 1772472848,
+            "created_timestamp": 1772472848,
+            "ending_timestamp": 1783010048,
+            "original_creation_timestamp": 1771886237,
+            "last_modified_timestamp": 1783059783,
+            "updated_timestamp": 1783059783,
+            "state_timestamp": 1777525798,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4462061850/rare-antique-mrs-potts-no-1-sad-iron",
+            "num_favorers": 2,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 96,
+            "item_weight_unit": "oz",
+            "item_length": 11,
+            "item_width": 9,
+            "item_height": 5,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 6599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1913,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4462070388,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4462070388,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage 1972 TISSOT Seastar Men&#39;s Automatic Swiss Watch Day Date. Working Cond.",
+            "description": "The Vintage 1972 TISSOT Seastar Men&#39;s Automatic Swiss Watch is a classic timepiece with a day/date feature, making it both functional and stylish. With a 36mm case size and an analog display, this wristwatch is perfect for everyday wear. The Tissot brand is known for its quality and durability, and this model from the 1970s is a timeless piece that can be worn for years to come. This item does not come with its original box or packaging, but it is in working condition and ready to be enjoyed by its new owner.",
+            "state": "edit",
+            "creation_timestamp": 1782340899,
+            "created_timestamp": 1782340899,
+            "ending_timestamp": 1792881699,
+            "original_creation_timestamp": 1771887408,
+            "last_modified_timestamp": 1783059784,
+            "updated_timestamp": 1783059784,
+            "state_timestamp": 1782340899,
+            "quantity": 1,
+            "shop_section_id": 57478584,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4462070388/vintage-1972-tissot-seastar-mens",
+            "num_favorers": 12,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 8,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 43199,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 6074,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4462545100,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4462545100,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Rare Vintage Original Perko USCG Ships Masthead Light W Original Cable. Untested",
+            "description": "This is a rare vintage masthead light from the US Coast Guard, featuring the original Perko brand and cable. The lamp is made of brass and has not been tested. It would make a great addition to any maritime collection or as a unique piece of decor in any home. The light is a vintage original and has not been reproduced. It is classified under the categories of Antiques, Maritime, and Maritime Lamps & Lighting.",
+            "state": "edit",
+            "creation_timestamp": 1772472774,
+            "created_timestamp": 1772472774,
+            "ending_timestamp": 1783009974,
+            "original_creation_timestamp": 1771965692,
+            "last_modified_timestamp": 1783059786,
+            "updated_timestamp": 1783059786,
+            "state_timestamp": 1775459564,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4462545100/rare-vintage-original-perko-uscg-ships",
+            "num_favorers": 4,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 192,
+            "item_weight_unit": "oz",
+            "item_length": 12,
+            "item_width": 12,
+            "item_height": 12,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 29799,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 12354,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4465781039,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4465781039,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique X Large Vintage European Cut Crystal Rose Bowl Globe 3 Footed. 9&quot; High.",
+            "description": "This antique X large vintage European cut crystal rose bowl globe is a stunning piece with a vintage pattern and round shape. Made of glass and crystal, this 9&quot; high bowl is of Bohemian origin, manufactured between 1940-1949 in the Czech Republic. The unmarked brand crystal bowl is a perfect addition for decorating with flowers or as a unique statement piece in your home. Its timeless design and clear color make it a standout decorative item for any space.",
+            "state": "edit",
+            "creation_timestamp": 1772656503,
+            "created_timestamp": 1772656503,
+            "ending_timestamp": 1783193703,
+            "original_creation_timestamp": 1772517219,
+            "last_modified_timestamp": 1783059787,
+            "updated_timestamp": 1783059787,
+            "state_timestamp": 1777525896,
+            "quantity": 1,
+            "shop_section_id": 57478636,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4465781039/antique-x-large-vintage-european-cut",
+            "num_favorers": 5,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 76,
+            "item_weight_unit": "oz",
+            "item_length": 12,
+            "item_width": 12,
+            "item_height": 12,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 24999,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1044,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4470696501,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4470698981,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4470702910,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4470702910,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Rare Antique Bronze Lion Amsterdam Coat of Arms Double Candle Holder Candelabra",
+            "description": "This rare antique bronze Lion Amsterdam coat of arms double candle holder candelabra is a unique and handmade piece originating from the Netherlands. Crafted from bronze, this candle holder features intricate detailing of a lion and the Amsterdam coat of arms, adding a touch of history and elegance to any space. Perfect for collectors of metalware or those looking to add a special touch to their home decor, this candelabra is a standout piece that will surely be a conversation starter.",
+            "state": "edit",
+            "creation_timestamp": 1773710555,
+            "created_timestamp": 1773710555,
+            "ending_timestamp": 1784251355,
+            "original_creation_timestamp": 1773308713,
+            "last_modified_timestamp": 1783059789,
+            "updated_timestamp": 1783059789,
+            "state_timestamp": 1779840659,
+            "quantity": 1,
+            "shop_section_id": 57493779,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4470702910/rare-antique-bronze-lion-amsterdam-coat",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 85,
+            "item_weight_unit": "oz",
+            "item_length": 8,
+            "item_width": 6,
+            "item_height": 6,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 15699,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 2214,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4476253907,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4476253907,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "V. S. Johnson Sterling Silver Needlepoint Turquoise Zuni Ladies Ring Size 8 1/4",
+            "description": "The V. S. Johnson Sterling Silver Needlepoint Turquoise Zuni Ladies Ring in size 8 1/4 is a stunning piece of jewelry that showcases the exquisite craftsmanship of Native American artisans. Made with 925 sterling silver and featuring a beautiful turquoise stone, this ring embodies the traditional Zuni tribal affiliation with a modern design. The intricate needlepoint detailing adds a unique touch to the piece, making it a standout accessory for any woman&#39;s collection.",
+            "state": "edit",
+            "creation_timestamp": 1774249169,
+            "created_timestamp": 1774249169,
+            "ending_timestamp": 1784789969,
+            "original_creation_timestamp": 1774248759,
+            "last_modified_timestamp": 1783059790,
+            "updated_timestamp": 1783059790,
+            "state_timestamp": 1777526043,
+            "quantity": 1,
+            "shop_section_id": 58017214,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4476253907/v-s-johnson-sterling-silver-needlepoint",
+            "num_favorers": 18,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 3,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 24999,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1240,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4476264316,
+      "ok": false,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_FORM",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        },
+        {
+          "method": "PATCH_JSON",
+          "status": 403,
+          "response": {
+            "error": "The listing is not editable, must be active or expired but is removed."
+          }
+        },
+        {
+          "method": "PUT_JSON",
+          "status": 404,
+          "response": {
+            "error": "Resource not found"
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4480402913,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4480402913,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique 14K Solid Gold Marquise Ring Filigree Bypass Setting Size 7.5 W Box.",
+            "description": "This antique 14K solid gold marquise ring features a beautiful filigree bypass setting, with a size of 7.5. The elegant design of the ring showcases a marquise stone set in yellow gold, making it a stunning piece of vintage jewelry. Complete with its original box, this ring is a timeless treasure that exudes sophistication and classic beauty. Perfect for someone looking for a unique and luxurious addition to their jewelry collection.",
+            "state": "edit",
+            "creation_timestamp": 1774909360,
+            "created_timestamp": 1774909360,
+            "ending_timestamp": 1785450160,
+            "original_creation_timestamp": 1774909131,
+            "last_modified_timestamp": 1783059792,
+            "updated_timestamp": 1783059792,
+            "state_timestamp": 1777526075,
+            "quantity": 1,
+            "shop_section_id": 57478638,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4480402913/antique-14k-solid-gold-marquise-ring",
+            "num_favorers": 11,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 3,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 52599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1240,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4480408584,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4480408584,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique Chelsea Clock Company US Army Clock Message Center M2 12/24 Hour. Works",
+            "description": "The Antique Chelsea Clock Company US Army Clock Message Center M2 12/24 Hour is a unique and valuable piece of maritime history. Made by Chelsea in the United States, this ship&#39;s clock features a classic design with wood and glass components, typical of the era. With a military origin from the US Army, this antique original clock serves as a functional and decorative piece for collectors or enthusiasts of maritime memorabilia. Its dual 12/24 hour display adds versatility to its use, making it a functional and stylish addition to any space.",
+            "state": "edit",
+            "creation_timestamp": 1774909361,
+            "created_timestamp": 1774909361,
+            "ending_timestamp": 1785450161,
+            "original_creation_timestamp": 1774908931,
+            "last_modified_timestamp": 1783059793,
+            "updated_timestamp": 1783059793,
+            "state_timestamp": 1777526082,
+            "quantity": 1,
+            "shop_section_id": 57478584,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4480408584/antique-chelsea-clock-company-us-army",
+            "num_favorers": 6,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 96,
+            "item_weight_unit": "oz",
+            "item_length": 16,
+            "item_width": 12,
+            "item_height": 10,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 62599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1016,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4480409712,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4480409712,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique 14K Solid Gold Blue Topaz Marquise Ring Filigree Estate Size 8 W Box.",
+            "description": "This antique 14K solid gold marquise ring features a stunning blue topaz stone, elegant filigree detailing, and a vintage charm. The size 8 ring is designed for women who appreciate classic, luxurious jewelry pieces. Crafted in yellow gold, this exquisite estate ring comes with its original box, making it a perfect gift or a valuable addition to any jewelry collection.",
+            "state": "edit",
+            "creation_timestamp": 1774909362,
+            "created_timestamp": 1774909362,
+            "ending_timestamp": 1785450162,
+            "original_creation_timestamp": 1774909092,
+            "last_modified_timestamp": 1783059794,
+            "updated_timestamp": 1783059794,
+            "state_timestamp": 1777526701,
+            "quantity": 1,
+            "shop_section_id": 57478638,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4480409712/antique-14k-solid-gold-blue-topaz",
+            "num_favorers": 7,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 3,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 49599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1240,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4515602119,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4515602119,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage Hand Blown Murano Style Multi-Color Confetti Art Glass Rooster Large!",
+            "description": "This Vintage Hand Blown Murano Style Multi-Color Confetti Art Glass Rooster is a stunning decorative piece that adds a touch of elegance to any space. Handmade in Italy with a glossy finish, this unique figurine features a rooster design with a colorful confetti pattern, reflecting the intricate craftsmanship of Murano glass. Standing at 10 inches tall and 8 inches wide, this one-of-a-kind piece is a perfect addition for collectors or those looking to add a touch of vintage charm to their decor.",
+            "state": "edit",
+            "creation_timestamp": 1780542452,
+            "created_timestamp": 1780542452,
+            "ending_timestamp": 1791083252,
+            "original_creation_timestamp": 1780471082,
+            "last_modified_timestamp": 1783059795,
+            "updated_timestamp": 1783059795,
+            "state_timestamp": 1780989454,
+            "quantity": 1,
+            "shop_section_id": null,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4515602119/vintage-hand-blown-murano-style-multi",
+            "num_favorers": 0,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [
+              "Brand Murano",
+              "Category Figurine",
+              "Color Multicolor",
+              "Domain Pottery Glass",
+              "Feature Decorative",
+              "Feature Yes",
+              "Material Art Glass",
+              "Material Glass",
+              "Origin Italy",
+              "Origin Venice",
+              "Size 10 inches",
+              "Size 8 in",
+              "Style Decorative"
+            ],
+            "materials": [
+              "Glass"
+            ],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "i_did",
+            "when_made": "1970s",
+            "is_supply": false,
+            "item_weight": 2,
+            "item_weight_unit": "lb",
+            "item_length": 9,
+            "item_width": 7.2,
+            "item_height": 5.6,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": false,
+            "language": "en-US",
+            "price": {
+              "amount": 8499,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 2889,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4515603115,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4515603115,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Reflections Royal Doulton Debut HN3046 Porcelain Figurine 1985. Hand Signed.",
+            "description": "The Reflections Royal Doulton Debut HN3046 Porcelain Figurine from 1985, hand signed by artist Pauline Parsons, is a beautiful collectible piece perfect for all occasions. Made of high-quality porcelain with a glossy finish, this medium-sized figurine features an all-over pattern in multicolor, depicting a woman in a timeless art deco style. Handmade in the United Kingdom by Royal Doulton, this original piece is part of the Reflections collection and is a unique addition to any collection of decorative sculptures and figurines.",
+            "state": "edit",
+            "creation_timestamp": 1780542383,
+            "created_timestamp": 1780542383,
+            "ending_timestamp": 1791083183,
+            "original_creation_timestamp": 1780471262,
+            "last_modified_timestamp": 1783059796,
+            "updated_timestamp": 1783059796,
+            "state_timestamp": 1780976152,
+            "quantity": 1,
+            "shop_section_id": null,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4515603115/reflections-royal-doulton-debut-hn3046",
+            "num_favorers": 0,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [
+              "Brand Royal Doulton",
+              "Category Figurine",
+              "Category Reflections",
+              "Color Multicolor",
+              "Domain Collectibles",
+              "Era 1980-1989",
+              "Era 1985",
+              "Feature Yes",
+              "Material Porcelain",
+              "Recently Added",
+              "Size Medium",
+              "Style Adults",
+              "Style All Occasions"
+            ],
+            "materials": [
+              "Porcelain"
+            ],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "i_did",
+            "when_made": "made_to_order",
+            "is_supply": false,
+            "item_weight": 2,
+            "item_weight_unit": "lb",
+            "item_length": 14,
+            "item_width": 12,
+            "item_height": 9,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": false,
+            "language": "en-US",
+            "price": {
+              "amount": 15999,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 130,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4517548168,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4517548168,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique Miniature Islamic Quran Istanbul Folding Manuscript In Case Arabic 40 Ft",
+            "description": "The product is an antique miniature Islamic Quran manuscript from Istanbul, folded and enclosed in a protective case. This unique and valuable item holds religious significance for Muslims and collectors alike, showcasing the beauty and history of Islamic tradition. Measuring approximately 50 feet in length, this Arabic manuscript is a rare find and a prized possession for those interested in religious artifacts and historical pieces.",
+            "state": "edit",
+            "creation_timestamp": 1780768620,
+            "created_timestamp": 1780768620,
+            "ending_timestamp": 1791309420,
+            "original_creation_timestamp": 1780767461,
+            "last_modified_timestamp": 1783059797,
+            "updated_timestamp": 1783059797,
+            "state_timestamp": 1780974380,
+            "quantity": 1,
+            "shop_section_id": null,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4517548168/antique-miniature-islamic-quran-istanbul",
+            "num_favorers": 10,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [
+              "Category Islam",
+              "Domain Collectibles",
+              "Feature Yes",
+              "Origin T rkiye",
+              "SC religious-books"
+            ],
+            "materials": [
+              "Islam",
+              "Collectibles",
+              "Yes",
+              "T rkiye",
+              "SC religious books"
+            ],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "i_did",
+            "when_made": "made_to_order",
+            "is_supply": false,
+            "item_weight": 1,
+            "item_weight_unit": "lb",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": false,
+            "language": "en-US",
+            "price": {
+              "amount": 27599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 101,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4517552065,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4517552065,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage 1950’s Jefferson “The Golden Hour” Mystery Clock 580-101 True MCM Works",
+            "description": "The Vintage 1950&#39;s Jefferson &quot;The Golden Hour&quot; Mystery Clock 580-101 is a unique collectible piece that showcases the art deco style popular in the mid 20th century. This round clock features a striking gold finish with Arabic numerals, making it a standout piece for any decor. With its mechanical movement and electrical power source, this clock is both functional and stylish, reflecting the era of 1940s-1969. Made of brass with a metal construction, this original Jefferson clock is a true vintage find from the United States, perfect for clock enthusiasts and collectors alike.",
+            "state": "edit",
+            "creation_timestamp": 1780768621,
+            "created_timestamp": 1780768621,
+            "ending_timestamp": 1791309421,
+            "original_creation_timestamp": 1780767479,
+            "last_modified_timestamp": 1783059799,
+            "updated_timestamp": 1783059799,
+            "state_timestamp": 1780771149,
+            "quantity": 1,
+            "shop_section_id": null,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4517552065/vintage-1950s-jefferson-the-golden-hour",
+            "num_favorers": 2,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [
+              "Brand Jefferson",
+              "Category Clocks",
+              "Color Gold",
+              "Domain Collectibles",
+              "Era 1950",
+              "Era 1950-1959",
+              "Feature Projection",
+              "Material Metal",
+              "Model Jefferson",
+              "Movement Mechanical",
+              "Origin United States",
+              "Style Art Deco",
+              "free shipping"
+            ],
+            "materials": [
+              "Metal"
+            ],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "1940s",
+            "is_supply": false,
+            "item_weight": 2,
+            "item_weight_unit": "lb",
+            "item_length": 14,
+            "item_width": 12,
+            "item_height": 9,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": false,
+            "language": "en-US",
+            "price": {
+              "amount": 15999,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1016,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458699147,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458699147,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Rare Antique Baroque Victorian Ornate Gilt Brass Oval Frame Vanity Mirror/frame.",
+            "description": "This product is a rare antique Baroque Victorian ornate gilt brass oval frame vanity mirror. It features a floral pattern in a gold color, with a Victorian style and romantic theme. The frame is made of brass and has a gilted finish, adding an elegant touch to any tabletop stand setting. Measuring 11 x 14 inches, this original piece is perfect for displaying a single photo or serving as a decorative collectible for those who appreciate antique and vintage decor.\n\nFrame Only. No mirror or picture glass.",
+            "state": "edit",
+            "creation_timestamp": 1781829115,
+            "created_timestamp": 1781829115,
+            "ending_timestamp": 1792369915,
+            "original_creation_timestamp": 1771283670,
+            "last_modified_timestamp": 1783059800,
+            "updated_timestamp": 1783059800,
+            "state_timestamp": 1781829115,
+            "quantity": 1,
+            "shop_section_id": null,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458699147/rare-antique-baroque-victorian-ornate",
+            "num_favorers": 0,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 76,
+            "item_weight_unit": "oz",
+            "item_length": 15,
+            "item_width": 14,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 16799,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 2279,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458528056,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458528056,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique Baccarat Crystal Candlestick, Dolphin Form, 24 Inch",
+            "description": "This rare antique Baccarat France dolphin form candlestick is a stunning piece made of clear glass and crystal. Standing at 24 inches tall, this art glass candlestick from the 1930s exudes elegance and sophistication. Featuring a French theme and signed by the renowned brand Baccarat, this unique and exquisite piece of decorative pottery and glassware would make a striking addition to any collection or home decor.",
+            "state": "edit",
+            "creation_timestamp": 1781718732,
+            "created_timestamp": 1781718732,
+            "ending_timestamp": 1792259532,
+            "original_creation_timestamp": 1771260364,
+            "last_modified_timestamp": 1783059801,
+            "updated_timestamp": 1783059801,
+            "state_timestamp": 1781718732,
+            "quantity": 1,
+            "shop_section_id": null,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458528056/antique-baccarat-crystal-candlestick",
+            "num_favorers": 0,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 144,
+            "item_weight_unit": "oz",
+            "item_length": 20,
+            "item_width": 16,
+            "item_height": 12,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 216399,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 2214,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458588320,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458588320,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "XL Lladro Don Quixote Figurine #1030 – Vintage Glazed Porcelain, Spain",
+            "description": "This rare XL Lladro &quot;Don Quixote&quot; figurine #1030 features a colorful multicolor porcelain design of the iconic character from &quot;Don Quixote.&quot; The large figurine, measuring 18 x 16 inches, boasts a glazed finish and is part of the Lladró brand&#39;s 1970s collection. This original piece, manufactured in Spain, is a retired decorative collectible that would make a unique addition to any collection of figurines or vintage décor.",
+            "state": "edit",
+            "creation_timestamp": 1781722366,
+            "created_timestamp": 1781722366,
+            "ending_timestamp": 1792263166,
+            "original_creation_timestamp": 1771268086,
+            "last_modified_timestamp": 1783059802,
+            "updated_timestamp": 1783059802,
+            "state_timestamp": 1781722366,
+            "quantity": 1,
+            "shop_section_id": 57478636,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458588320/xl-lladro-don-quixote-figurine-1030",
+            "num_favorers": 7,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 171,
+            "item_weight_unit": "oz",
+            "item_length": 22,
+            "item_width": 22,
+            "item_height": 15,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 205399,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 69,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458609228,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458609228,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage Emerald Green Glass Pitcher Set, Ornate Hand-Blown 1950s Barware",
+            "description": "This product is a gorgeous vintage set consisting of a highly ornate green emerald pitcher and 5 glasses. The all-over pattern and hand-blown glass production technique add to the uniqueness and charm of the set, which dates back to the 1950s. The matte finish on the glass gives it a luxurious and elegant look. The unmarked brand adds to the mystery and allure of this one-of-a-kind set, making it a standout decorative piece for any collector or enthusiast of vintage glassware.",
+            "state": "edit",
+            "creation_timestamp": 1781724761,
+            "created_timestamp": 1781724761,
+            "ending_timestamp": 1792265561,
+            "original_creation_timestamp": 1771270701,
+            "last_modified_timestamp": 1783059803,
+            "updated_timestamp": 1783059803,
+            "state_timestamp": 1781724761,
+            "quantity": 1,
+            "shop_section_id": null,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458609228/vintage-emerald-green-glass-pitcher-set",
+            "num_favorers": 0,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 44,
+            "item_weight_unit": "oz",
+            "item_length": 12,
+            "item_width": 10,
+            "item_height": 8,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 22399,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1938,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458611475,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458611475,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage Cortebert Mechanical Watch, Rose Gold Stainless Steel, 1960s Men&#39;s Timepiece",
+            "description": "This Rare Vintage Cortébert Mechanical Men&#39;s Watch is a luxurious timepiece from the 1960s, featuring a rose-colored stainless steel case and bracelet Band. The watch has a solid white dial with a second hand, making it a functional and stylish accessory for any man&#39;s collection. Made in the United States, this watch exudes a classic and timeless elegance that is sure to impress. With a vintage charm and a touch of nostalgia, this Cortébert watch is a unique and sought-after piece for watch enthusiasts and collectors alike.",
+            "state": "edit",
+            "creation_timestamp": 1781724763,
+            "created_timestamp": 1781724763,
+            "ending_timestamp": 1792265563,
+            "original_creation_timestamp": 1771271555,
+            "last_modified_timestamp": 1783059804,
+            "updated_timestamp": 1783059804,
+            "state_timestamp": 1781724763,
+            "quantity": 1,
+            "shop_section_id": 57478584,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458611475/vintage-cortebert-mechanical-watch-rose",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 3,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 26199,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 6075,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4458696506,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4458696506,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "1960s Zodiac Automatic Gold Plated Men&#39;s Watch - Vintage Timepiece",
+            "description": "The Vintage 1960&#39;s Zodiac Automatic Gold Plated Men&#39;s Wrist Watch is a stylish and classic timepiece that exudes sophistication. With its gold plated case and bezel, along with a brown leather band, this watch is perfect for dressy occasions. The mechanical automatic movement ensures accurate timekeeping, while the baton indexes on the gold dial add a touch of luxury. This watch from the 1960s is a rare and unique find for collectors of vintage watches, and it comes with a bonus of running great.\n\nMinor crack on the edge of the Crystal.",
+            "state": "edit",
+            "creation_timestamp": 1781829110,
+            "created_timestamp": 1781829110,
+            "ending_timestamp": 1792369910,
+            "original_creation_timestamp": 1771282589,
+            "last_modified_timestamp": 1783059805,
+            "updated_timestamp": 1783059805,
+            "state_timestamp": 1781829110,
+            "quantity": 1,
+            "shop_section_id": 57478584,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4458696506/1960s-zodiac-automatic-gold-plated-mens",
+            "num_favorers": 16,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 8,
+            "item_weight_unit": "oz",
+            "item_length": 10,
+            "item_width": 8,
+            "item_height": 4,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 38799,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 6075,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4480408586,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4480408586,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique 19th C Crucifix: Metal Jesus, Wood Cross, Memento Mori Skull",
+            "description": "This Antique 19th C Crucifix is a unique piece of Christian memorabilia, featuring a metal depiction of Jesus on a wooden cross. Handmade in Mexico, this rare item also includes tips and a skull motif, adding an extra layer of spiritual significance. The intricate details and historical charm make it a special addition to any collection of religious artifacts.",
+            "state": "edit",
+            "creation_timestamp": 1774909361,
+            "created_timestamp": 1774909361,
+            "ending_timestamp": 1785450161,
+            "original_creation_timestamp": 1774908931,
+            "last_modified_timestamp": 1783059807,
+            "updated_timestamp": 1783059807,
+            "state_timestamp": 1777526083,
+            "quantity": 1,
+            "shop_section_id": 57478662,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4480408586/antique-19th-c-crucifix-metal-jesus-wood",
+            "num_favorers": 4,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [],
+            "materials": [],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "made_to_order",
+            "is_supply": true,
+            "item_weight": 8,
+            "item_weight_unit": "oz",
+            "item_length": 12,
+            "item_width": 9,
+            "item_height": 6,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 27599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1152,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4501287286,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4501287286,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Antique 19th Century Ansonia Royal Bonn Porcelain Floral Shelf Clock Mechanical Wind Up",
+            "description": "This Antique 19th C Ansonia Royal Bonn China Porcelain Floral Shelf Clock is a rare and unique piece from the Victorian era. With a multicolor floral design on porcelain, this desk clock features a mechanical movement with a key for winding up the spring power source. The clock also includes a pendulum and moving parts, typical of antique clocks from the 19th century. The glossy finish and intricate details make it a valuable collectible for those interested in decorative vintage items.",
+            "state": "edit",
+            "creation_timestamp": 1778208400,
+            "created_timestamp": 1778208400,
+            "ending_timestamp": 1788835600,
+            "original_creation_timestamp": 1778208239,
+            "last_modified_timestamp": 1783059808,
+            "updated_timestamp": 1783059808,
+            "state_timestamp": 1778212210,
+            "quantity": 1,
+            "shop_section_id": 57478636,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4501287286/antique-19th-century-ansonia-royal-bonn",
+            "num_favorers": 1,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [
+              "Antique Shelf Clock",
+              "Ansonia Clock",
+              "Royal Bonn",
+              "Porcelain Clock",
+              "Victorian Decor",
+              "Mechanical Clock",
+              "Wind Up Clock",
+              "Floral Design",
+              "19th Century",
+              "Collectible Clock",
+              "Vintage Mantel",
+              "Porcelain Decor",
+              "Key Wound Clock"
+            ],
+            "materials": [
+              "Porcelain"
+            ],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "someone_else",
+            "when_made": "1800s",
+            "is_supply": false,
+            "item_weight": 4,
+            "item_weight_unit": "lb",
+            "item_length": 12,
+            "item_width": 9,
+            "item_height": 6,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": true,
+            "language": "en-US",
+            "price": {
+              "amount": 42599,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 1016,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    },
+    {
+      "listing_id": 4516153284,
+      "ok": true,
+      "attempts": [
+        {
+          "method": "PATCH_FORM",
+          "status": 200,
+          "response": {
+            "listing_id": 4516153284,
+            "user_id": 1198414609,
+            "shop_id": 64623797,
+            "title": "Vintage Lladro Figurine 4972 Girl With Calla Lilies Sitting Retired 1991",
+            "description": "This Vintage Lladro Figurine 4972 &quot;GIRL WITH CALLA LILIES SITTING&quot; is a beautiful medium-sized porcelain figurine created by artist Lladro in 1991. Depicting a girl sitting with calla lilies, this multicolor figurine with a glossy finish is a collectors&#39; item that showcases intricate details and craftsmanship. Made in Spain during the 1980s, this original, handmade piece is a retired item that would make a charming addition to any decorative display.",
+            "state": "edit",
+            "creation_timestamp": 1780542383,
+            "created_timestamp": 1780542383,
+            "ending_timestamp": 1791083183,
+            "original_creation_timestamp": 1780542095,
+            "last_modified_timestamp": 1783059809,
+            "updated_timestamp": 1783059809,
+            "state_timestamp": 1780546057,
+            "quantity": 1,
+            "shop_section_id": null,
+            "featured_rank": -1,
+            "url": "https://www.etsy.com/listing/4516153284/vintage-lladro-figurine-4972-girl-with",
+            "num_favorers": 0,
+            "non_taxable": false,
+            "is_taxable": true,
+            "is_customizable": false,
+            "is_personalizable": false,
+            "listing_type": "physical",
+            "tags": [
+              "Brand Lladro",
+              "Category Figurine",
+              "Color Multicolor",
+              "Domain Collectibles",
+              "Era 1980-1989",
+              "Era 1991",
+              "Feature Retired",
+              "Feature Yes",
+              "Material Porcelain",
+              "Origin Spain",
+              "Size 9 5",
+              "Size Medium",
+              "Style Girls"
+            ],
+            "materials": [
+              "Porcelain"
+            ],
+            "shipping_profile_id": 299298108438,
+            "return_policy_id": 1465769631726,
+            "processing_min": 1,
+            "processing_max": 3,
+            "who_made": "i_did",
+            "when_made": "1990s",
+            "is_supply": false,
+            "item_weight": 2,
+            "item_weight_unit": "lb",
+            "item_length": 14,
+            "item_width": 12,
+            "item_height": 9,
+            "item_dimensions_unit": "in",
+            "is_private": false,
+            "style": [],
+            "file_data": null,
+            "has_variations": false,
+            "should_auto_renew": false,
+            "language": "en-US",
+            "price": {
+              "amount": 9499,
+              "divisor": 100,
+              "currency_code": "USD"
+            },
+            "taxonomy_id": 130,
+            "production_partners": [],
+            "skus": [],
+            "views": 0,
+            "readiness_state_id": 1466946493907,
+            "suggested_title": null
+          }
+        }
+      ]
+    }
+  ]
+}

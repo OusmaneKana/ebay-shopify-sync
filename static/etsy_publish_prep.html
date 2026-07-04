@@ -286,6 +286,17 @@
         <input id="q" type="text" placeholder="Search SKU, title, category" />
       </div>
       <div class="row" style="margin-top: 8px;">
+        <div class="field" style="min-width: 220px;">
+          <label for="queueFilter">Filter</label>
+          <select id="queueFilter">
+            <option value="all">All unlinked items</option>
+            <option value="missing_weight">Missing weight</option>
+            <option value="missing_shipping">Missing weight or dimensions</option>
+            <option value="has_shipping">Has required weight and dimensions</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 8px;">
         <button class="primary" onclick="loadList()">Refresh</button>
       </div>
       <div class="small" id="listMeta" style="margin-top: 8px;">Loading…</div>
@@ -353,7 +364,7 @@
           <label for="ovTaxonomyId">Taxonomy ID</label>
           <div class="inline-actions">
             <input id="ovTaxonomyId" type="number" min="1" step="1" placeholder="e.g. 1234" />
-            <button id="suggestTaxonomyBtn" type="button" onclick="suggestTaxonomyForSelected()">Suggest</button>
+            <button id="suggestTaxonomyBtn" type="button" onclick="suggestTaxonomyForSelected(true)">Suggest</button>
           </div>
           <div id="taxonomySuggestions" class="suggestions small">No suggestions loaded.</div>
         </div>
@@ -438,7 +449,12 @@
       const optimizedPill = optimizedMissing.length
         ? `<span class="pill warn">missing ${optimizedMissing.length}</span>`
         : '<span class="pill ok">ready</span>';
-      return [currentPill, optimizedPill];
+      const extraPills = [];
+      if (item.missing_weight) extraPills.push('<span class="pill bad">missing weight</span>');
+      if (item.missing_shipping_measurements) extraPills.push('<span class="pill warn">missing shipping</span>');
+      if (item.detail_cache_hit) extraPills.push('<span class="pill ok">detail cached</span>');
+      if (item.taxonomy_cache_hit) extraPills.push('<span class="pill ok">taxonomy cached</span>');
+      return [currentPill, optimizedPill, extraPills.join(' ')];
     }
 
     function renderRows(items) {
@@ -449,12 +465,13 @@
       }
 
       tbody.innerHTML = items.map((item) => {
-        const [currentPill, optimizedPill] = pillsForRow(item);
+        const [currentPill, optimizedPill, extraPills] = pillsForRow(item);
         return `
           <tr class="${selectedSku === item.sku ? 'active' : ''}" onclick="loadDetail('${esc(item.sku)}')">
             <td>
               <div>${esc(item.sku || '')}</div>
               <div class="small">${esc(item.title || '')}</div>
+              ${extraPills ? `<div style="margin-top:4px;">${extraPills}</div>` : ''}
             </td>
             <td>${currentPill}</td>
             <td>${optimizedPill}</td>
@@ -465,8 +482,12 @@
 
     async function loadList() {
       const q = document.getElementById('q').value.trim();
+      const queueFilter = document.getElementById('queueFilter').value;
       const params = new URLSearchParams();
       if (q) params.set('q', q);
+      if (queueFilter === 'missing_weight') params.set('missing_weight_only', 'true');
+      if (queueFilter === 'missing_shipping') params.set('missing_shipping_only', 'true');
+      if (queueFilter === 'has_shipping') params.set('has_shipping_only', 'true');
       params.set('limit', '250');
 
       const r = await fetch(`/reporting/etsy-publish/queue?${params.toString()}`);
@@ -476,7 +497,14 @@
         return;
       }
 
-      document.getElementById('listMeta').textContent = `${d.count} loaded / ${d.total} total unlinked`;
+      const filterLabel = queueFilter === 'missing_weight'
+        ? 'missing weight only'
+        : queueFilter === 'missing_shipping'
+          ? 'missing weight or dimensions only'
+          : queueFilter === 'has_shipping'
+            ? 'has required weight and dimensions only'
+          : 'all unlinked';
+      document.getElementById('listMeta').textContent = `${d.count} loaded / ${d.total} total (${filterLabel})`;
       renderRows(d.items || []);
     }
 
@@ -722,7 +750,8 @@
         return;
       }
 
-      document.getElementById('detailMeta').textContent = `Selected ${d.sku}`;
+      const detailCacheState = d.cache && d.cache.detail_hit ? 'cache hit' : 'fresh generate';
+      document.getElementById('detailMeta').textContent = `Selected ${d.sku} · ${detailCacheState}`;
       selectedDetail = d;
       setHero(d);
       renderSeoInsights(d);
@@ -733,10 +762,10 @@
       setDraftResponse('No call made yet.');
       document.getElementById('createDraftBtn').disabled = false;
       document.getElementById('suggestTaxonomyBtn').disabled = false;
-      void suggestTaxonomyForSelected();
+      void suggestTaxonomyForSelected(false);
     }
 
-    async function suggestTaxonomyForSelected() {
+    async function suggestTaxonomyForSelected(forceRefresh = false) {
       if (!selectedSku || !selectedDetail) {
         renderTaxonomySuggestions([], null);
         return;
@@ -745,10 +774,12 @@
       const btn = document.getElementById('suggestTaxonomyBtn');
       const requestedSku = selectedSku;
       btn.disabled = true;
-      btn.textContent = 'Suggesting...';
+      btn.textContent = forceRefresh ? 'Remaking...' : 'Suggesting...';
 
       try {
-        const r = await fetch(`/reporting/etsy-publish/${encodeURIComponent(requestedSku)}/suggest-taxonomy`);
+        const url = new URL(`/reporting/etsy-publish/${encodeURIComponent(requestedSku)}/suggest-taxonomy`, window.location.origin);
+        if (forceRefresh) url.searchParams.set('force_refresh', 'true');
+        const r = await fetch(url.toString());
         const d = await r.json();
         if (requestedSku !== selectedSku) {
           return;
@@ -758,6 +789,8 @@
           document.getElementById('taxonomySuggestions').innerHTML = `<div class="small">${esc(msg)}</div>`;
           return;
         }
+        const taxonomyHit = d.cache && d.cache.taxonomy_hit;
+        document.getElementById('detailMeta').textContent = `Selected ${requestedSku} · ${(selectedDetail && selectedDetail.cache && selectedDetail.cache.detail_hit) ? 'cache hit' : 'fresh generate'} · taxonomy ${taxonomyHit ? 'cache hit' : 'fresh generate'}`;
         renderTaxonomySuggestions(d.suggestions || [], d.ai_choice || null);
         if (d.best_match && d.best_match.taxonomy_id) {
           applyTaxonomySuggestion(d.best_match.taxonomy_id);
@@ -766,7 +799,7 @@
         document.getElementById('taxonomySuggestions').innerHTML = `<div class="small">${esc(String(err))}</div>`;
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Suggest';
+        btn.textContent = 'Remake Taxonomy';
       }
     }
 
@@ -821,6 +854,7 @@
     document.getElementById('q').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') loadList();
     });
+    document.getElementById('queueFilter').addEventListener('change', () => loadList());
 
     async function logout() {
       try {
@@ -832,6 +866,7 @@
 
     loadList();
     document.getElementById('suggestTaxonomyBtn').disabled = true;
+    document.getElementById('suggestTaxonomyBtn').textContent = 'Remake Taxonomy';
   </script>
 </body>
 </html>

@@ -1,0 +1,77 @@
+source_bucket,listing_id,etsy_title,etsy_qty,reported_sold_sku,reported_sold_ebay_qty,reported_sold_shopify_id,reported_sold_exists_in_normalized,reported_sold_still_available_on_shopify,duplicate_title_in_normalized,normalized_match_count_for_title,available_shopify_skus_by_title,available_shopify_ids_by_title,available_qtys_by_title,sold_or_unavailable_skus_by_title
+sku_link,4465780967,Antique 1920&#39;s WM Rogers Louis XV Sterling Handle Carving Set In Original Box.,1,157721572219,0,10288740270361,True,False,True,2,158014777889,10674186649881,1,157721572219
+title_exact,4485310723,Capodimonte Benacchio Triade La Pietat De Michelangelo porcelain statue Signed.,1,EB-157009132542,0,,True,False,True,2,157800537412,10313799303449,1,EB-157009132542
+title_exact,4485310901,"Vintage 1960s Italy Giuseppe Capodimonte, The Promenada, Hand Painted Porcelain",1,EB-156422796233,0,,True,False,True,2,157800537448,10313800352025,1,EB-156422796233
+title_exact,4485310905,Vintage Sabino Glass Medium Chicken Hen Figurine Opalescent Signed 3 1/2&quot;,1,EB-157337026952,0,,True,False,True,2,157800537419,10313799434521,1,EB-157337026952
+title_exact,4485311027,Rare Collectible Japanese Vintage Hand Carved Wooden Noh Mask &quot;Sake&quot; Kagura Mask,1,EB-156374603330,0,,True,False,True,2,157800537447,10313800450329,1,EB-156374603330
+title_exact,4485311195,Lot Of 40 Authentic Antique Original Native American Arrowheads In Display Tray.,1,EB-157402428077,0,,True,False,True,2,157800537428,10313799794969,1,EB-157402428077
+title_exact,4485311569,Rare Antique Collectible Japanese Wooden Ebisu Noh Mask Theater Kabuki Kyogen,1,EB-156374598439,0,,True,False,True,2,157800537456,10313800778009,1,EB-156374598439
+title_exact,4485311613,Rare Vintage Pair CAPODIMONTE Vase Water Well Multicolored Flowers 6&quot;x12&quot; Italy.,1,EB-157254735076,0,,True,False,True,2,157800537426,10313799631129,1,EB-157254735076
+title_exact,4485311739,1880s-1890s Grover Cleveland 22nd & 24th U.S. President Decorative Calling Card,1,EB-157406254359,0,,True,False,True,2,157800537414,10313799205145,1,EB-157406254359
+title_exact,4485312009,Rare Men&#39;s wristwatch Studio Made by Vulcain 60s Gold-Plated Swiss Made. Working,1,EB-157259512717,0,,True,False,True,2,157800537439,10313800155417,1,EB-157259512717
+title_exact,4485312095,Set Of 2 Keramos Capodimonte Italy Cherub Centerpiece Vase Lidded Pedestal Bowls,1,EB-157254715727,0,,True,False,True,2,157800537443,10313800417561,1,EB-157254715727
+title_exact,4485316072,Rare 1800&#39;s Antique Chinese Gilt Lacquered Tea Caddy w/ Pewter Containers.,1,EB-156180400582,0,,True,False,True,2,157800537457,10313800941849,1,EB-156180400582
+title_exact,4485316412,Antique 1920&#39;s French Dog Meerschaum & Amber Cigarette Holder W Original Case.,1,EB-156912762830,0,,True,False,True,2,157800537416,10313799270681,1,EB-156912762830
+title_exact,4485316568,Ultra Rare Antique 19th C Drop Down Firefighting Station Clip On Horse Harness.,1,EB-157334733925,0,,True,False,True,2,157800537434,10313799958809,1,EB-157334733925
+title_exact,4485316744,Antique 19th C Horse Theme German Meerschaum Cigarette Holder W Original Case.,1,EB-156912768110,0,,True,False,True,2,157800537438,10313800122649,1,EB-156912768110
+title_exact,4485317104,Set Of 2 Lalique Crystal Glass Partridge Quail Bird Ring Holder Trinket Dish,1,EB-157186059391,0,,True,False,True,2,157800537430,10313799696665,1,EB-157186059391
+title_exact,4485317210,Antique 19th C ECHT German Meerschaum & Amber Pipe Horse Theme W Original Case.,1,EB-156912746630,0,,True,False,True,2,157800537421,10313799500057,1,EB-156912746630
+title_exact,4485317610,"Hensoldt Jagdt-Dialyt 6x42. Sharp, Clear w. Original Case. ABK Prisms. 6 x 42",1,EB-156143895121,0,,True,False,True,2,157800537461,10313800876313,1,EB-156143895121
+sku_link,4462543410,Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.,1,EB-156504277292,0,10225328324889,True,False,True,6,,,,156504277292;156504279011;156504330110;EB-156504277292;EB-156504279011;EB-156504330110
+title_exact,4462541539,Vintage Dunhill Rollagas Gold Tone Made in Switzerland Very Clean. Untested.,1,EB-156504277292;EB-156504279011;EB-156504330110;156504277292;156504279011;156504330110,0;0;0;0;0;0,,True,False,True,6,,,,156504277292;156504279011;156504330110;EB-156504277292;EB-156504279011;EB-156504330110
+sku_link,4458545279,Vtg 1940 Parker 51 Fountain Pen Black Barrel Sterling Silver Cap Gold Arrow Clip,1,157800537418,0,10313799368985,True,False,True,2,,,,157800537418;EB-157399251361
+sku_link,4462052709,"Rare Vintage Japanese Singed Wood, Lacquer Noh Mask Of Omoikane-no-mikoto",1,157800537458,0,10313800843545,True,False,True,2,,,,157800537458;EB-156374584452
+sku_link,4462069458,Vintage 1950 Zodiac Hermetic Swiss Black Dial Gilt Numerals Manual Watch. Works,1,157697439540,0,10284070764825,True,False,True,2,,,,157597077849;157697439540
+sku_link,4476253651,Rare Vtg Seiko Lot Of 5 Collector World Digital Timer Alarm Quartz Watches Read,1,157761583986,0,10300997533977,True,False,True,2,,,,157761583986;157800537433
+title_exact,4462053387,Original Antique 1860 John Adams. Engraving by J. Stephenson after J.S. Copley,1,156696716826;156377819863,0;0,,True,False,True,2,,,,156377819863;156696716826
+title_exact,4485316714,Rare Vintage Handmade Bust Of Princess Meritaten Of The Anciant Egyptian Dynasty,1,EB-157406247003;157800537450,0;0,,True,False,True,2,,,,157800537450;EB-157406247003
+sku_link,4458526271,Rare Post- WW2 AAF Technical Observer Wing Badge. Sterling Silver. VG Cond.,1,157429414434,0,,True,False,False,1,,,,157429414434
+sku_link,4458529384,Rare Antique Baroque Victorian Ornate Gilt Brass Oval Frame Vanity Mirror/frame.,1,157418943829,0,10225312891161,True,False,False,1,,,,157418943829
+sku_link,4458530300,Antique Swiss Silver Pocket Watch c1890 ECHAPPEMENT CYLINDRE RUBIS Working,1,157427814168,0,10225314267417,True,False,False,1,,,,157427814168
+sku_link,4458534259,Antique Capodimonte Boy and Girl Porcelain Figurine Romantic Scene W 5”,1,157538992731,0,10225322361113,True,False,False,1,,,,157538992731
+sku_link,4458534418,Vintage Celadon Cast Bronze Porcelain Birds Flowers Tree Candle Holder Figurine,1,157489183190,0,10225317183769,True,False,False,1,,,,157489183190
+sku_link,4458534498,RARE Giuseppe Armani Carmen 1532C Limited Ed Sculpture Italy 239/5000 W COA,1,157489202771,0,10225317314841,True,False,False,1,,,,157489202771
+sku_link,4458535259,Helbros &quot;Invincible&quot; 34mm Beige Dial Gold Plated Manual Wind Men Watch. Working.,1,157544167800,0,10225322918169,True,False,False,1,,,,157544167800
+sku_link,4458536262,Vintage Swarvoski SCS Arctic Hare Event Piece 2011 #1055005. Ltd Ed.,1,157517702119,0,10225319641369,True,False,False,1,,,,157517702119
+sku_link,4458536343,Antique OOAK Mid Century Ornate Hand Made Capodimonte Italy Large Vase No Chips,1,EB-157225496465,0,10225342447897,True,False,False,1,,,,EB-157225496465
+sku_link,4458537510,Rare Vintage Flamant France XL Crystal Decanter Ribbed Cut Glass w Stopper 15”,1,157522794517,0,10225320853785,True,False,False,1,,,,157522794517
+sku_link,4458541538,BULOVA 23 Sunburst Self Winding Watch. 23 Jewels 10BPAC Automatic 1950’s. Works.,1,157550716168,0,10225323901209,True,False,False,1,,,,157550716168
+sku_link,4458544204,MSA Cairns 1044 2015 Yellow Firefighter Helmet Front Visor. Seen Fire Action.,1,157578149673,0,10235458683161,True,False,False,1,,,,157578149673
+sku_link,4458577595,Vintage Collectible Royal Dux Seated Lady W Dog Porcelain Figurine Bohemia 10&quot;,1,156650740922,0,10225277305113,True,False,False,1,,,,156650740922
+sku_link,4458578237,Antique Wm. Rogers & Son &quot;Spring Flower&quot; Silver Plated Tea/Coffee Pot.,1,156654274366,0,10225277534489,True,False,False,1,,,,156654274366
+sku_link,4458579304,Disney Women Spring Pop Up Tigger Brown Leather Strap Quartz Watch 7 1/4&quot;,1,156611486096,0,10225273274649,True,False,False,1,,,,156611486096
+sku_link,4458580219,Vintage France Line Infantry Drummer 1812 Year 1/32 Scale Unpainted Tin Figure,1,156696656030,0,10225278484761,True,False,False,1,,,,156696656030
+sku_link,4458582852,Lladro &#39;Boy With Snails&#39; Figure 4896 Retired Beutiful Condition Made In Spain,1,EB-156654233396,0,10225330159897,True,False,False,1,,,,EB-156654233396
+sku_link,4458585223,"Rare Antique Chinese Cloisonne Enamel Inlaid Small Trinket, Jewelry Box.",1,156858279276,0,10225282547993,True,False,False,1,,,,156858279276
+sku_link,4458586257,Rare Antique Late 19th C Pair Of Original Mattatuck Co. USA Handcuffs. No Key.,1,156874441226,0,10225283399961,True,False,False,1,,,,156874441226
+sku_link,4458604631,Antique C 1830&#39;s Victorian Silver Plate & Cut Glass Vanity Box / Soap Holder.,1,157026423822,0,10225299882265,True,False,False,1,,,,157026423822
+sku_link,4458696053,Vtg Fratelli Toso Murano Millefiori Art Glass Vase Pitcher Colorful Floral Italy,1,EB-157348585770,0,10225471226137,True,False,False,1,,,,EB-157348585770
+sku_link,4458697421,Citizen GN-4-S Chronograph 100M Two-Tone Blue Dial Quartz Men’s Watch. Working,1,157362894564,0,10225310728473,True,False,False,1,,,,157362894564
+sku_link,4458697778,Vintage Orrefors Crystal Grizzly Bear Sculpture Paperweight Signed Swedish Mint,1,EB-157284983033,0,10225344577817,True,False,False,1,,,,EB-157284983033
+sku_link,4458700084,"Antique British Bentima Westminster Clock, Art Deco. Working. Read.",1,157348594618,0,10225309909273,True,False,False,1,,,,157348594618
+sku_link,4458700854,Vintage Waterford Crystal Blue Butterfly Figurine: Ribbed Pedestal Paperweight,1,EB-157355225616,0,10225471717657,True,False,False,1,,,,EB-157355225616
+sku_link,4462061850,Rare Antique Mrs. Potts No. 1 Sad Iron with Removable Wood Handle. Complete.,1,156455970335,0,10225264427289,True,False,False,1,,,,156455970335
+sku_link,4462070388,Vintage 1972 TISSOT Seastar Men&#39;s Automatic Swiss Watch Day Date. Working Cond.,1,157635909812,0,10255197536537,True,False,False,1,,,,157635909812
+sku_link,4462545100,Rare Vintage Original Perko USCG Ships Masthead Light W Original Cable. Untested,1,EB-156558522183,0,10225328685337,True,False,False,1,,,,EB-156558522183
+sku_link,4465781039,Antique X Large Vintage European Cut Crystal Rose Bowl Globe 3 Footed. 9&quot; High.,1,157721576689,0,,True,False,False,1,,,,157721576689
+sku_link,4470696501,Rare Antique Fillery’s Toy Drum Major Toffee Tin Can Birmingham England Guard,1,157734048557,0,10292090470681,True,False,False,1,,,,157734048557
+sku_link,4470698981,Vintage Royal Worcester “Canopic” Porcelain Plates 10.5&quot;. Hand Painted.,1,156180381523,0,10225255907609,True,False,False,1,,,,156180381523
+sku_link,4470702910,Rare Antique Bronze Lion Amsterdam Coat of Arms Double Candle Holder Candelabra,1,EB-157353154574,0,10225471521049,True,False,False,1,,,,EB-157353154574
+sku_link,4476253907,V. S. Johnson Sterling Silver Needlepoint Turquoise Zuni Ladies Ring Size 8 1/4,1,157761644835,0,10300997337369,True,False,False,1,,,,157761644835
+sku_link,4476264316,Antique C 1920&#39;s Picnic Basket 1&quot; Woven Slats Naturally Aged Patina Handles Lid,1,157778000629,0,10305400570137,True,False,False,1,,,,157778000629
+sku_link,4480402913,Antique 14K Solid Gold Marquise Ring Filigree Bypass Setting Size 7.5 W Box.,1,157796573947,0,10313797632281,True,False,False,1,,,,157796573947
+sku_link,4480408584,Antique Chelsea Clock Company US Army Clock Message Center M2 12/24 Hour. Works,1,157794427389,0,,True,False,False,1,,,,157794427389
+sku_link,4480409712,Antique 14K Solid Gold Blue Topaz Marquise Ring Filigree Estate Size 8 W Box.,1,157796554705,0,10313797468441,True,False,False,1,,,,157796554705
+sku_link,4515602119,Vintage Hand Blown Murano Style Multi-Color Confetti Art Glass Rooster Large!,1,157839519981,0,10594363736345,True,False,False,1,,,,157839519981
+sku_link,4515603115,Reflections Royal Doulton Debut HN3046 Porcelain Figurine 1985. Hand Signed.,1,157861741235,0,10602367910169,True,False,False,1,,,,157861741235
+sku_link,4517548168,Antique Miniature Islamic Quran Istanbul Folding Manuscript In Case Arabic 40 Ft,1,157934246802,0,10635498946841,True,False,False,1,,,,157934246802
+sku_link,4517552065,Vintage 1950’s Jefferson “The Golden Hour” Mystery Clock 580-101 True MCM Works,1,157917407068,0,10627585278233,True,False,False,1,,,,157917407068
+title_exact,4458699147,Rare Antique Baroque Victorian Ornate Gilt Brass Oval Frame Vanity Mirror/frame.,1,157418943829,0,,True,False,False,1,,,,157418943829
+sku_link,4458528056,"Antique Baccarat Crystal Candlestick, Dolphin Form, 24 Inch",1,EB-157401494855,0,10288083075353,True,False,False,0,,,,
+sku_link,4458588320,"XL Lladro Don Quixote Figurine #1030 – Vintage Glazed Porcelain, Spain",1,EB-156831364143,0,10225334026521,True,False,False,0,,,,
+sku_link,4458609228,"Vintage Emerald Green Glass Pitcher Set, Ornate Hand-Blown 1950s Barware",1,157670015306,0,10269784604953,True,False,False,0,,,,
+sku_link,4458611475,"Vintage Cortebert Mechanical Watch, Rose Gold Stainless Steel, 1960s Men&#39;s Timepiece",1,157228149269,0,10225304863001,True,False,False,0,,,,
+sku_link,4458696506,1960s Zodiac Automatic Gold Plated Men&#39;s Watch - Vintage Timepiece,1,EB-157259499690,0,10225343791385,True,False,False,0,,,,
+sku_link,4480408586,"Antique 19th C Crucifix: Metal Jesus, Wood Cross, Memento Mori Skull",1,157794423427,0,10311444660505,True,False,False,0,,,,
+sku_link,4501287286,Antique 19th Century Ansonia Royal Bonn Porcelain Floral Shelf Clock Mechanical Wind Up,1,157871944601,0,10604867715353,True,False,False,0,,,,
+sku_link,4516153284,Vintage Lladro Figurine 4972 Girl With Calla Lilies Sitting Retired 1991,1,EB-157069974537,0,10225340547353,True,False,False,0,,,,

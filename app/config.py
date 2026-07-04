@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     ETSY_CLIENT_SECRET: str | None = None
     ETSY_REDIRECT_URI: str | None = None
     ETSY_CODE_VERIFIER: str | None = None
-    ETSY_SCOPES: str = "listings_r listings_w transactions_r transactions_w shops_r shops_w"
+    ETSY_SCOPES: str = "listings_r listings_w listings_d transactions_r transactions_w shops_r shops_w offline_access"
     ETSY_TOKEN: str | None = None
     ETSY_WEBHOOK_SIGNING_SECRET: str | None = None
     ETSY_WEBHOOK_TOLERANCE_SECONDS: int = 300

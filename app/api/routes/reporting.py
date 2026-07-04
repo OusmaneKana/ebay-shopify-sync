@@ -2,6 +2,7 @@ import re
 import json
 import copy
 import asyncio
+import hashlib
 import mimetypes
 import math
 from pathlib import Path
@@ -78,6 +79,8 @@ ETSY_ALLOWED_WHEN_MADE = {
     "before_1700",
 }
 ETSY_ALLOWED_TAG_CHARS_RE = re.compile(r"[^A-Za-z0-9 '\-™©®]+")
+ETSY_ALLOWED_MATERIAL_CHARS_RE = re.compile(r"[^A-Za-z0-9 ]+")
+ETSY_MATERIAL_MAX_LENGTH = 45
 
 # Bulk publishing configuration
 ETSY_BULK_MIN_TAXONOMY_CONFIDENCE = 0.5
@@ -85,6 +88,7 @@ ETSY_BULK_MAX_ITEMS_PER_RUN = 500
 ETSY_BULK_VALIDATE_CONCURRENCY = 8
 ETSY_BULK_VALIDATE_BATCH_DELAY_SECONDS = 0.0
 BULK_REPORT_COLLECTION = "etsy_bulk_reports"
+ETSY_PREP_CACHE_COLLECTION = "etsy_publish_prep_cache"
 _ETSY_BULK_REPORT: dict[str, Any] = {
     "session_id": None,
     "validated_at": None,
@@ -120,6 +124,127 @@ def _get_etsy_semaphore() -> asyncio.Semaphore:
     if _etsy_semaphore is None:
         _etsy_semaphore = asyncio.Semaphore(ETSY_MAX_CONCURRENT_REQUESTS)
     return _etsy_semaphore
+
+
+def _normalize_etsy_prep_cache_value(value: Any) -> Any:
+    if isinstance(value, datetime):
+        return value.isoformat()
+    if isinstance(value, dict):
+        return {str(key): _normalize_etsy_prep_cache_value(val) for key, val in value.items()}
+    if isinstance(value, list):
+        return [_normalize_etsy_prep_cache_value(item) for item in value]
+    return value
+
+
+def _compute_etsy_prep_cache_version(doc: dict[str, Any]) -> str:
+    source = {
+        "sku": doc.get("_id") or doc.get("sku"),
+        "title": doc.get("title"),
+        "description": doc.get("description"),
+        "price": doc.get("price"),
+        "quantity": doc.get("quantity"),
+        "tags": doc.get("tags"),
+        "images": doc.get("images"),
+        "attributes": doc.get("attributes"),
+        "category": doc.get("category"),
+        "package": doc.get("package"),
+        "shipping": doc.get("shipping"),
+        "channels_etsy": ((doc.get("channels") or {}).get("etsy") or {}),
+        "last_normalized_at": doc.get("last_normalized_at"),
+        "models": {
+            "seo": ETSY_SEO_OPENAI_MODEL,
+            "tags": ETSY_TAG_OPENAI_MODEL,
+            "taxonomy": ETSY_TAXONOMY_OPENAI_MODEL,
+        },
+    }
+    payload = json.dumps(
+        _normalize_etsy_prep_cache_value(source),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+async def _load_etsy_prep_cache(sku: str, version: str) -> dict[str, Any] | None:
+    cache_doc = await db[ETSY_PREP_CACHE_COLLECTION].find_one({"_id": sku})
+    if not cache_doc or cache_doc.get("version") != version:
+        return None
+    return cache_doc
+
+
+async def _save_etsy_prep_cache_fields(sku: str, version: str, fields: dict[str, Any]) -> None:
+    await db[ETSY_PREP_CACHE_COLLECTION].update_one(
+        {"_id": sku},
+        {
+            "$set": {
+                "version": version,
+                "updated_at": _now_utc(),
+                **fields,
+            },
+            "$setOnInsert": {"created_at": _now_utc()},
+        },
+        upsert=True,
+    )
+
+
+def _apply_etsy_detail_optimizations(
+    detail: dict[str, Any],
+    *,
+    seo_optimization: dict[str, Any],
+    tag_suggestions: dict[str, Any],
+) -> dict[str, Any]:
+    detail["etsy_optimized"]["title"] = seo_optimization.get("seo_title") or detail["etsy_optimized"].get("title")
+    detail["etsy_optimized"]["when_made"] = seo_optimization.get("when_made") or detail["etsy_optimized"].get("when_made")
+    detail["seo_optimization"] = seo_optimization
+
+    for row in detail.get("required_fields") or []:
+        if row.get("key") == "title":
+            row["optimized"] = detail["etsy_optimized"].get("title")
+        elif row.get("key") == "when_made":
+            row["optimized"] = detail["etsy_optimized"].get("when_made")
+
+    detail["current"]["tags"] = tag_suggestions.get("source_tags") or detail["current"].get("tags") or []
+    detail["etsy_optimized"]["tags"] = tag_suggestions.get("tags") or detail["etsy_optimized"].get("tags") or []
+    detail["tag_suggestions"] = tag_suggestions
+
+    for row in detail.get("required_fields") or []:
+        if row.get("key") == "tags":
+            row["current"] = detail["current"].get("tags") or []
+            row["optimized"] = detail["etsy_optimized"].get("tags") or []
+
+    return detail
+
+
+def _has_weight_value_filter() -> dict[str, Any]:
+    return {
+        "$or": [
+            {"package.weight.major.value": {"$gt": 0}},
+            {"package.weight.minor.value": {"$gt": 0}},
+        ]
+    }
+
+
+def _missing_weight_filter() -> dict[str, Any]:
+    # Etsy accepts either major (lb/kg) or minor (oz/g) as a valid source weight.
+    return {"$nor": [{"package.weight.major.value": {"$gt": 0}}, {"package.weight.minor.value": {"$gt": 0}}]}
+
+
+def _missing_shipping_measurement_filter() -> dict[str, Any]:
+    return {
+        "$or": [
+            _missing_weight_filter(),
+            {"package.dimensions.length.value": {"$exists": False}},
+            {"package.dimensions.length.value": None},
+            {"package.dimensions.length.value": {"$lte": 0}},
+            {"package.dimensions.width.value": {"$exists": False}},
+            {"package.dimensions.width.value": None},
+            {"package.dimensions.width.value": {"$lte": 0}},
+            {"package.dimensions.height.value": {"$exists": False}},
+            {"package.dimensions.height.value": None},
+            {"package.dimensions.height.value": {"$lte": 0}},
+        ]
+    }
 
 
 def _ensure_utc(dt: datetime | None) -> datetime | None:
@@ -958,6 +1083,38 @@ def _sanitize_etsy_tags(values: list[object], *, limit: int = ETSY_TAG_MAX_COUNT
     return out
 
 
+def _sanitize_etsy_material(value: object) -> str | None:
+    text = _clean_text(value)
+    if not text:
+        return None
+    # Remove noisy prefixes commonly produced by taxonomy/category metadata.
+    text = re.sub(r"^(category|domain|feature|origin)\s+", "", text, flags=re.IGNORECASE)
+    text = ETSY_ALLOWED_MATERIAL_CHARS_RE.sub(" ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    if len(text) > ETSY_MATERIAL_MAX_LENGTH:
+        text = text[:ETSY_MATERIAL_MAX_LENGTH].rstrip()
+    if not text:
+        return None
+    return text
+
+
+def _sanitize_etsy_materials(values: list[object], *, limit: int = 13) -> list[str]:
+    out: list[str] = []
+    seen: set[str] = set()
+    for value in values:
+        material = _sanitize_etsy_material(value)
+        if not material:
+            continue
+        key = material.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(material)
+        if len(out) >= limit:
+            break
+    return out
+
+
 def _sanitize_etsy_title(value: object) -> str | None:
     txt = _clean_text(value)
     if not txt:
@@ -1599,7 +1756,7 @@ def _build_etsy_create_listing_payload(detail: dict, payload_override: dict[str,
         "item_height": _to_float(optimized.get("item_height")),
         "item_dimensions_unit": _clean_text(optimized.get("item_dimensions_unit")),
         "tags": _sanitize_etsy_tags(optimized.get("tags") or []),
-        "materials": _clean_list(optimized.get("materials") or [], limit=13),
+        "materials": _sanitize_etsy_materials(optimized.get("materials") or [], limit=13),
     }
 
     if payload["quantity"] is not None:
@@ -1643,7 +1800,10 @@ def _build_etsy_publish_comparison(doc: dict) -> dict:
     shipping_measurements = _extract_etsy_shipping_measurements(package)
 
     tags = _sanitize_etsy_tags(doc.get("tags") or etsy.get("tags") or [])
-    materials = _clean_list(etsy.get("materials") or [], limit=13) or _extract_materials(attrs, tags)
+    materials = _sanitize_etsy_materials(etsy.get("materials") or [], limit=13) or _sanitize_etsy_materials(
+        _extract_materials(attrs, tags),
+        limit=13,
+    )
     images = _clean_list(doc.get("images") or [], limit=10)
 
     weight_display = _fmt_weight(package.get("weight"))
@@ -1670,7 +1830,7 @@ def _build_etsy_publish_comparison(doc: dict) -> dict:
         "item_height": shipping_measurements.get("item_height"),
         "item_dimensions_unit": shipping_measurements.get("item_dimensions_unit"),
         "tags": tags,
-        "materials": _clean_list(etsy.get("materials") or [], limit=13),
+        "materials": _sanitize_etsy_materials(etsy.get("materials") or [], limit=13),
         "images": images,
         "weight": weight_display,
         "dimensions": dimensions_display,
@@ -1784,8 +1944,11 @@ def _has_required_shipping_measurements(package: dict | None) -> bool:
         return False
     
     major = weight.get("major") or {}
+    minor = weight.get("minor") or {}
     major_value = _to_float(major.get("value"))
-    if major_value is None or major_value <= 0:
+    minor_value = _to_float(minor.get("value"))
+    has_weight = (major_value is not None and major_value > 0) or (minor_value is not None and minor_value > 0)
+    if not has_weight:
         return False
     
     dimensions = package.get("dimensions") or {}
@@ -1793,7 +1956,7 @@ def _has_required_shipping_measurements(package: dict | None) -> bool:
         return False
     
     has_all_dims = all(
-        isinstance(dimensions.get(key), dict) and _to_float(dimensions[key].get("value")) is not None
+        isinstance(dimensions.get(key), dict) and (_to_float(dimensions[key].get("value")) or 0) > 0
         for key in ["length", "width", "height"]
     )
     return has_all_dims
@@ -2789,6 +2952,9 @@ async def etsy_match_excel_deny(payload: dict):
 @router.get("/etsy-publish/queue")
 async def etsy_publish_queue(
     q: str | None = Query(default=None, description="Search SKU/title/category"),
+    missing_weight_only: bool = Query(default=False, description="Only show items missing Etsy weight"),
+    missing_shipping_only: bool = Query(default=False, description="Only show items missing Etsy weight or dimensions"),
+    has_shipping_only: bool = Query(default=False, description="Only show items with required Etsy weight and dimensions"),
     limit: int = Query(default=100, ge=1, le=500),
 ):
     query: dict = {
@@ -2799,9 +2965,10 @@ async def etsy_publish_queue(
             {"channels.etsy.listing_id": ""},
         ]
     }
+    and_conditions: list[dict[str, Any]] = []
     if q:
         rx = _rx(q)
-        query["$and"] = [
+        and_conditions.append(
             {
                 "$or": [
                     {"_id": rx},
@@ -2810,7 +2977,18 @@ async def etsy_publish_queue(
                     {"category": rx},
                 ]
             }
-        ]
+        )
+    if missing_weight_only:
+        and_conditions.append(_missing_weight_filter())
+    if missing_shipping_only:
+        and_conditions.append(_missing_shipping_measurement_filter())
+    if has_shipping_only:
+        and_conditions.append(_has_weight_value_filter())
+        and_conditions.append({"package.dimensions.length.value": {"$gt": 0}})
+        and_conditions.append({"package.dimensions.width.value": {"$gt": 0}})
+        and_conditions.append({"package.dimensions.height.value": {"$gt": 0}})
+    if and_conditions:
+        query["$and"] = and_conditions
 
     projection = {
         "_id": 1,
@@ -2832,8 +3010,21 @@ async def etsy_publish_queue(
     total = await db.product_normalized.count_documents(query)
     docs = await db.product_normalized.find(query, projection).sort("last_normalized_at", -1).to_list(length=limit)
 
+    cache_versions = {
+        str(doc.get("_id") or doc.get("sku")): _compute_etsy_prep_cache_version(doc)
+        for doc in docs
+    }
+    cache_docs = await db[ETSY_PREP_CACHE_COLLECTION].find(
+        {"_id": {"$in": list(cache_versions.keys())}},
+        {"_id": 1, "version": 1, "detail": 1, "taxonomy_by_limit": 1},
+    ).to_list(length=limit)
+    cache_docs_by_sku = {str(doc.get("_id")): doc for doc in cache_docs}
+
     items: list[dict] = []
     for doc in docs:
+        sku = str(doc.get("_id") or doc.get("sku"))
+        cache_doc = cache_docs_by_sku.get(sku)
+        cache_version = cache_versions.get(sku)
         detail = _build_etsy_publish_comparison(doc)
         items.append(
             {
@@ -2845,6 +3036,13 @@ async def etsy_publish_queue(
                 "required_missing_optimized": detail.get("required_missing_optimized"),
                 "required_ready_current": detail.get("required_ready_current"),
                 "required_ready_optimized": detail.get("required_ready_optimized"),
+                "missing_weight": any(
+                    key in (detail.get("required_missing_optimized") or [])
+                    for key in ["item_weight", "item_weight_unit"]
+                ),
+                "missing_shipping_measurements": not _has_required_shipping_measurements(doc.get("package")),
+                "detail_cache_hit": bool(cache_doc and cache_doc.get("version") == cache_version and cache_doc.get("detail")),
+                "taxonomy_cache_hit": bool(cache_doc and cache_doc.get("version") == cache_version and cache_doc.get("taxonomy_by_limit")),
                 "last_normalized_at": detail.get("last_normalized_at"),
             }
         )
@@ -2878,37 +3076,54 @@ async def etsy_publish_detail(sku: str):
     if not doc:
         raise HTTPException(status_code=404, detail="SKU not found")
 
+    cache_version = _compute_etsy_prep_cache_version(doc)
     detail = _build_etsy_publish_comparison(doc)
+    cache_doc = await _load_etsy_prep_cache(str(detail.get("sku")), cache_version)
+    cached_detail = ((cache_doc or {}).get("detail") or {}) if cache_doc else {}
 
-    seo_optimization = await _generate_etsy_seo_optimization(detail)
-    detail["etsy_optimized"]["title"] = seo_optimization.get("seo_title") or detail["etsy_optimized"].get("title")
-    detail["etsy_optimized"]["when_made"] = seo_optimization.get("when_made") or detail["etsy_optimized"].get("when_made")
-    detail["seo_optimization"] = seo_optimization
+    seo_optimization = copy.deepcopy(cached_detail.get("seo_optimization") or {})
+    tag_suggestions = copy.deepcopy(cached_detail.get("tag_suggestions") or {})
 
-    for row in detail.get("required_fields") or []:
-        if row.get("key") == "title":
-            row["optimized"] = detail["etsy_optimized"].get("title")
-        elif row.get("key") == "when_made":
-            row["optimized"] = detail["etsy_optimized"].get("when_made")
+    if not seo_optimization:
+        seo_optimization = await _generate_etsy_seo_optimization(detail)
+    if not tag_suggestions:
+        tag_suggestions = await _generate_etsy_tag_suggestions(detail)
 
-    tag_suggestions = await _generate_etsy_tag_suggestions(detail)
-    detail["current"]["tags"] = tag_suggestions.get("source_tags") or detail["current"].get("tags") or []
-    detail["etsy_optimized"]["tags"] = tag_suggestions.get("tags") or detail["etsy_optimized"].get("tags") or []
-    detail["tag_suggestions"] = tag_suggestions
-    for row in detail.get("required_fields") or []:
-        if row.get("key") == "tags":
-            row["current"] = detail["current"].get("tags") or []
-            row["optimized"] = detail["etsy_optimized"].get("tags") or []
+    detail = _apply_etsy_detail_optimizations(
+        detail,
+        seo_optimization=seo_optimization,
+        tag_suggestions=tag_suggestions,
+    )
+
+    if not cached_detail:
+        await _save_etsy_prep_cache_fields(
+            str(detail.get("sku")),
+            cache_version,
+            {
+                "detail": {
+                    "seo_optimization": seo_optimization,
+                    "tag_suggestions": tag_suggestions,
+                }
+            },
+        )
     detail["required_field_help"] = {
         "type": sorted(ETSY_ALLOWED_LISTING_TYPES),
         "who_made": sorted(ETSY_ALLOWED_WHO_MADE),
         "when_made": sorted(ETSY_ALLOWED_WHEN_MADE),
     }
+    detail["cache"] = {
+        "version": cache_version,
+        "detail_hit": bool(cached_detail),
+    }
     return detail
 
 
 @router.get("/etsy-publish/{sku}/suggest-taxonomy")
-async def etsy_publish_suggest_taxonomy(sku: str, limit: int = Query(default=ETSY_TAXONOMY_RESULT_LIMIT, ge=1, le=20)):
+async def etsy_publish_suggest_taxonomy(
+    sku: str,
+    limit: int = Query(default=ETSY_TAXONOMY_RESULT_LIMIT, ge=1, le=20),
+    force_refresh: bool = Query(default=False, description="Bypass cached taxonomy and regenerate"),
+):
     projection = {
         "_id": 1,
         "sku": 1,
@@ -2929,8 +3144,20 @@ async def etsy_publish_suggest_taxonomy(sku: str, limit: int = Query(default=ETS
     if not doc:
         raise HTTPException(status_code=404, detail="SKU not found")
 
+    cache_version = _compute_etsy_prep_cache_version(doc)
     detail = _build_etsy_publish_comparison(doc)
-    suggestion_data = await _suggest_etsy_taxonomy(detail, limit=limit)
+    cache_doc = await _load_etsy_prep_cache(str(detail.get("sku")), cache_version)
+    taxonomy_cache = None if force_refresh else (((cache_doc or {}).get("taxonomy_by_limit") or {}).get(str(limit)) if cache_doc else None)
+    suggestion_data = copy.deepcopy(taxonomy_cache) if taxonomy_cache else None
+    if suggestion_data is None:
+        suggestion_data = await _suggest_etsy_taxonomy(detail, limit=limit)
+        taxonomy_by_limit = copy.deepcopy((cache_doc or {}).get("taxonomy_by_limit") or {}) if cache_doc else {}
+        taxonomy_by_limit[str(limit)] = suggestion_data
+        await _save_etsy_prep_cache_fields(
+            str(detail.get("sku")),
+            cache_version,
+            {"taxonomy_by_limit": taxonomy_by_limit},
+        )
     return {
         "ok": True,
         "sku": detail.get("sku"),
@@ -2939,6 +3166,10 @@ async def etsy_publish_suggest_taxonomy(sku: str, limit: int = Query(default=ETS
         "ai_choice": suggestion_data.get("ai_choice"),
         "best_match": suggestion_data.get("best_match"),
         "suggestions": suggestion_data.get("suggestions") or [],
+        "cache": {
+            "version": cache_version,
+            "taxonomy_hit": bool(taxonomy_cache),
+        },
     }
 
 
