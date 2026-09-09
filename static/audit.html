@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store Audit</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: rgba(15, 23, 42, 0.94);
+      --panel-strong: #0f172a;
+      --border: #1e293b;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --ok: #4ade80;
+      --warning: #fbbf24;
+      --critical: #fb7185;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px;
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(14, 116, 144, 0.22), transparent 34%),
+        radial-gradient(circle at 90% 10%, rgba(124, 58, 237, 0.12), transparent 30%),
+        var(--bg);
+    }
+
+    button, a.btn {
+      min-height: 36px;
+      padding: 7px 14px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color .15s ease, transform .15s ease;
+    }
+
+    button:hover, a.btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+    button:disabled { cursor: wait; opacity: .65; transform: none; }
+    button.primary { border-color: var(--accent); background: rgba(14, 116, 144, .2); }
+
+    .topbar, .hero, .filterbar, .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .topbar { margin-bottom: 20px; }
+    .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    h1 { margin: 0; font-size: clamp(24px, 4vw, 32px); }
+    .subtitle { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+    .hero {
+      align-items: stretch;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(145deg, rgba(15,23,42,.98), rgba(15,23,42,.82));
+      box-shadow: 0 22px 60px rgba(0, 0, 0, .28);
+    }
+
+    .overall { display: flex; gap: 15px; align-items: center; min-width: 250px; }
+    .status-orb { width: 54px; height: 54px; border-radius: 50%; flex: 0 0 auto; box-shadow: 0 0 28px currentColor; background: currentColor; }
+    .status-orb.loading { color: var(--muted); animation: pulse 1.2s infinite alternate; }
+    .status-orb.ok { color: var(--ok); }
+    .status-orb.warning { color: var(--warning); }
+    .status-orb.critical, .status-orb.error { color: var(--critical); }
+    @keyframes pulse { to { opacity: .38; } }
+
+    .eyebrow { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .overall-label { margin-top: 3px; font-size: 22px; font-weight: 750; text-transform: capitalize; }
+    .last-run { margin-top: 4px; color: var(--muted); font-size: 12px; }
+
+    .metrics { display: grid; grid-template-columns: repeat(3, minmax(92px, 1fr)); gap: 10px; flex: 1 1 420px; max-width: 650px; }
+    .metric { padding: 11px 13px; border: 1px solid var(--border); border-radius: 13px; background: rgba(2, 6, 23, .48); }
+    .metric-value { display: block; font-size: 22px; font-weight: 750; }
+    .metric-label { color: var(--muted); font-size: 11px; }
+
+    .filterbar { margin: 22px 0 13px; }
+    .filters { display: flex; gap: 7px; flex-wrap: wrap; }
+    .filter { color: var(--muted); }
+    .filter.active { border-color: var(--accent); color: var(--text); background: rgba(14, 116, 144, .18); }
+    .scope-note { color: var(--muted); font-size: 12px; }
+
+    .audit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+    .audit-card { overflow: hidden; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); }
+    .audit-card[data-hidden="true"] { display: none; }
+    .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 17px 13px; }
+    .card-title { margin: 0; font-size: 16px; }
+    .card-description { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .count { min-width: 44px; text-align: center; padding: 5px 9px; border: 1px solid currentColor; border-radius: 999px; font-weight: 750; }
+    .audit-card.ok .count { color: var(--ok); }
+    .audit-card.warning .count { color: var(--warning); }
+    .audit-card.critical .count { color: var(--critical); }
+
+    .empty { padding: 17px; border-top: 1px solid var(--border); color: var(--ok); font-size: 13px; }
+    .table-wrap { overflow-x: auto; border-top: 1px solid var(--border); }
+    table { width: 100%; min-width: 580px; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid rgba(30, 41, 59, .75); text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; background: rgba(2, 6, 23, .45); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover td { background: rgba(56, 189, 248, .045); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+    .cell-title { min-width: 170px; max-width: 330px; }
+    .tag { display: inline-block; margin: 1px 3px 1px 0; padding: 2px 6px; border-radius: 999px; background: rgba(148, 163, 184, .12); white-space: nowrap; }
+
+    .error-box { display: none; margin-top: 16px; padding: 15px; border: 1px solid var(--critical); border-radius: 13px; color: #fecdd3; background: rgba(159, 18, 57, .16); }
+    .error-box.visible { display: block; }
+    .skeleton { height: 160px; border: 1px solid var(--border); border-radius: 16px; background: linear-gradient(100deg, rgba(15,23,42,.65) 35%, rgba(30,41,59,.8) 50%, rgba(15,23,42,.65) 65%); background-size: 250% 100%; animation: shimmer 1.4s infinite; }
+    @keyframes shimmer { to { background-position-x: -250%; } }
+
+    @media (max-width: 820px) {
+      body { padding: 17px; }
+      .audit-grid { grid-template-columns: 1fr; }
+      .hero { padding: 17px; }
+    }
+
+    @media (max-width: 520px) {
+      .metrics { grid-template-columns: repeat(3, 1fr); }
+      .metric { padding: 9px; }
+      .metric-value { font-size: 18px; }
+      .scope-note { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Store Audit</h1>
+      <p class="subtitle">Inventory and listing issues that need attention.</p>
+    </div>
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="btn" href="/">Home</a>
+      <a class="btn" href="/reporting">Reporting</a>
+      <a class="btn" href="/admin">Admin</a>
+      <button id="refresh" class="primary" type="button">Refresh audit</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-live="polite">
+      <div class="overall">
+        <div id="statusOrb" class="status-orb loading" aria-hidden="true"></div>
+        <div>
+          <div class="eyebrow">Overall store health</div>
+          <div id="overallLabel" class="overall-label">Running audit…</div>
+          <div id="lastRun" class="last-run">Checking the latest catalog data</div>
+        </div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><span id="needsAttention" class="metric-value">—</span><span class="metric-label">Checks needing attention</span></div>
+        <div class="metric"><span id="issueCount" class="metric-value">—</span><span class="metric-label">Issues in results</span></div>
+        <div class="metric"><span id="clearCount" class="metric-value">—</span><span class="metric-label">Checks clear</span></div>
+      </div>
+    </section>
+
+    <div id="errorBox" class="error-box" role="alert"></div>
+
+    <section class="filterbar" aria-label="Audit filters">
+      <div class="filters">
+        <button class="filter active" type="button" data-filter="all">All checks</button>
+        <button class="filter" type="button" data-filter="attention">Needs attention</button>
+        <button class="filter" type="button" data-filter="ok">Clear</button>
+      </div>
+      <div class="scope-note">Sold and duplicate checks currently use Etsy listing data.</div>
+    </section>
+
+    <section id="auditGrid" class="audit-grid" aria-live="polite">
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </section>
+  </main>
+
+  <script>
+    const AUDIT_META = {
+      sold_still_live: {
+        title: 'Sold, still listed',
+        description: 'Zero-quantity products that still have an Etsy listing.',
+        preferred: ['sku', 'listing_id', 'listing_state', 'title']
+      },
+      duplicates: {
+        title: 'Duplicate listings',
+        description: 'SKUs connected to more than one Etsy listing.',
+        preferred: ['sku', 'count', 'listing_ids', 'states', 'title']
+      },
+      missing_skus: {
+        title: 'Missing SKUs',
+        description: 'Etsy listings without a SKU in their inventory data.',
+        preferred: ['listing_id', 'listing_state', 'title']
+      },
+      unlinked: {
+        title: 'Unlinked listings',
+        description: 'Etsy listings not connected to a normalized product.',
+        preferred: ['sku', 'listing_id', 'listing_state', 'title']
+      },
+      publish_queue: {
+        title: 'Ready to publish',
+        description: 'In-stock products with complete dimensions and no Etsy listing.',
+        preferred: ['sku', 'title']
+      },
+      low_res_images: {
+        title: 'Low-resolution images',
+        description: 'Shopify products that still reference a lower-resolution eBay image.',
+        preferred: ['sku', 'shopify_id', 'title', 'sample_url']
+      }
+    };
+
+    let currentAudits = {};
+    let activeFilter = 'all';
+
+    const escapeHtml = (value) => String(value ?? '')
+      .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+
+    function labelFor(key) {
+      return key.replaceAll('_', ' ').replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    function displayValue(value) {
+      if (Array.isArray(value)) {
+        return value.map(entry => `<span class="tag mono">${escapeHtml(entry)}</span>`).join('');
+      }
+      if (value === null || value === undefined || value === '') return '<span class="tag">Not set</span>';
+      return escapeHtml(value);
+    }
+
+    function columnsFor(audit, meta) {
+      const available = new Set((audit.items || []).flatMap(item => Object.keys(item)));
+      const preferred = meta.preferred.filter(key => available.has(key));
+      return preferred.length ? preferred : [...available];
+    }
+
+    function renderAuditCard(key, audit) {
+      const meta = AUDIT_META[key] || { title: labelFor(key), description: '', preferred: [] };
+      const status = ['ok', 'warning', 'critical'].includes(audit.status) ? audit.status : 'warning';
+      const items = Array.isArray(audit.items) ? audit.items : [];
+      const count = Number.isFinite(Number(audit.count)) ? Number(audit.count) : items.length;
+      const columns = columnsFor(audit, meta);
+      const rows = items.map(item => `<tr>${columns.map(column => {
+        const titleClass = column === 'title' ? 'cell-title' : '';
+        const monoClass = ['sku', 'listing_id', 'listing_ids', 'shopify_id'].includes(column) ? 'mono' : '';
+        return `<td class="${titleClass} ${monoClass}">${displayValue(item[column])}</td>`;
+      }).join('')}</tr>`).join('');
+      const details = items.length
+        ? `<div class="table-wrap"><table><thead><tr>${columns.map(column => `<th>${escapeHtml(labelFor(column))}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`
+        : `<div class="empty">✓ No issues found in this check.</div>`;
+      const truncated = count > items.length ? `<div class="empty" style="color:var(--muted)">Showing ${items.length} of ${count} results returned by the audit preview.</div>` : '';
+
+      return `<article class="audit-card ${status}" data-status="${status}">
+        <div class="card-header">
+          <div><h2 class="card-title">${escapeHtml(meta.title)}</h2><p class="card-description">${escapeHtml(meta.description)}</p></div>
+          <div class="count" title="${count} result${count === 1 ? '' : 's'}">${count}</div>
+        </div>
+        ${details}${truncated}
+      </article>`;
+    }
+
+    function applyFilter() {
+      document.querySelectorAll('.audit-card').forEach(card => {
+        const matches = activeFilter === 'all' ||
+          (activeFilter === 'ok' && card.dataset.status === 'ok') ||
+          (activeFilter === 'attention' && card.dataset.status !== 'ok');
+        card.dataset.hidden = String(!matches);
+      });
+    }
+
+    function render(data) {
+      currentAudits = data.audits || {};
+      const audits = Object.entries(currentAudits);
+      const attention = audits.filter(([, audit]) => audit.status !== 'ok').length;
+      const clear = audits.filter(([, audit]) => audit.status === 'ok').length;
+      const issues = audits.reduce((sum, [, audit]) => sum + (Number(audit.count) || 0), 0);
+      const overall = ['ok', 'warning', 'critical'].includes(data.overall) ? data.overall : (attention ? 'warning' : 'ok');
+
+      document.getElementById('statusOrb').className = `status-orb ${overall}`;
+      document.getElementById('overallLabel').textContent = overall === 'ok' ? 'All clear' : overall;
+      document.getElementById('needsAttention').textContent = attention;
+      document.getElementById('issueCount').textContent = issues;
+      document.getElementById('clearCount').textContent = clear;
+      const ranAt = data.ran_at ? new Date(data.ran_at) : new Date();
+      document.getElementById('lastRun').textContent = `Last checked ${ranAt.toLocaleString()}`;
+
+      const orderedKeys = [...Object.keys(AUDIT_META), ...Object.keys(currentAudits).filter(key => !AUDIT_META[key])];
+      document.getElementById('auditGrid').innerHTML = orderedKeys
+        .filter(key => currentAudits[key])
+        .map(key => renderAuditCard(key, currentAudits[key]))
+        .join('') || '<div class="empty">No audit checks were returned.</div>';
+      applyFilter();
+    }
+
+    async function loadAudit() {
+      const refresh = document.getElementById('refresh');
+      const errorBox = document.getElementById('errorBox');
+      refresh.disabled = true;
+      refresh.textContent = 'Running…';
+      errorBox.classList.remove('visible');
+      try {
+        const response = await fetch('/audit/summary', { headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error(`Audit request failed (${response.status})`);
+        render(await response.json());
+      } catch (error) {
+        document.getElementById('statusOrb').className = 'status-orb error';
+        document.getElementById('overallLabel').textContent = 'Audit unavailable';
+        document.getElementById('lastRun').textContent = 'The latest results could not be loaded';
+        document.getElementById('auditGrid').innerHTML = '';
+        errorBox.textContent = `${error.message}. Check that the service and database are available, then refresh.`;
+        errorBox.classList.add('visible');
+      } finally {
+        refresh.disabled = false;
+        refresh.textContent = 'Refresh audit';
+      }
+    }
+
+    document.querySelectorAll('.filter').forEach(button => button.addEventListener('click', () => {
+      activeFilter = button.dataset.filter;
+      document.querySelectorAll('.filter').forEach(item => item.classList.toggle('active', item === button));
+      applyFilter();
+    }));
+    document.getElementById('refresh').addEventListener('click', loadAudit);
+    loadAudit();
+  </script>
+</body>
+</html>

@@ -2,7 +2,143 @@
 
 ## Overview
 
-The bulk publishing feature allows you to create multiple Etsy listings at once with automatic data quality validation **and AI optimization generation**. There are three stages:
+The recommended bulk publishing workflow uses persistent runs. Validation,
+taxonomy decisions, Etsy creation attempts, and errors are saved in MongoDB, so
+the workflow can resume after a browser refresh, timeout, or deployment.
+
+For the most straightforward operation, open:
+
+- Local: `http://localhost:8080/etsy-publish-prep`
+- Deployed: `https://<service-host>/etsy-publish-prep`
+
+The page's normal sequence is:
+
+1. Click **Refresh Source Data** when eBay, Etsy, or taxonomy data may be stale.
+2. Click **Prepare All Unlinked Products** and let validation finish.
+3. Review or exclude taxonomy exceptions as needed.
+4. Click **Create 10 Tests**, then inspect those Etsy drafts.
+5. Click **Create All Ready Drafts**. The page sends resumable batches of 10.
+6. Click **Download Excel Report** to inspect successes and errors.
+
+Unresolved taxonomy-review items and validation-blocked items are left alone;
+they do not prevent auto-approved items from being created. If the page closes,
+open it again and resume the latest run.
+
+## Persistent run endpoints
+
+These endpoints are the supported API workflow. They require the same
+authorization/passkey as the protected UI.
+
+### Refresh source data
+
+`POST /reporting/etsy-publish/refresh`
+
+Refreshes raw eBay listings, normalization, the Etsy investigation snapshot,
+and Etsy Seller Taxonomy. This can take time and is not required before every
+resume of an existing run.
+
+### Create a validation run
+
+`POST /reporting/etsy-publish/runs`
+
+All eligible products:
+
+```json
+{"all": true}
+```
+
+Selected SKUs:
+
+```json
+{"skus": ["sku1", "sku2"]}
+```
+
+Save the returned `run_id`.
+
+### Process or resume validation
+
+`POST /reporting/etsy-publish/runs/{run_id}/process?limit=3`
+
+Call repeatedly until `counts.queued` and `counts.processing` are both zero.
+The endpoint processes 1–20 products per request and automatically returns
+validation items stuck in `processing` for more than 15 minutes to the queue.
+
+### Read a run
+
+- `GET /reporting/etsy-publish/runs/{run_id}` — run status, counts, and up to 100 taxonomy-review items
+- `GET /reporting/etsy-publish/run-management/latest` — newest saved run, used by the UI when reopening the page
+
+Important count fields include `queued`, `processing`, `auto_approved`,
+`review_required`, `blocked`, `creation_pending`, `creation_processing`,
+`created`, `creation_failed`, and `canary_attempted`.
+
+### Resolve taxonomy review items
+
+`PUT /reporting/etsy-publish/runs/{run_id}/items/{sku}/taxonomy`
+
+Approve a proposed or manually selected current Seller Taxonomy ID:
+
+```json
+{"action": "approve", "taxonomy_id": 123456}
+```
+
+Exclude the product from this run:
+
+```json
+{"action": "exclude", "note": "Optional explanation"}
+```
+
+### Create Etsy drafts
+
+`POST /reporting/etsy-publish/runs/{run_id}/create`
+
+Create up to 10 test drafts:
+
+```json
+{"confirmed": true, "limit": 10, "canary": true}
+```
+
+Create the next normal batch:
+
+```json
+{"confirmed": true, "limit": 10}
+```
+
+Retry failed creation attempts once more:
+
+```json
+{"confirmed": true, "limit": 50, "retry_failures": true}
+```
+
+The API caps a request at 50 items and a canary run at 10. Repeat normal create
+requests until `counts.creation_pending` is zero. Successfully created items
+are saved after every item, making the operation safe to resume. Draft creation
+will not start while validation is still queued or processing.
+
+### Download the Excel report
+
+`GET /reporting/etsy-publish/runs/{run_id}/report.xlsx`
+
+The workbook is generated from the latest saved state and contains:
+
+- `Summary`
+- `Historical Mapping Audit`
+- `Taxonomy Review`
+- `Ready to Create`
+- `Validation Errors`
+- `Created Listings`
+- `Creation Errors`
+- `Raw Error Details`
+
+Download it again after bulk creation or retries to get the newest results.
+
+## Legacy bulk workflow
+
+The older endpoints below remain available for compatibility, but their report
+cache is process memory and is not resumable across restarts or deployments.
+Prefer the persistent run endpoints above for operational use.
+
+The legacy flow has three stages:
 
 1. **Validate** (dry-run) - Generates AI optimizations (SEO title, when_made, tags, taxonomy) AND checks data quality
 2. **Create** (commit) - Reuses cached optimizations from validation (no regeneration - much faster!)
@@ -18,7 +154,7 @@ The bulk publishing feature allows you to create multiple Etsy listings at once 
 - Bulk create reuses cached optimizations (avoid redundant API calls)
 - Much faster: if 50 items validate, only 50 OpenAI calls total (not 100)
 
-## API Endpoints
+## Legacy API endpoints
 
 ### 1. POST `/reporting/etsy-publish/bulk/validate`
 
@@ -319,6 +455,26 @@ The validation phase checks:
 5. **Taxonomy confidence** - Skips if AI cannot suggest taxonomy or confidence below threshold
 
 ## Troubleshooting
+
+### The creation buttons are greyed out
+
+Check the run counts shown on the page:
+
+- Validation must finish first: `queued=0` and `processing=0`.
+- **Create 10 Tests** is intentionally unavailable after 10 canary attempts.
+- **Create All Ready Drafts** needs `creation_pending` to be greater than zero.
+- Taxonomy-review and blocked items are not creation-ready, but they no longer block auto-approved items.
+- A creation request left in progress for more than 15 minutes is recovered on the next create request.
+
+Reloading the page opens the latest saved run. If creation was interrupted,
+click **Create All Ready Drafts** again; completed items will not be recreated.
+
+### Some Etsy draft creations failed
+
+Download the run workbook and inspect `Creation Errors`, then use
+`Raw Error Details` for the complete Etsy response/payload context. After correcting the
+data, click **Retry Creation Failures** or call the persistent create endpoint
+with `"retry_failures": true`. Download the workbook again after retrying.
 
 ### Validation shows many items skipped with `missing_shipping_measurements`
 

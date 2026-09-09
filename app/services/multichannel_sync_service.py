@@ -1472,6 +1472,35 @@ async def _push_etsy_quantity(doc: dict[str, Any], target_qty: int) -> tuple[boo
     if not sku:
         return False, "missing_sku"
 
+    def _etsy_error(prefix: str, response: httpx.Response) -> str:
+        try:
+            payload = response.json()
+            detail = payload.get("error") or payload.get("message") or payload
+        except Exception:
+            detail = response.text
+        compact_detail = " ".join(str(detail or "no response body").split())[:500]
+        return f"{prefix}:{response.status_code}:{compact_detail}"
+
+    # Etsy does not expose a direct transition to `sold_out`. For a canonical
+    # quantity of zero, deactivate the listing so it immediately becomes
+    # unsearchable and unsellable without rebuilding its variation inventory.
+    if int(target_qty) <= 0:
+        listing_url = (
+            f"https://openapi.etsy.com/v3/application/shops/{shop_id}"
+            f"/listings/{listing_id}"
+        )
+        deactivate_headers = dict(headers)
+        deactivate_headers["Content-Type"] = "application/x-www-form-urlencoded"
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.patch(
+                listing_url,
+                headers=deactivate_headers,
+                data={"state": "inactive"},
+            )
+        if response.status_code >= 400:
+            return False, _etsy_error("etsy_listing_deactivate_failed", response)
+        return True, None
+
     inventory_url = f"https://openapi.etsy.com/v3/application/listings/{listing_id}/inventory"
 
     async with httpx.AsyncClient(timeout=30.0) as client:
@@ -1482,7 +1511,7 @@ async def _push_etsy_quantity(doc: dict[str, Any], target_qty: int) -> tuple[boo
         )
 
         if get_response.status_code >= 400:
-            return False, f"etsy_inventory_get_failed:{get_response.status_code}"
+            return False, _etsy_error("etsy_inventory_get_failed", get_response)
 
         inventory_payload = get_response.json() if get_response.content else {}
         try:
@@ -1501,7 +1530,7 @@ async def _push_etsy_quantity(doc: dict[str, Any], target_qty: int) -> tuple[boo
         )
 
     if put_response.status_code >= 400:
-        return False, f"etsy_inventory_put_failed:{put_response.status_code}"
+        return False, _etsy_error("etsy_inventory_put_failed", put_response)
 
     return True, None
 
@@ -1608,8 +1637,8 @@ async def process_single_job(job_id: str) -> dict[str, Any]:
     sync_note: str | None = None
 
     if target_channel == "etsy" and target_qty <= 0:
-        etsy_state_target = "sold_out"
-        sync_note = "etsy_marked_sold_out"
+        etsy_state_target = "inactive"
+        sync_note = "etsy_deactivated"
 
     if target_channel == "shopify":
         ok, error = await _push_shopify_quantity(doc, target_qty)

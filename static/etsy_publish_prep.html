@@ -86,6 +86,50 @@
 
     .card h2 { margin: 0 0 10px; font-size: 16px; }
 
+    .workflow {
+      margin-bottom: 14px;
+    }
+
+    .workflow-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .stat {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 10px;
+      background: rgba(2, 6, 23, 0.55);
+    }
+
+    .stat-value { font-size: 20px; font-weight: 700; }
+    .stat-label { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+    .review-list {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 9px;
+    }
+
+    .review-item {
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 10px;
+      background: rgba(2, 6, 23, 0.72);
+    }
+
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
     .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 
     .edit-grid {
@@ -268,7 +312,7 @@
   <div class="topbar">
     <div>
       <h1>Etsy Publish Prep</h1>
-      <div class="sub">Find normalized items not linked to Etsy and check required create-listing fields before manual API submission.</div>
+      <div class="sub">Prepare eBay products for Etsy with Seller Taxonomy validation, reviewable decisions, resumable draft creation, and Excel audit reports.</div>
     </div>
     <div class="nav">
       <a class="btn" href="/">Home</a>
@@ -277,6 +321,23 @@
       <a class="btn primary" href="/etsy-review">Etsy Review</a>
       <button onclick="logout()">Logout</button>
     </div>
+  </div>
+
+  <div class="card workflow">
+    <h2>Etsy Batch Workflow</h2>
+    <div class="small">Refresh source data, validate every candidate against Seller Taxonomy, review exceptions, then create Etsy drafts.</div>
+    <div class="workflow-actions" style="margin-top:10px;">
+      <button id="refreshEverythingBtn" onclick="refreshEverything()">Refresh Everything</button>
+      <button id="prepareBatchBtn" class="primary" onclick="prepareEtsyBatch()">Prepare Etsy Batch</button>
+      <button id="resumeValidationBtn" onclick="resumeValidation()" disabled>Resume Validation</button>
+      <button id="downloadRunBtn" onclick="downloadRunReport()" disabled>Download Excel Report</button>
+      <button id="createCanaryBtn" onclick="createCanaryDrafts()" disabled>Create 10 Test Drafts</button>
+      <button id="createRemainingBtn" class="primary" onclick="createRemainingDrafts()" disabled>Create All Ready Drafts</button>
+      <button id="retryFailuresBtn" onclick="retryCreationFailures()" disabled>Retry Failures</button>
+    </div>
+    <div id="runMessage" class="small" style="margin-top:9px;">Checking for the latest validation run…</div>
+    <div id="runStats" class="stats"></div>
+    <div id="taxonomyReviewList" class="review-list"></div>
   </div>
 
   <div class="layout">
@@ -395,6 +456,11 @@
     let selectedDetail = null;
     let selectedOverrides = {};
     let taxonomySuggestions = [];
+    let activeRunId = null;
+    let activeRun = null;
+    let activeReviewItems = [];
+    let validationLoopRunning = false;
+    const BULK_CREATE_BATCH_SIZE = 10;
 
     const FALLBACK_HELP = {
       type: ['digital', 'physical'],
@@ -439,6 +505,270 @@
       const txt = String(v);
       return txt.length ? esc(txt) : '—';
     };
+
+    async function fetchJson(url, options = {}) {
+      const response = await fetch(url, options);
+      const text = await response.text();
+      let data;
+      try { data = text ? JSON.parse(text) : {}; } catch { data = { detail: text }; }
+      if (!response.ok) {
+        const detail = data && data.detail ? data.detail : `Request failed (${response.status})`;
+        throw new Error(typeof detail === 'string' ? detail : JSON.stringify(detail));
+      }
+      return data;
+    }
+
+    function setRunMessage(message) {
+      document.getElementById('runMessage').textContent = message;
+    }
+
+    function renderRunStats(run) {
+      activeRun = run;
+      activeRunId = run && run.run_id ? run.run_id : activeRunId;
+      const counts = (run && run.counts) || {};
+      const stats = [
+        ['Candidates', counts.total || 0],
+        ['Waiting', counts.queued || 0],
+        ['Ready', counts.creation_pending || 0],
+        ['Needs review', counts.review_required || 0],
+        ['Blocked', counts.blocked || 0],
+        ['Creating', counts.creation_processing || 0],
+        ['Created', counts.created || 0],
+        ['Create errors', counts.creation_failed || 0],
+      ];
+      document.getElementById('runStats').innerHTML = stats.map(([label, value]) => `
+        <div class="stat"><div class="stat-value">${esc(value)}</div><div class="stat-label">${esc(label)}</div></div>
+      `).join('');
+
+      const hasRun = Boolean(activeRunId);
+      const validationComplete = hasRun && !counts.queued && !counts.processing;
+      const creationIdle = validationComplete && !counts.creation_processing;
+      const canCreateCanary = hasRun
+        && counts.creation_pending
+        && (counts.canary_attempted || 0) < 10
+        && !counts.creation_processing;
+      document.getElementById('resumeValidationBtn').disabled = !hasRun || !counts.queued || validationLoopRunning;
+      document.getElementById('downloadRunBtn').disabled = !hasRun;
+      document.getElementById('createCanaryBtn').disabled = !canCreateCanary;
+      const createRemainingBtn = document.getElementById('createRemainingBtn');
+      createRemainingBtn.disabled = !creationIdle || !counts.creation_pending;
+      createRemainingBtn.textContent = counts.creation_pending
+        ? `Create All ${counts.creation_pending} Ready Drafts`
+        : 'All Ready Drafts Created';
+      document.getElementById('retryFailuresBtn').disabled = !creationIdle || !counts.creation_failed;
+      renderRunTaxonomyReviews((run && run.review_items) || []);
+    }
+
+    function renderRunTaxonomyReviews(items) {
+      const container = document.getElementById('taxonomyReviewList');
+      activeReviewItems = items;
+      if (!items.length) {
+        container.innerHTML = activeRunId ? '<div class="small">No unresolved taxonomy reviews.</div>' : '';
+        return;
+      }
+      container.innerHTML = items.map((item, itemIndex) => {
+        const inputs = item.classification_inputs || {};
+        const decision = item.taxonomy_decision || {};
+        const candidates = item.taxonomy_candidates || [];
+        const choices = candidates.slice(0, 3).map((candidate) => `
+          <button type="button" onclick="approveRunTaxonomy(${itemIndex}, ${Number(candidate.taxonomy_id)})">
+            Use ${esc(candidate.full_path || candidate.name || candidate.taxonomy_id)}
+          </button>
+        `).join('');
+        return `
+          <div class="review-item">
+            <div style="font-weight:700;">${esc(inputs.original_title || item.title || item.sku)}</div>
+            <div class="small" style="margin-top:4px;">SKU ${esc(item.sku)} · ${esc(inputs.ebay_category_path || 'No eBay category')}</div>
+            <div class="small" style="margin-top:6px;">${esc(decision.reason || 'Select the most appropriate Seller Taxonomy category.')}</div>
+            <div class="row" style="margin-top:8px;">${choices}</div>
+            <div class="row" style="margin-top:7px;">
+              <button type="button" onclick="approveCustomRunTaxonomy(${itemIndex})">Enter another taxonomy ID</button>
+              <button type="button" onclick="excludeRunItem(${itemIndex})">Exclude</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadLatestRun() {
+      try {
+        const run = await fetchJson('/reporting/etsy-publish/run-management/latest');
+        activeRunId = run.run_id;
+        renderRunStats(run);
+        setRunMessage(`Latest run ${activeRunId} · ${run.status || 'unknown status'}`);
+      } catch (err) {
+        if (!String(err).includes('No validation runs found')) setRunMessage(String(err));
+        else setRunMessage('No validation run yet. Refresh data, then prepare a batch.');
+      }
+    }
+
+    async function loadActiveRun() {
+      if (!activeRunId) return;
+      const run = await fetchJson(`/reporting/etsy-publish/runs/${encodeURIComponent(activeRunId)}`);
+      renderRunStats(run);
+      return run;
+    }
+
+    async function refreshEverything() {
+      if (!confirm('Refresh eBay raw products, normalize them, and refresh Etsy listings plus Seller Taxonomy now?')) return;
+      const btn = document.getElementById('refreshEverythingBtn');
+      btn.disabled = true;
+      setRunMessage('Refreshing eBay, normalization, Etsy listings, and Seller Taxonomy. Keep this page open…');
+      try {
+        const result = await fetchJson('/reporting/etsy-publish/refresh', { method: 'POST' });
+        setRunMessage(`Refresh completed at ${result.refreshed_at}. You can prepare a new batch.`);
+        await loadList();
+      } catch (err) {
+        setRunMessage(`Refresh failed: ${String(err)}`);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function prepareEtsyBatch() {
+      if (!confirm('Create a new validation snapshot for every active eBay product not linked to Etsy? No Etsy drafts will be created yet.')) return;
+      const btn = document.getElementById('prepareBatchBtn');
+      btn.disabled = true;
+      setRunMessage('Building candidate snapshot and historical taxonomy mappings…');
+      try {
+        const run = await fetchJson('/reporting/etsy-publish/runs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ all: true }),
+        });
+        activeRunId = run.run_id;
+        renderRunStats(run);
+        await resumeValidation();
+      } catch (err) {
+        setRunMessage(`Could not prepare batch: ${String(err)}`);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function resumeValidation() {
+      if (!activeRunId || validationLoopRunning) return;
+      validationLoopRunning = true;
+      document.getElementById('resumeValidationBtn').disabled = true;
+      try {
+        let run = await loadActiveRun();
+        while (run && run.counts && run.counts.queued > 0) {
+          setRunMessage(`Validating ${run.counts.queued} remaining products. You can safely resume if this page closes.`);
+          await fetchJson(`/reporting/etsy-publish/runs/${encodeURIComponent(activeRunId)}/process?limit=3`, { method: 'POST' });
+          run = await loadActiveRun();
+        }
+        setRunMessage('Validation finished. Review taxonomy exceptions and download the Excel report.');
+      } catch (err) {
+        setRunMessage(`Validation paused: ${String(err)}`);
+      } finally {
+        validationLoopRunning = false;
+        await loadActiveRun().catch(() => {});
+      }
+    }
+
+    async function approveRunTaxonomy(itemIndex, taxonomyId) {
+      if (!activeRunId) return;
+      const sku = activeReviewItems[itemIndex] && activeReviewItems[itemIndex].sku;
+      if (!sku) return;
+      try {
+        await fetchJson(`/reporting/etsy-publish/runs/${encodeURIComponent(activeRunId)}/items/${encodeURIComponent(sku)}/taxonomy`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'approve', taxonomy_id: taxonomyId }),
+        });
+        setRunMessage(`Approved taxonomy ${taxonomyId} for ${sku}.`);
+        await loadActiveRun();
+      } catch (err) {
+        setRunMessage(`Taxonomy approval failed: ${String(err)}`);
+      }
+    }
+
+    function approveCustomRunTaxonomy(itemIndex) {
+      const value = prompt('Enter a current Etsy Seller Taxonomy ID:');
+      const taxonomyId = Number(value);
+      if (!Number.isInteger(taxonomyId) || taxonomyId <= 0) {
+        if (value !== null) setRunMessage('Enter a positive numeric Seller Taxonomy ID.');
+        return;
+      }
+      approveRunTaxonomy(itemIndex, taxonomyId);
+    }
+
+    async function excludeRunItem(itemIndex) {
+      const sku = activeReviewItems[itemIndex] && activeReviewItems[itemIndex].sku;
+      if (!activeRunId || !sku || !confirm(`Exclude ${sku} from this Etsy batch?`)) return;
+      try {
+        await fetchJson(`/reporting/etsy-publish/runs/${encodeURIComponent(activeRunId)}/items/${encodeURIComponent(sku)}/taxonomy`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'exclude' }),
+        });
+        await loadActiveRun();
+      } catch (err) {
+        setRunMessage(`Could not exclude product: ${String(err)}`);
+      }
+    }
+
+    function downloadRunReport() {
+      if (activeRunId) window.location.href = `/reporting/etsy-publish/runs/${encodeURIComponent(activeRunId)}/report.xlsx`;
+    }
+
+    async function createDraftBatch(limit, retryFailures = false, canary = false) {
+      const result = await fetchJson(`/reporting/etsy-publish/runs/${encodeURIComponent(activeRunId)}/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirmed: true, limit, retry_failures: retryFailures, canary }),
+      });
+      await loadActiveRun();
+      return result;
+    }
+
+    async function createCanaryDrafts() {
+      if (!activeRunId || !confirm('Create up to 10 Etsy drafts as a test batch?')) return;
+      const btn = document.getElementById('createCanaryBtn');
+      btn.disabled = true;
+      setRunMessage('Creating the test drafts…');
+      try {
+        const result = await createDraftBatch(10, false, true);
+        setRunMessage(`Test batch finished: ${result.processed} products attempted. Inspect the drafts in Etsy before continuing.`);
+      } catch (err) {
+        setRunMessage(`Test batch failed: ${String(err)}`);
+      } finally {
+        await loadActiveRun().catch(() => {});
+      }
+    }
+
+    async function createRemainingDrafts() {
+      const readyCount = Number((activeRun && activeRun.counts && activeRun.counts.creation_pending) || 0);
+      if (!activeRunId || !readyCount) return;
+      if (!confirm(`Create all ${readyCount} auto-approved products as Etsy drafts? Products requiring taxonomy review or blocked by validation will be left untouched.`)) return;
+      const btn = document.getElementById('createRemainingBtn');
+      btn.disabled = true;
+      try {
+        let run = await loadActiveRun();
+        while (run && run.counts && run.counts.creation_pending > 0) {
+          const before = run.counts.creation_pending;
+          setRunMessage(`Creating all ready drafts: ${before} remaining. Keep this page open; completed work is saved after every batch.`);
+          const result = await createDraftBatch(BULK_CREATE_BATCH_SIZE, false);
+          if (!result.processed) break;
+          run = activeRun;
+        }
+        setRunMessage('Ready-draft creation finished. Click Download Excel Report; creation failures are in the Creation Errors sheet with full payloads in Raw Error Details.');
+      } catch (err) {
+        setRunMessage(`Draft creation paused: ${String(err)} Completed batches are saved; click Create All Ready Drafts to resume.`);
+      } finally {
+        await loadActiveRun().catch(() => {});
+      }
+    }
+
+    async function retryCreationFailures() {
+      if (!activeRunId || !confirm('Retry the currently failed Etsy draft creations once?')) return;
+      try {
+        const result = await createDraftBatch(50, true);
+        setRunMessage(`Retry pass finished: ${result.processed} products attempted.`);
+      } catch (err) {
+        setRunMessage(`Retry failed: ${String(err)}`);
+      }
+    }
 
     function pillsForRow(item) {
       const currentMissing = item.required_missing_current || [];
@@ -865,6 +1195,7 @@
     }
 
     loadList();
+    loadLatestRun();
     document.getElementById('suggestTaxonomyBtn').disabled = true;
     document.getElementById('suggestTaxonomyBtn').textContent = 'Remake Taxonomy';
   </script>

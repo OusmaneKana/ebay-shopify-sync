@@ -102,7 +102,7 @@ async def refresh_access_token() -> str:
     doc = await db[TOKEN_COLLECTION].find_one({"_id": TOKEN_DOC_ID})
     if not doc or not doc.get("refresh_token"):
         raise ValueError(
-            "No Etsy refresh token in database. Re-authorize and include offline_access scope."
+            "No Etsy refresh token in database. Re-authorize so Etsy issues a refresh token."
         )
 
     payload = {

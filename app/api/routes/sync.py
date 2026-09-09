@@ -24,6 +24,10 @@ from app.services.multichannel_sync_service import (
     run_worker_batch,
     set_conflict_policy,
 )
+from app.services.etsy_publish_queue import (
+    enqueue_etsy_publish_job,
+    run_etsy_publish_worker,
+)
 
 router = APIRouter()
 
@@ -394,6 +398,18 @@ async def multichannel_ingest_sale_prod(payload: dict = Body(...)):
 async def multichannel_run_worker_prod(limit: int = 25):
     """Run a batch of queued multichannel sync jobs (PROD)."""
     return await run_worker_batch(limit=limit)
+
+
+@prod_router.post("/etsy-publish/enqueue/{sku}")
+async def etsy_publish_enqueue_prod(sku: str):
+    """Durably enqueue Etsy draft creation for one normalized SKU (PROD)."""
+    return await enqueue_etsy_publish_job(sku, source="manual_api")
+
+
+@prod_router.post("/etsy-publish/run-worker")
+async def etsy_publish_run_worker_prod(limit: int = 10):
+    """Run a batch of queued Etsy draft-creation jobs (PROD)."""
+    return await run_etsy_publish_worker(limit=limit)
 
 
 @prod_router.post("/multichannel/replay-failed")

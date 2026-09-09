@@ -25,9 +25,11 @@ Usage:
 
 import asyncio
 import logging
+import json
 import sys
 import time
 from argparse import ArgumentParser
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import aiohttp
@@ -125,6 +127,36 @@ def dedupe_preserve_order(urls: List[str]) -> List[str]:
 
 def chunked(lst: List[str], n: int) -> List[List[str]]:
     return [lst[i : i + n] for i in range(0, len(lst), n)]
+
+
+def load_shopify_ids_filter(path: str) -> set[int]:
+    file_path = Path(path)
+    if not file_path.exists():
+        raise FileNotFoundError(f"Shopify IDs file not found: {file_path}")
+
+    raw = file_path.read_text(encoding="utf-8").strip()
+    if not raw:
+        return set()
+
+    ids: set[int] = set()
+    if file_path.suffix.lower() == ".json":
+        payload = json.loads(raw)
+        if isinstance(payload, list):
+            values = payload
+        elif isinstance(payload, dict) and isinstance(payload.get("shopify_ids"), list):
+            values = payload.get("shopify_ids") or []
+        else:
+            raise ValueError("Unsupported JSON format. Expected list or {'shopify_ids': [...]}.")
+        for value in values:
+            ids.add(int(value))
+        return ids
+
+    for line in raw.splitlines():
+        value = line.strip()
+        if not value or value.startswith("#"):
+            continue
+        ids.add(int(value))
+    return ids
 
 
 # -----------------------------
@@ -344,27 +376,29 @@ async def update_shopify_images(
     delete_first: bool = True,
     concurrency: int = 8,
     rps: int = 6,
+    shopify_ids_filter: Optional[set[int]] = None,
 ) -> dict:
     start_time = time.time()
     logger.info("▶ Starting Shopify image REPLACE via GraphQL (ordered + concurrent)...")
     logger.info(f"Settings: delete_first={delete_first}, concurrency={concurrency}, rps={rps}")
+    if shopify_ids_filter is not None:
+        logger.info("Filtering to %s Shopify product IDs", len(shopify_ids_filter))
 
     # Global limiters
     limiter = AsyncLimiter(rps, 1)
     sem = asyncio.Semaphore(concurrency)
 
+    query: dict[str, Any] = {
+        "shopify_id": {"$exists": True, "$ne": None},
+        "shopify_variant_id": {"$exists": True, "$ne": None},
+        "images": {"$exists": True, "$ne": []},
+    }
+    if shopify_ids_filter is not None:
+        query["shopify_id"] = {"$in": sorted(shopify_ids_filter)}
+
     cursor = db.product_normalized.find(
-        {
-            "shopify_id": {"$exists": True, "$ne": None},
-            "shopify_variant_id": {"$exists": True, "$ne": None},
-            "images": {"$exists": True, "$ne": []},
-        },
-        {
-            "_id": 1,
-            "shopify_id": 1,
-            "shopify_variant_id": 1,
-            "images": 1,
-        },
+        query,
+        {"_id": 1, "shopify_id": 1, "shopify_variant_id": 1, "images": 1},
     )
 
     if limit:
@@ -450,7 +484,17 @@ if __name__ == "__main__":
     parser.add_argument("--no-delete", action="store_true", help="Do not delete existing product images before adding new ones")
     parser.add_argument("--concurrency", type=int, default=8, help="Number of products processed in parallel (default 8)")
     parser.add_argument("--rps", type=int, default=6, help="Max GraphQL requests per second (default 6)")
+    parser.add_argument(
+        "--shopify-ids-file",
+        type=str,
+        default=None,
+        help="Optional path to TXT/JSON file of Shopify product IDs to process",
+    )
     args = parser.parse_args()
+
+    shopify_ids_filter = None
+    if args.shopify_ids_file:
+        shopify_ids_filter = load_shopify_ids_filter(args.shopify_ids_file)
 
     res = asyncio.run(
         update_shopify_images(
@@ -458,6 +502,7 @@ if __name__ == "__main__":
             delete_first=(not args.no_delete),
             concurrency=args.concurrency,
             rps=args.rps,
+            shopify_ids_filter=shopify_ids_filter,
         )
     )
     sys.exit(0 if res["errors"] == 0 else 1)

@@ -1,4 +1,5 @@
 import logging
+import re
 from datetime import datetime, timezone
 from typing import Any
 from pymongo import ReturnDocument
@@ -7,10 +8,12 @@ from app.database.mongo import db
 from app.services.normalizer_service import normalize_from_raw
 from app.services.shopify_sync import sync_to_shopify
 from app.services.multichannel_sync_service import ingest_sale_event, run_worker_batch
+from app.services.etsy_publish_queue import enqueue_etsy_publish_job, run_etsy_publish_worker
 
 logger = logging.getLogger(__name__)
 
 LISTING_SYNC_COLLECTION = "ebay_listing_sync_queue"
+HIRES_SUFFIX_RE = re.compile(r"_(\d+)(\.jpe?g)(?=($|[?#]))", re.IGNORECASE)
 
 
 def _safe_int(value: Any, default: int = 0) -> int:
@@ -51,13 +54,31 @@ def _parse_ebay_datetime(value: Any) -> datetime | None:
         return None
 
 
+def _to_hires_image_url(url: str) -> str:
+    def _replace(match: re.Match[str]) -> str:
+        suffix = match.group(1)
+        ext = match.group(2)
+        if suffix == "32":
+            return match.group(0)
+        return f"_32{ext}"
+
+    return HIRES_SUFFIX_RE.sub(_replace, url)
+
+
 def _extract_images(item_data: dict[str, Any]) -> list[str]:
     picture_details = item_data.get("PictureDetails") or {}
     picture_url = picture_details.get("PictureURL")
     if isinstance(picture_url, str):
-        return [picture_url]
+        normalized = _to_hires_image_url(picture_url.strip())
+        return [normalized] if normalized else []
     if isinstance(picture_url, list):
-        return [str(url) for url in picture_url if str(url).strip()]
+        images: list[str] = []
+        for url in picture_url:
+            text = str(url).strip()
+            if not text:
+                continue
+            images.append(_to_hires_image_url(text))
+        return images
     return []
 
 
@@ -163,6 +184,11 @@ async def process_ebay_listing_sync_queue(limit: int = 10) -> dict[str, Any]:
                 adjust_inventory=True,
                 skus=[sku],
             )
+            etsy_publish_result = await enqueue_etsy_publish_job(
+                sku,
+                source="ebay_itemlisted",
+                source_job_id=str(job.get("_id")),
+            )
 
             completed += 1
             await db[LISTING_SYNC_COLLECTION].update_one(
@@ -172,6 +198,7 @@ async def process_ebay_listing_sync_queue(limit: int = 10) -> dict[str, Any]:
                         "status": "completed",
                         "normalize_result": normalize_result,
                         "shopify_result": shopify_result,
+                        "etsy_publish_result": etsy_publish_result,
                         "updated_at": datetime.now(timezone.utc),
                         "completed_at": datetime.now(timezone.utc),
                         "error": None,
@@ -183,7 +210,16 @@ async def process_ebay_listing_sync_queue(limit: int = 10) -> dict[str, Any]:
                 "status": "completed",
                 "normalize": normalize_result,
                 "shopify": shopify_result,
+                "etsy_publish": etsy_publish_result,
             })
+
+            if etsy_publish_result.get("queued"):
+                try:
+                    import asyncio
+
+                    asyncio.create_task(run_etsy_publish_worker(limit=1))
+                except Exception:
+                    logger.exception("Failed to schedule Etsy publish worker for sku=%s", sku)
         except Exception as exc:
             failed += 1
             logger.exception("ItemListed queue job failed for sku=%s", sku)

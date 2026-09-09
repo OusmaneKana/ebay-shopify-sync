@@ -88,7 +88,7 @@ async def check_etsy_token_health():
         elif not has_refresh:
             _startup_logger.warning(
                 "Etsy: token is valid but no refresh token stored. "
-                "Re-authorize via /auth/etsy/login with offline_access scope to enable auto-refresh."
+                "Re-authorize via /auth/etsy/login to enable auto-refresh."
             )
         else:
             seconds_left = status.get("seconds_until_expiry")
@@ -143,6 +143,13 @@ async def etsy_publish_prep_page(request: Request):
 @app.get("/channel-compare", response_class=FileResponse)
 async def channel_compare_page(request: Request):
     return FileResponse("static/channel_compare.html")
+
+
+@app.get("/audit-dashboard", response_class=FileResponse)
+async def audit_dashboard_page(request: Request):
+    if passkey_enabled() and not is_authorized(request):
+        return RedirectResponse(url="/login?next=/audit-dashboard")
+    return FileResponse("static/audit.html")
 
 
 @app.get("/multichannel-dashboard", response_class=FileResponse)

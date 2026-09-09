@@ -1,10 +1,7 @@
 # eBay → Shopify Sync (Middleware)
 
-FastAPI-based middleware that synchronizes eBay listings into Shopify.
-
-**Planned next:** adding Etsy inventory into the same orchestration layer (fetch → normalize → publish/sync). This repo is structured to support additional marketplaces with the same MongoDB-backed pipeline.
-
-**Note for Etsy reviewers:** Etsy is **not integrated yet** in the current codebase, and there are **no Etsy API calls** today. The Etsy work is scoped and tracked under the “Roadmap (Etsy)” section below.
+FastAPI-based middleware that synchronizes inventory and listings across eBay,
+Shopify, and Etsy.
 
 ## What this service does
 
@@ -14,7 +11,10 @@ FastAPI-based middleware that synchronizes eBay listings into Shopify.
 2. **Persist raw documents** to MongoDB (`product_raw`)
 3. **Normalize/enrich** into a Shopify-friendly shape (`product_normalized`)
 4. **Sync to Shopify** (Admin REST API): create/update products + keep inventory aligned
-5. **Handle eBay order webhooks**: set corresponding Shopify inventory to `0` and optionally set product status to `draft`
+5. **Prepare and publish Etsy drafts** through persistent, resumable validation runs
+6. **Audit channel state** for sold-but-live, duplicate, unlinked, missing-SKU, publish-ready, and low-resolution-image records
+7. **Handle eBay listing webhooks (`ItemListed`)**: ingest new listing → normalize by SKU → auto-create/update Shopify product
+8. **Handle marketplace order webhooks**: decrement inventory through the multichannel worker and propagate quantity changes to downstream channels
 
 Mermaid overview:
 
@@ -23,7 +23,11 @@ flowchart LR
 	EB[eBay API] -->|Fetch listings| RAW[(MongoDB: product_raw)]
 	RAW -->|Normalize| NORM[(MongoDB: product_normalized)]
 	NORM -->|Create/Update + Inventory| SH[Shopify Admin API]
-	EB -->|Order webhook| WH[/FastAPI webhook/] -->|Zero inventory + optional unpublish| SH
+	NORM -->|Validate + Create Drafts| ET[Etsy API]
+	EB -->|ItemListed webhook| WH[/FastAPI webhook/] --> RAW
+	RAW -->|Normalize queued SKU| NORM
+	NORM -->|Auto create/update| SH
+	EB -->|Order webhook| WH -->|Inventory decrement + sync| SH
 ```
 
 ## Key features
@@ -42,7 +46,7 @@ flowchart LR
 - `app/normalizer/` — normalization pipeline helpers
 - `app/shopify/` — Shopify API client + product/inventory operations
 - `scripts/` — one-off scripts for manual operations and backfills
-- `static/` — simple admin page served at `/admin`
+- `static/` — admin, audit, reporting, and Etsy publishing pages
 
 ## Requirements
 
@@ -50,6 +54,7 @@ flowchart LR
 - MongoDB connection string
 - eBay developer app credentials (OAuth)
 - Shopify Admin API credentials
+- Etsy OAuth app credentials and an authorized shop
 
 ## Configuration
 
@@ -78,6 +83,14 @@ SHOPIFY_STORE_URL_PROD=your-prod-store.myshopify.com
 
 # Optional
 OPENAI_API_KEY=
+
+# Etsy
+ETSY_CLIENT_ID=...
+ETSY_CLIENT_SECRET=...
+ETSY_REDIRECT_URI=...
+ETSY_SHIPPING_PROFILE_ID=...
+ETSY_RETURN_POLICY_ID=...
+ETSY_READINESS_STATE_ID=...
 ```
 
 ## Local development
@@ -93,15 +106,24 @@ uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
 - API root: `http://localhost:8080/`
 - Swagger UI: `http://localhost:8080/docs`
 - Admin page: `http://localhost:8080/admin`
+- Audit dashboard: `http://localhost:8080/audit-dashboard`
+- Etsy publishing page: `http://localhost:8080/etsy-publish-prep`
 
 ### Quick endpoint reference
 
 - `GET /` — service status
 - `GET /health` — simple health check (also available as `GET /health/`)
 - `GET /products/?limit=50` — list normalized products from MongoDB
+- `GET /audit-dashboard` — human-readable health/audit dashboard
+- `GET /etsy-publish-prep` — persistent Etsy validation and bulk draft workflow
+- `GET /audit/summary` — all inventory/listing audits in one response
+- `GET /audit/sold-still-live` — sold products that still have an active Etsy listing
 - `POST /sync/prod/*` — production Shopify store operations
 - `GET /auth/ebay/*` — eBay OAuth login/callback/status
-- `GET|POST /webhooks/ebay/orders` — eBay order webhook endpoints
+- `GET|POST /webhooks/ebay/orders` — eBay listing + order webhook endpoints
+
+See [BULK_PUBLISHING_GUIDE.md](BULK_PUBLISHING_GUIDE.md) for the complete,
+resumable Etsy draft workflow and its API request bodies.
 
 ## Docker
 
@@ -185,25 +207,122 @@ Additional targeted endpoints:
 	- `POST /sync/prod/sync-shopify-new?limit=50`
 - Inventory-only enforcement:
 	- `POST /sync/prod/sync-shopify-inventory?only_zero=false&limit=200&dry_run=true`
+- Run queued downstream inventory updates:
+	- `POST /sync/prod/multichannel/run-worker?limit=25`
+- Reconcile one SKU against selected channels:
+	- `POST /sync/prod/multichannel/reconcile/{sku}` with `{"channels": ["etsy", "shopify"], "reason": "manual_reconcile"}`
+- Replay failed multichannel jobs:
+	- `POST /sync/prod/multichannel/replay-failed`
+- Enqueue and run Etsy draft jobs:
+	- `POST /sync/prod/etsy-publish/enqueue/{sku}`
+	- `POST /sync/prod/etsy-publish/run-worker?limit=10`
 
 ### Destructive operations (use with care)
 
 - `POST /sync/prod/purge-shopify` — deletes Shopify products in the production store
 
+## Etsy bulk draft publishing
+
+The supported workflow is the persistent run UI at `GET /etsy-publish-prep`.
+Runs and per-item results are stored in MongoDB, so validation and creation can
+be resumed after a browser refresh or request timeout.
+
+Important endpoints:
+
+- `POST /reporting/etsy-publish/refresh` — refresh eBay raw data, normalized products, the Etsy listing snapshot, and Seller Taxonomy
+- `POST /reporting/etsy-publish/runs` — create a run with `{"all": true}` or `{"skus": ["..."]}`
+- `POST /reporting/etsy-publish/runs/{run_id}/process?limit=3` — process the next validation batch; repeat until `counts.queued` is zero
+- `GET /reporting/etsy-publish/runs/{run_id}` — get status, counts, and taxonomy review items
+- `GET /reporting/etsy-publish/run-management/latest` — reopen the newest run
+- `PUT /reporting/etsy-publish/runs/{run_id}/items/{sku}/taxonomy` — approve a taxonomy or exclude an item
+- `POST /reporting/etsy-publish/runs/{run_id}/create` — create ready Etsy drafts; requires `{"confirmed": true}`
+- `GET /reporting/etsy-publish/runs/{run_id}/report.xlsx` — download validation and creation results as Excel
+
+Creation requests accept at most 50 items. The UI uses batches of 10 and its
+**Create All Ready Drafts** action repeats batches until no auto-approved items
+remain. Items still requiring taxonomy review do not block already approved
+items. See [BULK_PUBLISHING_GUIDE.md](BULK_PUBLISHING_GUIDE.md) for canary,
+retry, and Excel-report details.
+
+## Audit dashboard and API
+
+Open `GET /audit-dashboard` for the front end or poll these JSON endpoints:
+
+- `GET /audit/summary` — every audit in one call
+- `GET /audit/sold-still-live` — quantity-zero products with an **active** Etsy listing
+- `GET /audit/duplicates` — SKUs appearing on multiple active Etsy listings
+- `GET /audit/missing-skus` — Etsy listings without an inventory SKU
+- `GET /audit/unlinked` — Etsy listings not linked to a normalized product
+- `GET /audit/publish-queue` — products eligible to publish to Etsy
+- `GET /audit/low-res-images` — Shopify products whose image URL is not the expected high-resolution variant
+
+These routes return a consistent `audit`, `status`, `count`, `items`, and
+`ran_at` envelope. Etsy audits use the locally stored listing snapshot; refresh
+that snapshot after an out-of-band Etsy change before treating the audit as
+current.
+
 ## Webhooks
 
-### eBay order webhook
+### eBay webhooks (`/webhooks/ebay/orders`)
 
 Endpoint:
 
 - `GET /webhooks/ebay/orders` — challenge/verification helper
-- `POST /webhooks/ebay/orders` — processes order payloads asynchronously
+- `POST /webhooks/ebay/orders` — receives both listing and order notifications
 
-Processing behavior:
+#### `ItemListed` automation (new eBay listing → Shopify product)
+
+When eBay sends `NotificationEventName=ItemListed`, the service:
+
+1. Extracts item data (`ItemID`, `SKU`, `Title`, `Description`, `PictureDetails.PictureURL`, quantity, price)
+2. Upserts a raw record into `product_raw` (source: `ebay_itemlisted`)
+3. Queues SKU in `ebay_listing_sync_queue`
+4. Runs queue worker (`process_ebay_listing_sync_queue`) to:
+   - normalize that SKU (`normalize_from_raw(skus=[sku])`)
+   - sync to Shopify (`sync_to_shopify(..., allow_create=True, skus=[sku])`)
+
+This is the near-real-time automation path used for creating Shopify products from new eBay listings.
+
+#### Image-resolution caveat on webhook-created products
+
+`ItemListed` currently stores eBay `PictureURL` values as-is. If eBay sends URLs with low-res suffixes (for example `$_1.JPG`, `$_0.JPG`), those same URLs flow into `product_normalized.images` and then into Shopify product images.
+
+To upgrade images to full resolution after ingestion, run:
+
+- `python -m scripts.renormalize_with_hires_images`
+- `python -m scripts.update_shopify_images_graphql --shopify-ids-file <generated_ids_file>`
+
+#### Repair sold inventory across Shopify and Etsy
+
+Preview eBay records with `QuantityAvailable=0` whose normalized quantity or
+active Etsy listing still needs correction:
+
+```bash
+python -m scripts.fix_zero_quantity_mismatch --dry-run
+```
+
+Apply quantity `0` to MongoDB and linked Shopify variants, and deactivate linked
+active Etsy listings:
+
+```bash
+python -m scripts.fix_zero_quantity_mismatch
+```
+
+Use `--skip-shopify` or `--skip-etsy` to omit a remote channel, and `--verbose`
+to include records skipped during the scan. A successful Etsy deactivation now
+updates the local normalized record and investigation snapshot immediately.
+Run this separate refresh only after manual/out-of-band Etsy changes or when
+reconciling older repairs:
+
+```bash
+python -m scripts.sync_etsy_listings_investigation --shop-id <ETSY_SHOP_ID>
+```
+
+#### Order webhook processing
 
 - Finds the corresponding `product_normalized` doc by SKU
-- Sets Shopify inventory to `0`
-- Optionally sets the Shopify product `status` to `draft`
+- Applies a canonical sale event + inventory decrement flow
+- Enqueues downstream channel inventory sync jobs (including Shopify)
 - Writes a summary record to `sync_log`
 
 Note: `app/api/routes/webhooks.py` currently contains a verification token and endpoint URL as constants. For production usage, those should be moved to environment variables or a secret manager.
@@ -229,16 +348,11 @@ Note: `scripts/run_full_sync.py` currently runs the Shopify sync step; the norma
 - **Credentials**: secrets are expected via environment variables (not committed).
 - **Data storage**: raw and normalized product data is stored in MongoDB to support repeatable syncs; OAuth tokens are stored in MongoDB; webhook handling persists only processing summaries to `sync_log`.
 
-## Roadmap (Etsy)
+## Etsy integration
 
-Etsy inventory support is being added next so the orchestrator can manage multiple marketplace inputs.
-
-Planned additions:
-
-- Etsy OAuth + API client
-- Etsy listings ingestion to a raw collection (parallel to `product_raw`)
-- Normalization adapters so listings from eBay/Etsy can map into a shared normalized model
-- Conflict rules (which source wins for quantity/price) and per-channel publish flags
-- Etsy integration will use official Etsy APIs + OAuth and will only operate on accounts that have explicitly authorized access.
+Etsy access uses the official API and OAuth. The service supports listing
+snapshot ingestion, draft preparation and creation, taxonomy review, inventory
+deactivation for sold items, and multichannel inventory jobs. Only explicitly
+authorized shops are accessed.
 
 ## License
