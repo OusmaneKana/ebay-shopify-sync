@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     EBAY_OAUTH_TOKEN: str = ""
     # RuName from eBay Developer Portal (Auth Accepted URL name)
     EBAY_RUNAME: str = ""
+    EBAY_MARKETPLACE_ID: str = "EBAY_US"
 
     SHOPIFY_API_KEY_PROD: str
     SHOPIFY_PASSWORD_PROD: str

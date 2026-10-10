@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>eBay Intelligence · Store performance</title>
+  <link rel="stylesheet" href="/static/etsy_insights.css?v=20261003-3">
+  <link rel="stylesheet" href="/static/ebay_insights.css?v=20261003-2">
+  <link rel="stylesheet" href="/static/insight_ratios.css?v=20261003-2">
+  <script defer src="/static/ebay_insights.js?v=20261003-3"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="/"><span class="brand-icon">e</span><span>Store intelligence<small>YOUR MARKETPLACES, IN FOCUS</small></span></a>
+  <div class="nav-label">WORKSPACE</div>
+  <a class="nav active" href="/ebay-insights"><span>◫</span> eBay Intelligence</a>
+  <a class="nav" href="/etsy-insights"><span>◇</span> Etsy Insights</a>
+  <a class="nav" href="/reporting"><span>▤</span> Product reporting</a>
+  <a class="nav" href="/inventory-command-center"><span>▦</span> Inventory center</a>
+  <div class="sidebar-bottom"><div class="small-logo">e</div><strong>Built for your eBay store</strong><p>Connect listing traffic, sales, age, and advertising performance.</p><a href="/">← Back to workspace</a></div>
+</aside>
+<main>
+  <header class="topbar"><span>eBay workspace <span class="divider">/</span> <strong>Intelligence</strong></span><span class="connection" id="connection">○ Awaiting eBay data</span></header>
+  <section class="content">
+    <div class="heading"><div><div class="eyebrow">ORGANIC + ADVERTISING PERFORMANCE</div><h1>eBay Intelligence<span class="orange-dot">.</span></h1><p>See where buyers find listings, what converts, and where ad spend needs attention.</p></div><button class="primary" id="refresh">↻ Refresh eBay data</button></div>
+    <div class="toolbar">
+      <label>Marketplace <select id="marketplace"><option value="EBAY_US">United States</option></select></label>
+      <div class="toolbar-right"><label>Period <select id="period"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select></label><label>Currency <select id="currency"><option>USD</option></select></label><a class="reauthorize" href="/auth/ebay/login">Reauthorize eBay</a><button id="demo">Explore demo</button></div>
+    </div>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    <div id="empty" class="empty"><div class="empty-icon">◫</div><h2>Your eBay performance belongs in one view.</h2><p>Refresh to combine local listings with eBay traffic, paid orders, and promoted-listing reports. Advertising reports can take a few minutes.</p><button id="empty-demo" class="primary">Explore a sample dashboard →</button><a href="/auth/ebay/login">Connect or reauthorize eBay</a></div>
+    <div id="dashboard" hidden>
+      <div class="section-top"><span id="scope">EBAY STORE PERFORMANCE</span><small id="updated"></small></div>
+      <div class="kpis">
+        <article class="kpi"><div>Gross product revenue <span>↗</span></div><strong id="revenue">—</strong><small id="revenue-note">Paid, non-cancelled orders</small></article>
+        <article class="kpi"><div>Orders <span>▧</span></div><strong id="orders">—</strong><small id="orders-note">Selected period</small></article>
+        <article class="kpi"><div>Views <span>◉</span></div><strong id="impressions">—</strong><small id="traffic-note">Selected-period listing views</small></article>
+        <article class="kpi"><div>Promoted listing fees <span>◎</span></div><strong id="ad-spend">—</strong><small id="ad-note">Advertising return</small></article>
+      </div>
+      <div class="overview">
+        <article class="panel chart-panel"><div class="panel-heading"><div><h2>Sales over time</h2><p>Daily product revenue, with buyer traffic in each point</p></div><span class="legend"><i></i> <span id="chart-currency">USD</span></span></div><div id="chart" class="chart" role="img" aria-label="Daily eBay revenue chart"></div><div class="chart-footer"><span>Paid, non-cancelled orders</span><span id="chart-range"></span></div></article>
+        <article class="panel attention"><div class="panel-heading"><div><h2>Business attention</h2><p>Listings worth reviewing first</p></div></div>
+          <button class="attention-row" data-signal="ad_waste"><span class="signal-icon red">$</span><span><strong>Ad spend without sales</strong><small>Promoted fees, no attributed revenue</small></span><b id="count-ad_waste">0</b><span>↗</span></button>
+          <button class="attention-row" data-signal="conversion"><span class="signal-icon peach">◉</span><span><strong>Traffic without sales</strong><small>Views are present, orders are not</small></span><b id="count-conversion">0</b><span>↗</span></button>
+          <button class="attention-row" data-signal="stale"><span class="signal-icon lavender">◷</span><span><strong>Long-listed inventory</strong><small>120+ days with no recent sale</small></span><b id="count-stale">0</b><span>↗</span></button>
+          <div class="attention-note">These are investigation prompts, not automatic recommendations to change price or advertising.</div>
+        </article>
+      </div>
+      <article class="panel categories"><div class="panel-heading"><div><h2>Category selling speed</h2><p>Click a heading to sort; click it again to reverse the order.</p></div><span class="ratio-period" id="category-period"></span></div><div class="table-wrap"><table><thead><tr><th><button class="table-sort" data-category-sort="category">Category <span>↕</span></button></th><th><button class="table-sort" data-category-sort="listing_count">Inventory pool <span>↕</span></button></th><th><button class="table-sort" data-category-sort="sold_listings">Sold <span>↕</span></button></th><th><button class="table-sort active" data-category-sort="median_days_to_sale">Median time to sell <span>↑</span></button></th><th id="sell-through-heading"><button class="table-sort" data-category-sort="sell_through_rate">Sell-through <span>↕</span></button></th><th><button class="table-sort" data-category-sort="views_per_sale">Views / sale <span>↕</span></button></th></tr></thead><tbody id="category-rows"></tbody></table></div></article>
+      <article class="panel products"><div class="panel-heading"><div><h2>Listing performance</h2><p>Views, selling speed, revenue, and advertising at listing level.</p></div><button id="export">↓ Export CSV</button></div>
+        <div class="filters"><label class="search"><span>⌕</span><input id="search" placeholder="Search title, SKU, category, or listing ID…" aria-label="Search listings"></label><select id="state" aria-label="Listing status"><option value="all">All statuses</option><option value="active">Active</option><option value="sold_out">Sold out</option><option value="ended">Ended</option><option value="archived">Archived</option></select><select id="ad-filter" aria-label="Advertising status"><option value="all">All advertising</option><option value="advertised">Advertised</option><option value="organic">Not advertised</option></select><select id="sort" aria-label="Sort listings"><option value="revenue">Sort: revenue</option><option value="lifecycle_date">Sort: listed / sold date</option><option value="views">Sort: views</option><option value="views_per_sale">Sort: views / sale</option><option value="days_to_sale">Sort: time to sell</option><option value="ad_fees">Sort: ad fees</option><option value="ad_roas">Sort: ad ROAS</option><option value="title">Sort: product name</option></select><select id="sort-direction" aria-label="Sort direction"><option value="desc">Descending</option><option value="asc">Ascending</option></select></div>
+        <div class="table-wrap"><table><thead><tr><th><button class="table-sort" data-product-sort="title">Listing <span>↕</span></button></th><th><button class="table-sort active" data-product-sort="revenue">Revenue <span>↓</span></button></th><th><button class="table-sort" data-product-sort="views">Views <span>↕</span></button></th><th><button class="table-sort" data-product-sort="views_per_sale">Views / sale <span>↕</span></button></th><th><button class="table-sort" data-product-sort="days_to_sale">Time to sell <span>↕</span></button></th><th><button class="table-sort" data-product-sort="ad_fees">Advertising <span>↕</span></button></th><th><button class="table-sort" data-product-sort="lifecycle_date">Listed / sold <span>↕</span></button></th></tr></thead><tbody id="rows"></tbody></table></div>
+        <div class="table-footer"><span id="result-count"></span><div><button id="prev" aria-label="Previous page">←</button><span id="page"></span><button id="next" aria-label="Next page">→</button></div></div>
+      </article>
+      <details class="methodology"><summary>About these numbers & data availability</summary><p>Revenue is item price × quantity from paid, non-cancelled Trading API orders; it excludes shipping, taxes, refunds, fees, and other adjustments. Views are listing views returned by eBay Analytics for the selected period.</p><p>For a sold listing, views per sale is selected-period views divided by sold units. Time to sell runs from the original listing date to its first paid order in the selected period. Category sell-through is sold listings divided by current active listings plus listings sold in the selected period; historical ended listings are excluded because their period availability is unknown.</p><p>Promoted Listings figures come from asynchronous Marketing API reports. General campaign sales use eBay’s cost-per-sale attribution; Priority campaign sales use cost-per-click attribution. eBay may reconcile recent advertising figures for up to 72 hours.</p><p>A refresh saves the selected 7, 30, or 90-day period separately. Reauthorizing eBay is required once after Analytics and Marketing scopes are added.</p></details>
+      <footer class="footer"><span><span class="orange-dot">●</span> eBay Intelligence</span><span>Organic and paid performance, together.</span></footer>
+    </div>
+  </section>
+</main>
+<dialog id="detail"><div class="detail-top"><span class="eyebrow">LISTING INTELLIGENCE</span><button id="close-detail" aria-label="Close listing details">✕</button></div><div id="detail-content"></div></dialog>
+</body>
+</html>

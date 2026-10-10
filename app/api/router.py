@@ -3,6 +3,7 @@ from app.api.routes import health, sync, products, auth
 from app.api.routes import webhooks
 from app.api.routes import reporting
 from app.api.routes import audit
+from app.api.routes import ebay_insights
 
 api_router = APIRouter()
 
@@ -14,3 +15,7 @@ api_router.include_router(reporting.router, prefix="/reporting", tags=["Reportin
 api_router.include_router(webhooks.router, prefix="/webhooks", tags=["Webhooks"])
 api_router.include_router(auth.router, prefix="/auth", tags=["Auth"])
 api_router.include_router(audit.router, prefix="/audit", tags=["Audit"])
+api_router.include_router(ebay_insights.router, prefix="/ebay-insights/api", tags=["eBay Insights"])
+
+from app.api.routes import etsy_insights
+api_router.include_router(etsy_insights.router, prefix="/etsy-insights/api", tags=["Etsy Insights"])

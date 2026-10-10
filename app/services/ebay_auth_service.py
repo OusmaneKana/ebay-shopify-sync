@@ -13,19 +13,16 @@ logger = logging.getLogger(__name__)
 EBAY_AUTH_URL = "https://auth.ebay.com/oauth2/authorize"
 EBAY_TOKEN_URL = "https://api.ebay.com/identity/v1/oauth2/token"
 
-# Scopes needed for Trading API (GetMyeBaySelling, GetItem).
+# Scopes needed for Trading API plus the read-only eBay Intelligence dashboard.
 # Keep this list aligned with the scopes actually granted to your
 # eBay application in the developer portal; requesting scopes that
 # are not enabled for the app will cause "invalid_scope" errors on
 # token exchange/refresh.
 #
-# For this service we need the generic API scope. If your eBay
-# application does not support "offline_access", requesting it will
-# trigger "invalid_scope". Start with the base scope only; once
-# confirmed working you can add "offline_access" back *only if* it is
-# enabled for your app in the eBay developer portal.
 EBAY_SCOPES = [
     "https://api.ebay.com/oauth/api_scope",
+    "https://api.ebay.com/oauth/api_scope/sell.analytics.readonly",
+    "https://api.ebay.com/oauth/api_scope/sell.marketing.readonly",
 ]
 
 TOKEN_COLLECTION = "ebay_oauth_tokens"
@@ -125,6 +122,8 @@ async def refresh_access_token() -> str:
     if "refresh_token" not in token_data:
         token_data["refresh_token"] = doc["refresh_token"]
         token_data["refresh_token_expires_in"] = doc.get("refresh_token_expires_in")
+    if "scope" not in token_data and doc.get("scope"):
+        token_data["scope"] = doc["scope"]
 
     await _save_tokens(token_data)
     logger.info("eBay access token refreshed successfully")
@@ -189,6 +188,7 @@ async def get_token_status() -> dict:
         "expires_at": expires_at.isoformat() if expires_at else None,
         "seconds_until_expiry": seconds_left,
         "updated_at": updated_at.isoformat() if updated_at else None,
+        "scope": doc.get("scope"),
     }
 
     if doc.get("refresh_token_expires_at"):
@@ -213,6 +213,9 @@ async def _save_tokens(token_data: dict) -> None:
         "expires_at": now + timedelta(seconds=expires_in),
         "updated_at": now,
     }
+
+    if token_data.get("scope"):
+        doc["scope"] = token_data["scope"]
 
     refresh_expires_in = token_data.get("refresh_token_expires_in")
     if refresh_expires_in:

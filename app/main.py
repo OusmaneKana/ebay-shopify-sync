@@ -176,3 +176,17 @@ async def item_detail_timeline_page(request: Request):
 @app.get("/login", response_class=FileResponse)
 async def login_page():
     return FileResponse("static/login.html")
+
+
+@app.get("/etsy-insights", response_class=FileResponse)
+async def etsy_insights_page(request: Request):
+    if passkey_enabled() and not is_authorized(request):
+        return RedirectResponse(url="/login?next=/etsy-insights")
+    return FileResponse("static/etsy_insights.html")
+
+
+@app.get("/ebay-insights", response_class=FileResponse)
+async def ebay_insights_page(request: Request):
+    if passkey_enabled() and not is_authorized(request):
+        return RedirectResponse(url="/login?next=/ebay-insights")
+    return FileResponse("static/ebay_insights.html")

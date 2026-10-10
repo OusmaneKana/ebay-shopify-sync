@@ -240,10 +240,6 @@ def _ordered_taxonomy_candidates(taxonomy_data: dict[str, Any]) -> list[dict[str
     if not suggestions:
         return []
 
-    leaf_suggestions = [item for item in suggestions if item.get("leaf")]
-    if leaf_suggestions:
-        suggestions = leaf_suggestions
-
     seen: set[int] = set()
     ordered: list[dict[str, Any]] = []
 

@@ -1,0 +1,66 @@
+.categories {
+  margin: 22px 0;
+}
+
+.categories td:first-child {
+  font-weight: 600;
+}
+
+.ratio-period {
+  color: var(--muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.ratio-value {
+  font-weight: 600;
+}
+
+.ratio-note {
+  color: var(--muted);
+  display: block;
+  font-size: 9px;
+  margin-top: 4px;
+}
+
+.category-empty {
+  color: var(--muted);
+  font-weight: 400 !important;
+  padding: 34px !important;
+  text-align: center;
+}
+
+.table-sort {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  color: inherit;
+  display: inline-flex;
+  font-size: inherit;
+  font-weight: inherit;
+  gap: 5px;
+  padding: 2px 0;
+  white-space: nowrap;
+}
+
+.table-sort:hover,
+.table-sort:focus-visible,
+.table-sort.active {
+  background: transparent;
+  color: var(--ink);
+}
+
+.table-sort span {
+  color: #a5ada6;
+  font-size: 11px;
+}
+
+.table-sort.active span {
+  color: var(--orange);
+}
+
+.lifecycle-sold {
+  color: var(--ink);
+  font-weight: 600;
+}

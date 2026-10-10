@@ -6,6 +6,7 @@ from openpyxl import load_workbook
 from app.services.etsy_bulk_report import build_etsy_run_workbook
 from app.services.etsy_taxonomy_validation import (
     AUTO_APPROVED,
+    BLOCKED,
     REVIEW_REQUIRED,
     backtest_historical_mappings,
     build_historical_mapping_records,
@@ -122,13 +123,40 @@ class EtsyTaxonomyValidationTests(unittest.TestCase):
         self.assertEqual(agreed["status"], AUTO_APPROVED)
         self.assertEqual(disagreed["status"], REVIEW_REQUIRED)
 
-    def test_non_leaf_taxonomy_requires_review(self):
+    def test_non_leaf_taxonomy_can_be_manually_approved(self):
         result = decide_taxonomy(
             selected_taxonomy_id=11,
             taxonomy_index=TREE_INDEX,
             source="manual",
         )
-        self.assertEqual(result["status"], REVIEW_REQUIRED)
+        self.assertEqual(result["status"], AUTO_APPROVED)
+        self.assertFalse(result["taxonomy_leaf"])
+
+    def test_non_leaf_taxonomy_still_uses_ai_confidence_and_agreement(self):
+        for confidence, local_id, expected in [(0.94, 11, AUTO_APPROVED), (0.94, 10, REVIEW_REQUIRED), (0.75, 11, REVIEW_REQUIRED), (0.5, 11, BLOCKED)]:
+            with self.subTest(confidence=confidence, local_id=local_id):
+                result = decide_taxonomy(selected_taxonomy_id=11, taxonomy_index=TREE_INDEX, source="ai", ai_confidence=confidence, local_top_taxonomy_id=local_id)
+                self.assertEqual(result["status"], expected)
+
+    def test_non_leaf_historical_mapping_can_be_strong_and_backtested(self):
+        pairs = [_product(index, taxonomy_id=11) for index in range(7)]
+        products = [product for product, _ in pairs]
+        listings = {str(listing["listing_id"]): listing for _, listing in pairs}
+        records = build_historical_mapping_records(products, listings, TREE_INDEX)
+        selected = select_historical_mapping(extract_primary_classification_inputs(products[0]), {r["mapping_key"]: r for r in records})
+        self.assertEqual(selected["strength"], "strong")
+        self.assertFalse(selected["taxonomy_leaf"])
+        result = decide_taxonomy(selected_taxonomy_id=11, taxonomy_index=TREE_INDEX, source="historical", historical_mapping=selected)
+        self.assertEqual(result["status"], AUTO_APPROVED)
+        backtest = backtest_historical_mappings(products, listings, TREE_INDEX)
+        self.assertEqual(backtest["auto_predictions"], 7)
+        self.assertEqual(backtest["auto_exact_accuracy"], 1.0)
+
+    def test_missing_taxonomy_and_failed_technical_validation_remain_blocked(self):
+        for taxonomy_id, technical_ok in [(999, True), (11, False)]:
+            with self.subTest(taxonomy_id=taxonomy_id):
+                result = decide_taxonomy(selected_taxonomy_id=taxonomy_id, taxonomy_index=TREE_INDEX, source="manual", technical_validation_ok=technical_ok)
+                self.assertEqual(result["status"], BLOCKED)
 
 
 class EtsyWorkbookTests(unittest.TestCase):

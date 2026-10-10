@@ -92,6 +92,10 @@ def extract_primary_classification_inputs(
         "theme": _attribute_lookup(attributes, ["theme"]),
         "era": _attribute_lookup(attributes, ["era", "time period manufactured", "year", "year made"]),
         "brand": _attribute_lookup(attributes, ["brand", "maker", "manufacturer"]),
+        "department": _attribute_lookup(attributes, ["department", "gender"]),
+        "production_technique": _attribute_lookup(attributes, ["production technique", "printing technique"]),
+        "closure": _attribute_lookup(attributes, ["closure", "chain type"]),
+        "genre": _attribute_lookup(attributes, ["genre"]),
         "country_region": _attribute_lookup(attributes, ["country/region of manufacture", "country of origin"]),
     }
     selected_attributes = {key: value for key, value in selected_attributes.items() if value}
@@ -229,7 +233,6 @@ def build_historical_mapping_records(
                     "strong"
                     if total >= HISTORICAL_MIN_SUPPORT
                     and agreement >= HISTORICAL_MIN_AGREEMENT
-                    and bool(dominant.get("leaf"))
                     else "weak"
                 ),
                 "alternatives": alternatives,
@@ -279,8 +282,7 @@ def backtest_historical_mappings(
         counts = Counter(remaining)
         predicted, predicted_count = counts.most_common(1)[0]
         agreement = predicted_count / len(remaining)
-        node = taxonomy_index.get(predicted) or {}
-        if agreement < HISTORICAL_MIN_AGREEMENT or not node.get("leaf"):
+        if agreement < HISTORICAL_MIN_AGREEMENT:
             continue
         auto_predictions += 1
         if predicted == actual:
@@ -336,15 +338,8 @@ def decide_taxonomy(
             "reason": "taxonomy_technical_validation_failed",
             "reasons": ["Etsy did not accept the seller-taxonomy property lookup for this ID."],
         }
-    if not taxonomy.get("leaf"):
-        return {
-            "status": REVIEW_REQUIRED,
-            "reason": "taxonomy_is_not_leaf",
-            "reasons": ["The selected category is a broad branch rather than a specific leaf category."],
-        }
-
     if source == "manual":
-        reasons.append("A reviewer selected this current Seller Taxonomy leaf.")
+        reasons.append("A reviewer selected this current Seller Taxonomy category.")
         status = AUTO_APPROVED
     elif source == "historical":
         mapping = historical_mapping or {}

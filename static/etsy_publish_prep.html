@@ -97,6 +97,31 @@
       align-items: center;
     }
 
+    .ready-publish-control {
+      display: inline-flex;
+      gap: 7px;
+      align-items: center;
+      padding: 5px 7px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: rgba(2, 6, 23, 0.45);
+    }
+
+    .ready-publish-control label {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .ready-publish-control input {
+      width: 76px;
+      padding: 7px 8px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: #020617;
+      color: var(--text);
+    }
+
     .stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -330,9 +355,18 @@
       <button id="refreshEverythingBtn" onclick="refreshEverything()">Refresh Everything</button>
       <button id="prepareBatchBtn" class="primary" onclick="prepareEtsyBatch()">Prepare Etsy Batch</button>
       <button id="resumeValidationBtn" onclick="resumeValidation()" disabled>Resume Validation</button>
+      <button id="pauseValidationBtn" onclick="pauseValidation()" disabled>Pause Validation</button>
       <button id="downloadRunBtn" onclick="downloadRunReport()" disabled>Download Excel Report</button>
       <button id="createCanaryBtn" onclick="createCanaryDrafts()" disabled>Create 10 Test Drafts</button>
-      <button id="createRemainingBtn" class="primary" onclick="createRemainingDrafts()" disabled>Create All Ready Drafts</button>
+      <div class="ready-publish-control">
+        <label for="priceMarkupPercent">Price increase %</label>
+        <input id="priceMarkupPercent" type="number" min="0" max="500" step="0.01" value="5" inputmode="decimal" />
+      </div>
+      <div class="ready-publish-control">
+        <label for="readyPublishCount">Ready quantity</label>
+        <input id="readyPublishCount" type="number" min="1" step="1" value="3" inputmode="numeric" disabled />
+        <button id="createRemainingBtn" class="primary" onclick="createRequestedReadyDrafts()" disabled>Publish Newest Ready Products</button>
+      </div>
       <button id="retryFailuresBtn" onclick="retryCreationFailures()" disabled>Retry Failures</button>
     </div>
     <div id="runMessage" class="small" style="margin-top:9px;">Checking for the latest validation run…</div>
@@ -460,6 +494,8 @@
     let activeRun = null;
     let activeReviewItems = [];
     let validationLoopRunning = false;
+    let validationStopRequested = false;
+    let creationLoopRunning = false;
     const BULK_CREATE_BATCH_SIZE = 10;
 
     const FALLBACK_HELP = {
@@ -528,6 +564,7 @@
       const counts = (run && run.counts) || {};
       const stats = [
         ['Candidates', counts.total || 0],
+        ['Price increase', `${Number((run && run.price_markup_percent) || 0).toFixed(2)}%`],
         ['Waiting', counts.queued || 0],
         ['Ready', counts.creation_pending || 0],
         ['Needs review', counts.review_required || 0],
@@ -542,19 +579,26 @@
 
       const hasRun = Boolean(activeRunId);
       const validationComplete = hasRun && !counts.queued && !counts.processing;
-      const creationIdle = validationComplete && !counts.creation_processing;
+      const creationIdle = validationComplete && !counts.creation_processing && !creationLoopRunning;
+      const readyPublishIdle = hasRun
+        && !counts.processing
+        && !counts.creation_processing
+        && !creationLoopRunning;
       const canCreateCanary = hasRun
         && counts.creation_pending
         && (counts.canary_attempted || 0) < 10
-        && !counts.creation_processing;
+        && !counts.creation_processing
+        && !creationLoopRunning;
       document.getElementById('resumeValidationBtn').disabled = !hasRun || !counts.queued || validationLoopRunning;
+      document.getElementById('pauseValidationBtn').disabled = !validationLoopRunning;
       document.getElementById('downloadRunBtn').disabled = !hasRun;
       document.getElementById('createCanaryBtn').disabled = !canCreateCanary;
       const createRemainingBtn = document.getElementById('createRemainingBtn');
-      createRemainingBtn.disabled = !creationIdle || !counts.creation_pending;
-      createRemainingBtn.textContent = counts.creation_pending
-        ? `Create All ${counts.creation_pending} Ready Drafts`
-        : 'All Ready Drafts Created';
+      const readyPublishCount = document.getElementById('readyPublishCount');
+      createRemainingBtn.disabled = !readyPublishIdle || !counts.creation_pending;
+      createRemainingBtn.textContent = counts.creation_pending ? 'Publish Newest Ready Products' : 'No Ready Products';
+      readyPublishCount.disabled = createRemainingBtn.disabled;
+      readyPublishCount.max = String(Math.max(1, Number(counts.creation_pending || 0)));
       document.getElementById('retryFailuresBtn').disabled = !creationIdle || !counts.creation_failed;
       renderRunTaxonomyReviews((run && run.review_items) || []);
     }
@@ -626,15 +670,21 @@
     }
 
     async function prepareEtsyBatch() {
-      if (!confirm('Create a new validation snapshot for every active eBay product not linked to Etsy? No Etsy drafts will be created yet.')) return;
+      const priceMarkupPercent = Number(document.getElementById('priceMarkupPercent').value);
+      if (!Number.isFinite(priceMarkupPercent) || priceMarkupPercent < 0 || priceMarkupPercent > 500) {
+        setRunMessage('Price increase must be between 0% and 500%.');
+        return;
+      }
+      if (!confirm(`Create a new validation snapshot with a ${priceMarkupPercent}% Etsy price increase? No Etsy drafts will be created yet.`)) return;
       const btn = document.getElementById('prepareBatchBtn');
       btn.disabled = true;
       setRunMessage('Building candidate snapshot and historical taxonomy mappings…');
       try {
+        localStorage.setItem('etsyPriceMarkupPercent', String(priceMarkupPercent));
         const run = await fetchJson('/reporting/etsy-publish/runs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ all: true }),
+          body: JSON.stringify({ all: true, price_markup_percent: priceMarkupPercent }),
         });
         activeRunId = run.run_id;
         renderRunStats(run);
@@ -648,22 +698,31 @@
 
     async function resumeValidation() {
       if (!activeRunId || validationLoopRunning) return;
+      validationStopRequested = false;
       validationLoopRunning = true;
       document.getElementById('resumeValidationBtn').disabled = true;
       try {
         let run = await loadActiveRun();
-        while (run && run.counts && run.counts.queued > 0) {
+        while (run && run.counts && run.counts.queued > 0 && !validationStopRequested) {
           setRunMessage(`Validating ${run.counts.queued} remaining products. You can safely resume if this page closes.`);
           await fetchJson(`/reporting/etsy-publish/runs/${encodeURIComponent(activeRunId)}/process?limit=3`, { method: 'POST' });
           run = await loadActiveRun();
         }
-        setRunMessage('Validation finished. Review taxonomy exceptions and download the Excel report.');
+        setRunMessage(validationStopRequested
+          ? 'Validation paused. Already-Ready products can now be published.'
+          : 'Validation finished. Review taxonomy exceptions and download the Excel report.');
       } catch (err) {
         setRunMessage(`Validation paused: ${String(err)}`);
       } finally {
         validationLoopRunning = false;
         await loadActiveRun().catch(() => {});
       }
+    }
+
+    function pauseValidation() {
+      validationStopRequested = true;
+      document.getElementById('pauseValidationBtn').disabled = true;
+      setRunMessage('Pause requested. The current validation batch will finish, then publishing will be enabled.');
     }
 
     async function approveRunTaxonomy(itemIndex, taxonomyId) {
@@ -712,11 +771,11 @@
       if (activeRunId) window.location.href = `/reporting/etsy-publish/runs/${encodeURIComponent(activeRunId)}/report.xlsx`;
     }
 
-    async function createDraftBatch(limit, retryFailures = false, canary = false) {
+    async function createDraftBatch(limit, retryFailures = false, canary = false, readyOnly = false) {
       const result = await fetchJson(`/reporting/etsy-publish/runs/${encodeURIComponent(activeRunId)}/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ confirmed: true, limit, retry_failures: retryFailures, canary }),
+        body: JSON.stringify({ confirmed: true, limit, retry_failures: retryFailures, canary, ready_only: readyOnly }),
       });
       await loadActiveRun();
       return result;
@@ -726,6 +785,7 @@
       if (!activeRunId || !confirm('Create up to 10 Etsy drafts as a test batch?')) return;
       const btn = document.getElementById('createCanaryBtn');
       btn.disabled = true;
+      creationLoopRunning = true;
       setRunMessage('Creating the test drafts…');
       try {
         const result = await createDraftBatch(10, false, true);
@@ -733,29 +793,43 @@
       } catch (err) {
         setRunMessage(`Test batch failed: ${String(err)}`);
       } finally {
+        creationLoopRunning = false;
         await loadActiveRun().catch(() => {});
       }
     }
 
-    async function createRemainingDrafts() {
+    async function createRequestedReadyDrafts() {
       const readyCount = Number((activeRun && activeRun.counts && activeRun.counts.creation_pending) || 0);
       if (!activeRunId || !readyCount) return;
-      if (!confirm(`Create all ${readyCount} auto-approved products as Etsy drafts? Products requiring taxonomy review or blocked by validation will be left untouched.`)) return;
+      const requestedCount = Number(document.getElementById('readyPublishCount').value);
+      if (!Number.isInteger(requestedCount) || requestedCount < 1) {
+        setRunMessage('Enter a whole number of Ready products to publish.');
+        return;
+      }
+      if (requestedCount > readyCount) {
+        setRunMessage(`Only ${readyCount} products are currently Ready. Enter ${readyCount} or less.`);
+        return;
+      }
+      if (!confirm(`Create the ${requestedCount} newest Ready products as Etsy drafts?`)) return;
+      validationStopRequested = true;
       const btn = document.getElementById('createRemainingBtn');
       btn.disabled = true;
+      creationLoopRunning = true;
+      let attempted = 0;
       try {
-        let run = await loadActiveRun();
-        while (run && run.counts && run.counts.creation_pending > 0) {
-          const before = run.counts.creation_pending;
-          setRunMessage(`Creating all ready drafts: ${before} remaining. Keep this page open; completed work is saved after every batch.`);
-          const result = await createDraftBatch(BULK_CREATE_BATCH_SIZE, false);
+        let remaining = requestedCount;
+        while (remaining > 0) {
+          setRunMessage(`Publishing the ${requestedCount} newest Ready products: ${remaining} remaining. Completed work is saved after every batch.`);
+          const result = await createDraftBatch(Math.min(BULK_CREATE_BATCH_SIZE, remaining), false, false, true);
           if (!result.processed) break;
-          run = activeRun;
+          attempted += result.processed;
+          remaining -= result.processed;
         }
-        setRunMessage('Ready-draft creation finished. Click Download Excel Report; creation failures are in the Creation Errors sheet with full payloads in Raw Error Details.');
+        setRunMessage(`Publish pass finished: ${attempted} of ${requestedCount} products attempted. Download the Excel report for results and errors.`);
       } catch (err) {
-        setRunMessage(`Draft creation paused: ${String(err)} Completed batches are saved; click Create All Ready Drafts to resume.`);
+        setRunMessage(`Publishing paused after ${attempted} products: ${String(err)} Completed batches are saved.`);
       } finally {
+        creationLoopRunning = false;
         await loadActiveRun().catch(() => {});
       }
     }
@@ -1194,6 +1268,13 @@
       }
     }
 
+    try {
+      const savedMarkup = localStorage.getItem('etsyPriceMarkupPercent');
+      if (savedMarkup !== null) document.getElementById('priceMarkupPercent').value = savedMarkup;
+    } catch (_) {}
+    document.getElementById('priceMarkupPercent').addEventListener('change', (event) => {
+      try { localStorage.setItem('etsyPriceMarkupPercent', event.target.value); } catch (_) {}
+    });
     loadList();
     loadLatestRun();
     document.getElementById('suggestTaxonomyBtn').disabled = true;

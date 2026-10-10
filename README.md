@@ -108,6 +108,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
 - Admin page: `http://localhost:8080/admin`
 - Audit dashboard: `http://localhost:8080/audit-dashboard`
 - Etsy publishing page: `http://localhost:8080/etsy-publish-prep`
+- eBay Intelligence: `http://localhost:8080/ebay-insights`
 
 ### Quick endpoint reference
 
@@ -116,6 +117,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
 - `GET /products/?limit=50` — list normalized products from MongoDB
 - `GET /audit-dashboard` — human-readable health/audit dashboard
 - `GET /etsy-publish-prep` — persistent Etsy validation and bulk draft workflow
+- `GET /ebay-insights` — eBay organic traffic, sales, listing age, and advertising intelligence
 - `GET /audit/summary` — all inventory/listing audits in one response
 - `GET /audit/sold-still-live` — sold products that still have an active Etsy listing
 - `POST /sync/prod/*` — production Shopify store operations
@@ -244,6 +246,10 @@ remain. Items still requiring taxonomy review do not block already approved
 items. See [BULK_PUBLISHING_GUIDE.md](BULK_PUBLISHING_GUIDE.md) for canary,
 retry, and Excel-report details.
 
+When a creation request supplies a quantity/limit, Ready products are selected
+newest to oldest by their eBay listing start date. Older saved runs are
+backfilled from the source product dates before selection.
+
 ## Audit dashboard and API
 
 Open `GET /audit-dashboard` for the front end or poll these JSON endpoints:
@@ -356,3 +362,36 @@ deactivation for sold items, and multichannel inventory jobs. Only explicitly
 authorized shops are accessed.
 
 ## License
+
+### Etsy Insights
+
+Open `/etsy-insights` from the workspace home page. Enter an Etsy shop ID, load
+its saved dashboard, and use **Refresh Etsy data** to read live listings, the
+last 90 days of orders, and customer reviews. The existing Etsy OAuth token is
+reused; `listings_r` and `transactions_r` access are needed. If authorization
+needs renewal, use `/auth/etsy/login`. No listing or inventory updates are made.
+
+The dashboard includes 7/30/90-day sales, current views and favorites, product
+search and filters, stock and review signals, product details, and CSV export.
+Revenue is gross transaction price × quantity, before discounts, refunds,
+shipping, tax, and fees. Currency totals are kept separate. Sales periods use
+UTC calendar days, including today. Ratings cover all available reviews.
+
+Each successful refresh saves one completed snapshot per shop per UTC day in
+`etsy_insight_snapshots`; refreshing again replaces that day's snapshot.
+Engagement changes require a snapshot at or before the selected period's start.
+Snapshots are collected on refresh; no recurring collection is enabled.
+`etsy_insight_status` records refresh progress and prevents concurrent refreshes
+for the same shop. Failed listing/order reads preserve the previous completed
+snapshot; unavailable reviews are explicitly reported. These collections do not
+store customer names, addresses, emails, or credentials. Insight APIs use the
+existing admin passkey protection.
+
+Use `/etsy-insights?demo=1` for a clearly labeled sample dashboard without
+reading Etsy or the database. To verify the feature:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 venv/bin/python -m unittest tests.test_etsy_insights -v
+node --check static/etsy_insights.js
+node tests/test_etsy_insights_csv.cjs
+```

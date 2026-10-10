@@ -1,0 +1,23 @@
+{
+  "run_id": "etsy-run-f4df5b80-8135-464c-a2c6-d4a260513e94",
+  "excluded_verified": 66,
+  "newly_excluded_existing": 62,
+  "new_candidate_excluded": 1,
+  "already_excluded": 3,
+  "borderline_candidates_unchanged": 6,
+  "counts": {
+    "total": 608,
+    "queued": 0,
+    "processing": 0,
+    "auto_approved": 306,
+    "review_required": 227,
+    "blocked": 9,
+    "excluded": 66,
+    "created": 272,
+    "creation_processing": 0,
+    "creation_failed": 33,
+    "creation_pending": 1,
+    "canary_attempted": 10
+  },
+  "completed_at": "2026-09-13 04:15:07.445560+00:00"
+}

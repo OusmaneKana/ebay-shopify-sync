@@ -1,0 +1,265 @@
+{
+  "rechecked": 48,
+  "modified": 48,
+  "statuses": {
+    "REVIEW_REQUIRED": 38,
+    "AUTO_APPROVED": 10
+  },
+  "remaining_nonleaf_review_results": 0,
+  "counts": {
+    "total": 608,
+    "queued": 0,
+    "processing": 0,
+    "auto_approved": 316,
+    "review_required": 217,
+    "blocked": 9,
+    "excluded": 66,
+    "created": 272,
+    "creation_processing": 0,
+    "creation_failed": 33,
+    "creation_pending": 11,
+    "canary_attempted": 10
+  },
+  "results": [
+    {
+      "sku": "155972005220",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "156444705889",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "EB-156197005430",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "156455961501",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "155972005771",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "156960443836",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "156566803965",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "EB-157389919849",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "156347180005",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157264421805",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "156423825743",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "156538330584",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "156423819833",
+      "status": "AUTO_APPROVED",
+      "reason": "AI and local Seller Taxonomy ranking agree with high confidence."
+    },
+    {
+      "sku": "156497301967",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157302668618",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "156681473865",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "156423814761",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "155974724233",
+      "status": "AUTO_APPROVED",
+      "reason": "AI and local Seller Taxonomy ranking agree with high confidence."
+    },
+    {
+      "sku": "EB-157232590444",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157651475246",
+      "status": "AUTO_APPROVED",
+      "reason": "AI and local Seller Taxonomy ranking agree with high confidence."
+    },
+    {
+      "sku": "157800537437",
+      "status": "AUTO_APPROVED",
+      "reason": "AI and local Seller Taxonomy ranking agree with high confidence."
+    },
+    {
+      "sku": "157624583334",
+      "status": "AUTO_APPROVED",
+      "reason": "AI and local Seller Taxonomy ranking agree with high confidence."
+    },
+    {
+      "sku": "157805626044",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157880206428",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157638187688",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157669999981",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157861748813",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157880211479",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157681279782",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157631494838",
+      "status": "AUTO_APPROVED",
+      "reason": "AI and local Seller Taxonomy ranking agree with high confidence."
+    },
+    {
+      "sku": "157670024933",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157605972547",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157841817562",
+      "status": "AUTO_APPROVED",
+      "reason": "AI and local Seller Taxonomy ranking agree with high confidence."
+    },
+    {
+      "sku": "157878632501",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157968273325",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "158049999122",
+      "status": "AUTO_APPROVED",
+      "reason": "AI and local Seller Taxonomy ranking agree with high confidence."
+    },
+    {
+      "sku": "157928283782",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "158039815497",
+      "status": "AUTO_APPROVED",
+      "reason": "AI and local Seller Taxonomy ranking agree with high confidence."
+    },
+    {
+      "sku": "157989022705",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157995347814",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157919857484",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157939662524",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157988990094",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157989033292",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "158207651420",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157917358941",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "158014690251",
+      "status": "REVIEW_REQUIRED",
+      "reason": "A valid taxonomy was found, but it requires review before creation."
+    },
+    {
+      "sku": "157919883392",
+      "status": "AUTO_APPROVED",
+      "reason": "AI and local Seller Taxonomy ranking agree with high confidence."
+    }
+  ]
+}

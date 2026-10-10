@@ -23,6 +23,8 @@ from app.database.mongo import db
 from app.config import settings
 from app.services.etsy_auth_service import get_valid_token as get_valid_etsy_token
 from app.services.etsy_bulk_report import build_etsy_run_workbook
+from app.services.etsy_price_adjustment import apply_price_markup, normalize_price_markup_percent
+from app.services.etsy_taxonomy_matching import MATCHING_VERSION, score_candidate
 from app.services.etsy_taxonomy_validation import (
     AUTO_APPROVED,
     BLOCKED,
@@ -114,6 +116,12 @@ ETSY_PUBLISH_RUN_ITEMS_COLLECTION = "etsy_publish_run_items"
 ETSY_TAXONOMY_MAPPINGS_COLLECTION = "etsy_taxonomy_mappings"
 ETSY_RUN_TAXONOMY_MAPPINGS_COLLECTION = "etsy_publish_run_taxonomy_mappings"
 ETSY_TAXONOMY_SNAPSHOTS_COLLECTION = "etsy_seller_taxonomy_snapshots"
+ETSY_PUBLISH_NEWEST_FIRST_SORT = [
+    ("source_published_at", -1),
+    ("source_first_seen_at", -1),
+    ("source_normalized_at", -1),
+    ("sku", 1),
+]
 _ETSY_BULK_REPORT: dict[str, Any] = {
     "session_id": None,
     "validated_at": None,
@@ -181,6 +189,7 @@ def _compute_etsy_prep_cache_version(doc: dict[str, Any]) -> str:
             "tags": ETSY_TAG_OPENAI_MODEL,
             "taxonomy": ETSY_TAXONOMY_OPENAI_MODEL,
         },
+        "taxonomy_matching_version": MATCHING_VERSION,
     }
     payload = json.dumps(
         _normalize_etsy_prep_cache_value(source),
@@ -1387,6 +1396,7 @@ def _build_etsy_taxonomy_query(detail: dict) -> dict[str, Any]:
         "attributes": primary_attributes,
         "description": description[:1200],
         "ebay_category_id": primary.get("ebay_category_id"),
+        "item_type": primary.get("item_type"),
         "query_text": query_text,
         "query_tokens": query_tokens,
     }
@@ -1521,39 +1531,7 @@ _flatten_buyer_taxonomy_nodes = _flatten_seller_taxonomy_nodes
 
 
 def _score_etsy_taxonomy_candidate(query: dict[str, Any], candidate: dict[str, Any]) -> float:
-    tokens = set(query.get("query_tokens") or [])
-    if not tokens:
-        return 0.0
-
-    name_tokens = set(candidate.get("name_tokens") or [])
-    path_tokens = set(candidate.get("path_tokens") or [])
-    name_overlap = tokens & name_tokens
-    path_overlap = tokens & path_tokens
-
-    score = 0.0
-    score += len(name_overlap) * 4.0
-    score += len(path_overlap) * 1.5
-
-    title = (query.get("title") or "").lower()
-    category = (query.get("category") or "").lower()
-    name = (candidate.get("name") or "").lower()
-    full_path = (candidate.get("full_path") or "").lower()
-
-    if name and name in title:
-        score += 6.0
-    if name and name in category:
-        score += 3.0
-    if full_path and category and category in full_path:
-        score += 2.0
-
-    if candidate.get("leaf"):
-        score += 1.0
-
-    level = candidate.get("level") or 0
-    if level <= 1:
-        score -= 2.0
-
-    return round(score, 3)
+    return score_candidate(query, candidate)
 
 
 def _prefilter_etsy_taxonomy_candidates(query: dict[str, Any], flat_nodes: list[dict[str, Any]], *, limit: int = ETSY_TAXONOMY_PREFILTER_LIMIT) -> list[dict[str, Any]]:
@@ -1586,6 +1564,7 @@ def _rank_etsy_taxonomy_candidates_with_openai(query: dict[str, Any], candidates
             "title": query.get("title"),
             "category": query.get("category"),
             "ebay_category_id": query.get("ebay_category_id"),
+            "item_type": query.get("item_type"),
             "attributes": query.get("attributes") or {},
             "original_description": query.get("description"),
             "tags": query.get("tags") or [],
@@ -1595,7 +1574,12 @@ def _rank_etsy_taxonomy_candidates_with_openai(query: dict[str, Any], candidates
         "candidates": candidates,
         "rules": [
             "Choose exactly one taxonomy_id from the candidate list when there is a reasonable fit.",
-            "Prefer the most specific, leaf-level category that fits the product.",
+            "Identify what the object IS from title, eBay category, item type and description before choosing a category.",
+            "Reject categories for unrelated objects, even when brands, materials, decoration or incidental words overlap.",
+            "Prefer the most specific accurate category; valid parent categories are allowed.",
+            "Distinguish antique porcelain plates from disposable party plates, and physical artworks from digital downloads.",
+            "For mixed lots or insufficient facts, flag ambiguity with low confidence instead of forcing a narrow category.",
+            "Confidence is your estimated classification certainty from 0 to 1, not a lexical match score.",
             "Do not invent taxonomy ids.",
             "If the fit is weak, return null and low confidence.",
         ],
@@ -1663,7 +1647,7 @@ async def _suggest_etsy_taxonomy(detail: dict, *, limit: int = ETSY_TAXONOMY_RES
         ai_choice = await asyncio.to_thread(_rank_etsy_taxonomy_candidates_with_openai, query, prefiltered)
         await asyncio.sleep(OPENAI_REQUEST_DELAY_SECONDS)
     
-    suggestions = [dict(item) for item in prefiltered[:limit]]
+    suggestions = [dict(item) for item in prefiltered]
     best_match = None
 
     if ai_choice and ai_choice.get("taxonomy_id") is not None:
@@ -1680,6 +1664,7 @@ async def _suggest_etsy_taxonomy(detail: dict, *, limit: int = ETSY_TAXONOMY_RES
     if best_match is None and suggestions:
         best_match = suggestions[0]
 
+    suggestions = suggestions[:limit]
     return {
         "query": query,
         "ai_used": bool(ai_choice),
@@ -4150,8 +4135,73 @@ def _taxonomy_product_projection() -> dict[str, int]:
         "shipping": 1,
         "channels.ebay": 1,
         "channels.etsy": 1,
+        "ebay_posted_at": 1,
+        "first_seen_at": 1,
         "last_normalized_at": 1,
     }
+
+
+def _etsy_publish_recency_fields(
+    raw_doc: dict[str, Any] | None,
+    normalized: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Snapshot source dates used to publish the newest eBay products first."""
+    raw_doc = raw_doc or {}
+    normalized = normalized or {}
+    ebay_channel = ((normalized.get("channels") or {}).get("ebay") or {})
+    return {
+        "source_published_at": (
+            raw_doc.get("ebay_posted_at")
+            or normalized.get("ebay_posted_at")
+            or ebay_channel.get("posted_at")
+        ),
+        "source_first_seen_at": normalized.get("first_seen_at"),
+        "source_normalized_at": normalized.get("last_normalized_at"),
+    }
+
+
+async def _backfill_etsy_publish_recency(run_id: str) -> None:
+    """Add source dates to pending items from runs created before ordering existed."""
+    items = await db[ETSY_PUBLISH_RUN_ITEMS_COLLECTION].find(
+        {
+            "run_id": run_id,
+            "creation_status": {"$in": ["pending", "failed"]},
+            "source_published_at": {"$exists": False},
+        },
+        {"sku": 1},
+    ).to_list(length=None)
+    skus = [str(item.get("sku")) for item in items if item.get("sku")]
+    if not skus:
+        return
+
+    normalized_docs = await db.product_normalized.find(
+        {"$or": [{"_id": {"$in": skus}}, {"sku": {"$in": skus}}]},
+        {
+            "_id": 1,
+            "sku": 1,
+            "ebay_posted_at": 1,
+            "first_seen_at": 1,
+            "last_normalized_at": 1,
+            "channels.ebay.posted_at": 1,
+        },
+    ).to_list(length=None)
+    raw_docs = await db.product_raw.find(
+        {"$or": [{"_id": {"$in": skus}}, {"sku": {"$in": skus}}]},
+        {"_id": 1, "sku": 1, "ebay_posted_at": 1},
+    ).to_list(length=None)
+    normalized_by_sku = {
+        str(doc.get("_id") or doc.get("sku")): doc for doc in normalized_docs
+    }
+    raw_by_sku = {str(doc.get("_id") or doc.get("sku")): doc for doc in raw_docs}
+    operations = [
+        UpdateOne(
+            {"run_id": run_id, "sku": sku},
+            {"$set": _etsy_publish_recency_fields(raw_by_sku.get(sku), normalized_by_sku.get(sku))},
+        )
+        for sku in skus
+    ]
+    if operations:
+        await db[ETSY_PUBLISH_RUN_ITEMS_COLLECTION].bulk_write(operations, ordered=False)
 
 
 async def _seller_taxonomy_context() -> tuple[list[dict[str, Any]], dict[int, dict[str, Any]], str]:
@@ -4204,13 +4254,13 @@ async def _refresh_historical_taxonomy_mappings(
             existing = existing_by_id.get(record_id) or {}
             existing_taxonomy_id = _to_int(existing.get("taxonomy_id"))
             existing_node = taxonomy_index.get(existing_taxonomy_id) if existing_taxonomy_id else None
-            if existing.get("review_status") == "approved" and existing_node and existing_node.get("leaf"):
-                # Preserve a human override while it remains a current, valid leaf.
+            if existing.get("review_status") == "approved" and existing_node:
+                # Preserve a human override while it remains in the current tree.
                 fields["taxonomy_id"] = existing_taxonomy_id
                 fields["taxonomy_path"] = existing_node.get("full_path")
-                fields["taxonomy_leaf"] = True
+                fields["taxonomy_leaf"] = bool(existing_node.get("leaf"))
             elif existing.get("review_status") == "approved":
-                # Etsy removed or broadened the approved node; require review again.
+                # Etsy removed the approved node; require review again.
                 fields["review_status"] = "suggested"
             set_on_insert = {"created_at": _now_utc()}
             if "review_status" not in fields:
@@ -4329,6 +4379,10 @@ async def etsy_publish_create_validation_run(
     requested_skus = body.get("skus") if isinstance(body.get("skus"), list) else None
     if not body.get("all") and not requested_skus:
         raise HTTPException(status_code=400, detail="Provide 'all': true or a non-empty 'skus' list")
+    try:
+        price_markup_percent = float(normalize_price_markup_percent(body.get("price_markup_percent", 0)))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     nodes, taxonomy_index, tree_hash = await _seller_taxonomy_context()
     mappings, backtest = await _refresh_historical_taxonomy_mappings(taxonomy_index, tree_hash)
@@ -4341,8 +4395,16 @@ async def etsy_publish_create_validation_run(
         raw_query = {"$or": [{"_id": {"$in": sku_values}}, {"sku": {"$in": sku_values}}]}
     raw_docs = await db.product_raw.find(
         raw_query,
-        {"_id": 1, "sku": 1, "raw.QuantityAvailable": 1, "raw.ItemID": 1, "raw.Title": 1, "updated_at": 1},
-    ).to_list(length=None)
+        {
+            "_id": 1,
+            "sku": 1,
+            "raw.QuantityAvailable": 1,
+            "raw.ItemID": 1,
+            "raw.Title": 1,
+            "ebay_posted_at": 1,
+            "updated_at": 1,
+        },
+    ).sort([("ebay_posted_at", -1), ("_id", 1)]).to_list(length=None)
     active_raw_docs = [
         doc for doc in raw_docs if (_to_int((doc.get("raw") or {}).get("QuantityAvailable")) or 0) >= 1
     ]
@@ -4390,6 +4452,7 @@ async def etsy_publish_create_validation_run(
             "creation_status": "pending",
             "created_at": now,
             "updated_at": now,
+            **_etsy_publish_recency_fields(raw_doc, normalized),
         }
         if not normalized:
             item.update(
@@ -4431,6 +4494,7 @@ async def etsy_publish_create_validation_run(
         "historical_mapping_computed_at": mappings[0].get("computed_at") if mappings else None,
         "historical_backtest": backtest,
         "historical_auto_enabled": historical_auto_enabled,
+        "price_markup_percent": price_markup_percent,
         "selection": {"all": bool(body.get("all")), "skus": requested_skus},
     }
     await db[ETSY_PUBLISH_RUNS_COLLECTION].insert_one(run_doc)
@@ -4488,6 +4552,11 @@ async def _process_etsy_validation_item(
 
         detail = _build_etsy_publish_comparison(normalized)
         detail["classification_inputs"] = inputs
+        if historical:
+            historical_node = taxonomy_index.get(_to_int(historical.get("taxonomy_id")))
+            if not historical_node or _score_etsy_taxonomy_candidate(_build_etsy_taxonomy_query(detail), historical_node) <= 0:
+                # Existing listings are evidence, not proof of object compatibility.
+                historical = None
 
         source = "ai"
         selected_taxonomy_id: int | None = None
@@ -4551,6 +4620,17 @@ async def _process_etsy_validation_item(
         tags = await _generate_etsy_tag_suggestions(detail)
         detail["etsy_optimized"]["tags"] = tags.get("tags") or detail["etsy_optimized"].get("tags")
         detail["etsy_optimized"]["taxonomy_id"] = selected_taxonomy_id
+        base_price = _to_float(detail["etsy_optimized"].get("price"))
+        markup_percent = float(run.get("price_markup_percent") or 0)
+        adjusted_price = (
+            apply_price_markup(base_price, markup_percent)
+            if base_price is not None and base_price > 0
+            else base_price
+        )
+        detail["etsy_optimized"]["price"] = adjusted_price
+        for field in detail.get("required_fields") or []:
+            if field.get("key") == "price":
+                field["optimized"] = adjusted_price
         request_payload = _build_etsy_create_listing_payload(detail)
         if request_payload.get("type") == "physical":
             shop_id = await _resolve_etsy_shop_id()
@@ -4605,6 +4685,9 @@ async def _process_etsy_validation_item(
             "taxonomy_id": selected_taxonomy_id,
             "taxonomy_confidence": ai_confidence,
             "taxonomy_reason": taxonomy_reason,
+            "base_price": base_price,
+            "price_markup_percent": markup_percent,
+            "price": adjusted_price,
         }
         update = {
             "processing_status": "completed",
@@ -4666,6 +4749,7 @@ async def etsy_publish_process_validation_run(
             }
         },
     )
+    await _backfill_etsy_publish_recency(run_id)
     _nodes, taxonomy_index, current_hash = await _seller_taxonomy_context()
     if current_hash != run.get("taxonomy_tree_hash"):
         raise HTTPException(status_code=409, detail="Seller Taxonomy changed; create a new validation run")
@@ -4675,7 +4759,7 @@ async def etsy_publish_process_validation_run(
         item = await db[ETSY_PUBLISH_RUN_ITEMS_COLLECTION].find_one_and_update(
             {"run_id": run_id, "processing_status": "queued"},
             {"$set": {"processing_status": "processing", "processing_started_at": _now_utc()}},
-            sort=[("sku", 1)],
+            sort=ETSY_PUBLISH_NEWEST_FIRST_SORT,
             return_document=ReturnDocument.AFTER,
         )
         if not item:
@@ -4855,8 +4939,11 @@ async def etsy_publish_create_run_drafts(
     if body.get("confirmed") is not True:
         raise HTTPException(status_code=400, detail="Set confirmed=true to create Etsy drafts")
     canary = body.get("canary") is True
+    ready_only = body.get("ready_only") is True
     if canary and body.get("retry_failures") is True:
         raise HTTPException(status_code=400, detail="Canary creation cannot retry previous failures")
+    if ready_only and body.get("retry_failures") is True:
+        raise HTTPException(status_code=400, detail="Ready-only creation cannot retry previous failures")
     limit = max(1, min(int(body.get("limit") or 10), 50))
     if canary:
         limit = min(limit, 10)
@@ -4883,7 +4970,9 @@ async def etsy_publish_create_run_drafts(
         },
     )
     counts = await _refresh_publish_run_counts(run_id)
-    if not canary and (counts.get("queued") or counts.get("processing")):
+    if ready_only and counts.get("processing"):
+        raise HTTPException(status_code=409, detail="Pause validation and wait for the current item to finish")
+    if not canary and not ready_only and (counts.get("queued") or counts.get("processing")):
         raise HTTPException(status_code=409, detail="Finish validation before creating drafts")
     if not canary and counts.get("creation_processing"):
         raise HTTPException(status_code=409, detail="Another draft-creation batch is still running")
@@ -4904,6 +4993,7 @@ async def etsy_publish_create_run_drafts(
     }
     if requested_skus:
         query["sku"] = {"$in": [str(value) for value in requested_skus]}
+    await _backfill_etsy_publish_recency(run_id)
     results: list[dict[str, Any]] = []
     for _ in range(limit):
         canary_slot_reserved = False
@@ -4925,13 +5015,13 @@ async def etsy_publish_create_run_drafts(
                 "$set": {
                     "creation_status": "creating",
                     "creation_started_at": _now_utc(),
-                    "creation_mode": "canary" if canary else "batch",
+                    "creation_mode": "canary" if canary else ("ready_subset" if ready_only else "batch"),
                     **({"canary_attempted_at": _now_utc()} if canary else {}),
                     "updated_at": _now_utc(),
                 },
                 "$inc": {"creation_attempt_count": 1},
             },
-            sort=[("sku", 1)],
+            sort=ETSY_PUBLISH_NEWEST_FIRST_SORT,
             return_document=ReturnDocument.AFTER,
         )
         if not item:
@@ -4950,6 +5040,8 @@ async def etsy_publish_create_run_drafts(
             "tags": optimizations.get("tags") or [],
             "taxonomy_id": item.get("final_taxonomy_id"),
         }
+        if optimizations.get("price") is not None:
+            payload["price"] = optimizations.get("price")
         try:
             result = await etsy_publish_create_draft(sku, body={"payload": payload}, _authorized=None)
             linked_listing_id = result.get("linked_listing_id") or result.get("existing_listing_id")

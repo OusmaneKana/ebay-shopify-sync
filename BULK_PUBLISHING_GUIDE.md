@@ -92,6 +92,12 @@ Exclude the product from this run:
 
 `POST /reporting/etsy-publish/runs/{run_id}/create`
 
+Ready products are selected from newest to oldest using their eBay listing
+start date. Therefore, a request with `"limit": 10` publishes the 10 most
+recent Ready products first. Validation follows the same newest-first order, so
+recent products become Ready first even when validation is paused. The SKU is
+used only as the final tie-breaker.
+
 Create up to 10 test drafts:
 
 ```json

@@ -1,0 +1,1920 @@
+{
+  "applied": 270,
+  "statuses": {
+    "REVIEW_REQUIRED": 43,
+    "AUTO_APPROVED": 218,
+    "BLOCKED": 9
+  },
+  "changes": {
+    "Keep category": 122,
+    "Change category": 146,
+    "Unresolved": 2
+  },
+  "counts": {
+    "total": 608,
+    "queued": 0,
+    "processing": 0,
+    "auto_approved": 490,
+    "review_required": 43,
+    "blocked": 9,
+    "excluded": 66,
+    "created": 272,
+    "creation_processing": 0,
+    "creation_failed": 33,
+    "creation_pending": 188,
+    "canary_attempted": 10
+  },
+  "backup": "/Users/administrator/Desktop/Dev/ebay-shopify-sync/reports/etsy_taxonomy_apply_backup_20260913T050139Z.json",
+  "results": [
+    {
+      "sku": "157389825474",
+      "taxonomy_id": 1003,
+      "status": "REVIEW_REQUIRED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156715175591",
+      "taxonomy_id": 126,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "155972005220",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157421049651",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "155990287860",
+      "taxonomy_id": 69,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156444705889",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-156197005430",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156455961501",
+      "taxonomy_id": 1866,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-156664288179",
+      "taxonomy_id": 1049,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157326766326",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156193494534",
+      "taxonomy_id": 915,
+      "status": "BLOCKED",
+      "change": "Change category",
+      "independent_blocker_retained": true
+    },
+    {
+      "sku": "156052579956",
+      "taxonomy_id": 68,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "155972005771",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-156660930504",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156960443836",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156566803965",
+      "taxonomy_id": 1044,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157167357337",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-157389919849",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156800532392",
+      "taxonomy_id": 336,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-157353134611",
+      "taxonomy_id": 6074,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156444600006",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156347180005",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156887121489",
+      "taxonomy_id": null,
+      "status": "REVIEW_REQUIRED",
+      "change": "Unresolved",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-156708779455",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157264421805",
+      "taxonomy_id": 156,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156423825743",
+      "taxonomy_id": 2848,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "155970191630",
+      "taxonomy_id": 130,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-156666167488",
+      "taxonomy_id": 1867,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156497303030",
+      "taxonomy_id": 1607,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156052574774",
+      "taxonomy_id": 6987,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156109588872",
+      "taxonomy_id": 68,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156862726879",
+      "taxonomy_id": 6099,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156197007229",
+      "taxonomy_id": 6314,
+      "status": "REVIEW_REQUIRED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-156197023112",
+      "taxonomy_id": 1607,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156647498108",
+      "taxonomy_id": 68,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156442008380",
+      "taxonomy_id": 1050,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156941049089",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156210019276",
+      "taxonomy_id": 12619,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156538330584",
+      "taxonomy_id": 144,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156423819833",
+      "taxonomy_id": 2848,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156008308558",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156424610062",
+      "taxonomy_id": 1086,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156180377729",
+      "taxonomy_id": 1049,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156096869923",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156497301967",
+      "taxonomy_id": 1607,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157302668618",
+      "taxonomy_id": 1620,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156681473865",
+      "taxonomy_id": 336,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-157376900223",
+      "taxonomy_id": 1886,
+      "status": "REVIEW_REQUIRED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157012491158",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156423814761",
+      "taxonomy_id": 2848,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "155973835778",
+      "taxonomy_id": 69,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "155974724233",
+      "taxonomy_id": 1023,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-157232590444",
+      "taxonomy_id": 1026,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156407481290",
+      "taxonomy_id": 1026,
+      "status": "BLOCKED",
+      "change": "Change category",
+      "independent_blocker_retained": true
+    },
+    {
+      "sku": "EB-157272134017",
+      "taxonomy_id": 336,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156034098288",
+      "taxonomy_id": 340,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-157371868744",
+      "taxonomy_id": 6664,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156874427186",
+      "taxonomy_id": 70,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "155973846915",
+      "taxonomy_id": 1048,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "156497273951",
+      "taxonomy_id": 1086,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-156050620304",
+      "taxonomy_id": 349,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157651475246",
+      "taxonomy_id": null,
+      "status": "REVIEW_REQUIRED",
+      "change": "Unresolved",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157660624248",
+      "taxonomy_id": 1229,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157800498642",
+      "taxonomy_id": 6075,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157825305335",
+      "taxonomy_id": 1231,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157871989068",
+      "taxonomy_id": 1016,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157649355265",
+      "taxonomy_id": 6649,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157670023200",
+      "taxonomy_id": 6415,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157799070320",
+      "taxonomy_id": 70,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157815788747",
+      "taxonomy_id": 1228,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157890978955",
+      "taxonomy_id": 2854,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157893981807",
+      "taxonomy_id": 6074,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157580521904",
+      "taxonomy_id": 64,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157664416849",
+      "taxonomy_id": 6076,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157665460212",
+      "taxonomy_id": 1049,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157800537437",
+      "taxonomy_id": 70,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157825263777",
+      "taxonomy_id": 2160,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157882857866",
+      "taxonomy_id": 11245,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157908965683",
+      "taxonomy_id": 6074,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157800537455",
+      "taxonomy_id": 129,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157799064748",
+      "taxonomy_id": 70,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157807374616",
+      "taxonomy_id": 6060,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157810339587",
+      "taxonomy_id": 1229,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157839473213",
+      "taxonomy_id": 6076,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157841841021",
+      "taxonomy_id": 1002,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157861768515",
+      "taxonomy_id": 69,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157610372968",
+      "taxonomy_id": 345,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157614846795",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157624583334",
+      "taxonomy_id": 123,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157874724163",
+      "taxonomy_id": 6060,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157638218990",
+      "taxonomy_id": 1201,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157681273814",
+      "taxonomy_id": 69,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157770801447",
+      "taxonomy_id": 1002,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157799026544",
+      "taxonomy_id": 1217,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157805626044",
+      "taxonomy_id": 1477,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157601606130",
+      "taxonomy_id": 134,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157631492147",
+      "taxonomy_id": 123,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157651494159",
+      "taxonomy_id": 335,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157670047648",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157676742837",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157861802682",
+      "taxonomy_id": 1938,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157880206428",
+      "taxonomy_id": 1580,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157896606416",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157631504681",
+      "taxonomy_id": 123,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157638187688",
+      "taxonomy_id": 1866,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157669999981",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157841878686",
+      "taxonomy_id": 507,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157861748813",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157890959749",
+      "taxonomy_id": 2889,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157651527692",
+      "taxonomy_id": 1942,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157721587908",
+      "taxonomy_id": 1016,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157775750022",
+      "taxonomy_id": 72,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157880172358",
+      "taxonomy_id": 840,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157880211479",
+      "taxonomy_id": 1580,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157890934880",
+      "taxonomy_id": 1026,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157635932999",
+      "taxonomy_id": 1221,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157651448505",
+      "taxonomy_id": 128,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157789802951",
+      "taxonomy_id": 119,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157909046924",
+      "taxonomy_id": 436,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "EB-156275604566",
+      "taxonomy_id": 67,
+      "status": "BLOCKED",
+      "change": "Change category",
+      "independent_blocker_retained": true
+    },
+    {
+      "sku": "157670012047",
+      "taxonomy_id": 1196,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157810315347",
+      "taxonomy_id": 1943,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157665466597",
+      "taxonomy_id": 1049,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157681279782",
+      "taxonomy_id": 129,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157799092572",
+      "taxonomy_id": 349,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157829742226",
+      "taxonomy_id": 14,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157896615132",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157631494838",
+      "taxonomy_id": 123,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157660635115",
+      "taxonomy_id": 1229,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157670024933",
+      "taxonomy_id": 1052,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157726877709",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157800537411",
+      "taxonomy_id": 2815,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157825256742",
+      "taxonomy_id": 2831,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157829751050",
+      "taxonomy_id": 14,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157841844278",
+      "taxonomy_id": 1002,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157908969934",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157605972547",
+      "taxonomy_id": 1862,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157610369816",
+      "taxonomy_id": 1016,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157620808269",
+      "taxonomy_id": 352,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157651571214",
+      "taxonomy_id": 1198,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157841817562",
+      "taxonomy_id": 129,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157878632501",
+      "taxonomy_id": 6415,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157605886529",
+      "taxonomy_id": 67,
+      "status": "BLOCKED",
+      "change": "Change category",
+      "independent_blocker_retained": true
+    },
+    {
+      "sku": "157638215491",
+      "taxonomy_id": 1197,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157651516711",
+      "taxonomy_id": 129,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157665449573",
+      "taxonomy_id": 1049,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157800498643",
+      "taxonomy_id": 1222,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157810358115",
+      "taxonomy_id": 1240,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157638108426",
+      "taxonomy_id": 354,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157660628350",
+      "taxonomy_id": 1229,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157775555567",
+      "taxonomy_id": 216,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157825288473",
+      "taxonomy_id": 840,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157829746922",
+      "taxonomy_id": 14,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157968273325",
+      "taxonomy_id": 6102,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157989017624",
+      "taxonomy_id": 70,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158049999122",
+      "taxonomy_id": 126,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158241515434",
+      "taxonomy_id": 1232,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157968266546",
+      "taxonomy_id": 1193,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158018737348",
+      "taxonomy_id": 67,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158049847577",
+      "taxonomy_id": 2213,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158200581770",
+      "taxonomy_id": 6104,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158207611770",
+      "taxonomy_id": 158,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158215346951",
+      "taxonomy_id": 6074,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158217244493",
+      "taxonomy_id": 6076,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157919935055",
+      "taxonomy_id": 2039,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157928283782",
+      "taxonomy_id": 1208,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157937014370",
+      "taxonomy_id": 120,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157937016922",
+      "taxonomy_id": 120,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158039815497",
+      "taxonomy_id": 67,
+      "status": "REVIEW_REQUIRED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158049946912",
+      "taxonomy_id": 6649,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158105390525",
+      "taxonomy_id": 6074,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158200623983",
+      "taxonomy_id": 1201,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158231463306",
+      "taxonomy_id": 70,
+      "status": "BLOCKED",
+      "change": "Change category",
+      "independent_blocker_retained": true
+    },
+    {
+      "sku": "157928253026",
+      "taxonomy_id": 6076,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157934172715",
+      "taxonomy_id": 72,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158055932507",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158211083680",
+      "taxonomy_id": 6102,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158215380324",
+      "taxonomy_id": 6312,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157953756703",
+      "taxonomy_id": 347,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157989022705",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157989029268",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157995347814",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158003734472",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158036675700",
+      "taxonomy_id": 82,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158036834455",
+      "taxonomy_id": 1026,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158252031929",
+      "taxonomy_id": 2907,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157936981900",
+      "taxonomy_id": 1859,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158039866057",
+      "taxonomy_id": 2815,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158200574055",
+      "taxonomy_id": 72,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158200594062",
+      "taxonomy_id": 165,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158231464089",
+      "taxonomy_id": 70,
+      "status": "BLOCKED",
+      "change": "Change category",
+      "independent_blocker_retained": true
+    },
+    {
+      "sku": "158235104878",
+      "taxonomy_id": 69,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157909051959",
+      "taxonomy_id": 1050,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157919857484",
+      "taxonomy_id": 2848,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157939662524",
+      "taxonomy_id": 1003,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157953728850",
+      "taxonomy_id": 349,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157988990094",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157989033292",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158207651420",
+      "taxonomy_id": 1607,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158228017632",
+      "taxonomy_id": 52,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157937055029",
+      "taxonomy_id": 2815,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157953693104",
+      "taxonomy_id": 2011,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157989047808",
+      "taxonomy_id": 2052,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158003647804",
+      "taxonomy_id": 120,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158014693468",
+      "taxonomy_id": 2115,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158049829971",
+      "taxonomy_id": 12491,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158215293958",
+      "taxonomy_id": 134,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158215324537",
+      "taxonomy_id": 1238,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158231419281",
+      "taxonomy_id": 6236,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158231462611",
+      "taxonomy_id": 70,
+      "status": "BLOCKED",
+      "change": "Change category",
+      "independent_blocker_retained": true
+    },
+    {
+      "sku": "157942347042",
+      "taxonomy_id": 1044,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157953763087",
+      "taxonomy_id": 2011,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157979863767",
+      "taxonomy_id": 2115,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157979866975",
+      "taxonomy_id": 2115,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158036756571",
+      "taxonomy_id": 12491,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158039821916",
+      "taxonomy_id": 1077,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158039807185",
+      "taxonomy_id": 1166,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158055971246",
+      "taxonomy_id": 69,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158207578759",
+      "taxonomy_id": 6074,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158207582278",
+      "taxonomy_id": 6074,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158215280713",
+      "taxonomy_id": 6102,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158215353314",
+      "taxonomy_id": 6075,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158217264758",
+      "taxonomy_id": 1232,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158252004199",
+      "taxonomy_id": 134,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157917358941",
+      "taxonomy_id": 1629,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157934242465",
+      "taxonomy_id": 1240,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157988986501",
+      "taxonomy_id": 1021,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158055967473",
+      "taxonomy_id": 130,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158200660308",
+      "taxonomy_id": 1995,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158207626031",
+      "taxonomy_id": 1068,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158215359465",
+      "taxonomy_id": 827,
+      "status": "BLOCKED",
+      "change": "Change category",
+      "independent_blocker_retained": true
+    },
+    {
+      "sku": "158227942043",
+      "taxonomy_id": 351,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158234989568",
+      "taxonomy_id": 6074,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158241503807",
+      "taxonomy_id": 840,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157968156571",
+      "taxonomy_id": 2214,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158056001177",
+      "taxonomy_id": 1868,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158217303065",
+      "taxonomy_id": 1229,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157979832961",
+      "taxonomy_id": 2115,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157979861855",
+      "taxonomy_id": 1229,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158014690251",
+      "taxonomy_id": 2115,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158049927790",
+      "taxonomy_id": 6650,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158227985937",
+      "taxonomy_id": 6567,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158231587771",
+      "taxonomy_id": 1229,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157909050013",
+      "taxonomy_id": 1050,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158018753133",
+      "taxonomy_id": 260,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158049902189",
+      "taxonomy_id": 2889,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158231462033",
+      "taxonomy_id": 70,
+      "status": "BLOCKED",
+      "change": "Change category",
+      "independent_blocker_retained": true
+    },
+    {
+      "sku": "157939712846",
+      "taxonomy_id": 2011,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157974051844",
+      "taxonomy_id": 144,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158049970124",
+      "taxonomy_id": 6074,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158200620719",
+      "taxonomy_id": 1866,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158241511952",
+      "taxonomy_id": 1232,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157919883392",
+      "taxonomy_id": 119,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158014634432",
+      "taxonomy_id": 1894,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158014685937",
+      "taxonomy_id": 6426,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158055962837",
+      "taxonomy_id": 2815,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158215382242",
+      "taxonomy_id": 6102,
+      "status": "REVIEW_REQUIRED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158231621119",
+      "taxonomy_id": 6239,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158235018806",
+      "taxonomy_id": 64,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158252070559",
+      "taxonomy_id": 1229,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157939690705",
+      "taxonomy_id": 345,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157939708015",
+      "taxonomy_id": 344,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157962112512",
+      "taxonomy_id": 216,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157988974042",
+      "taxonomy_id": 73,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "157995281149",
+      "taxonomy_id": 1204,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158039807994",
+      "taxonomy_id": 1166,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158078534894",
+      "taxonomy_id": 46,
+      "status": "AUTO_APPROVED",
+      "change": "Keep category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158215317216",
+      "taxonomy_id": 2152,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158217261969",
+      "taxonomy_id": 1194,
+      "status": "AUTO_APPROVED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    },
+    {
+      "sku": "158234948402",
+      "taxonomy_id": 1049,
+      "status": "REVIEW_REQUIRED",
+      "change": "Change category",
+      "independent_blocker_retained": false
+    }
+  ]
+}
