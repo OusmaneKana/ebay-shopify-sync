@@ -120,6 +120,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
 - `GET /ebay-insights` — eBay organic traffic, sales, listing age, and advertising intelligence
 - `GET /audit/summary` — all inventory/listing audits in one response
 - `GET /audit/sold-still-live` — sold products that still have an active Etsy listing
+- `GET /audit/zero-quantity-unverified` — zero-quantity products without confirmed eBay sale evidence
 - `POST /sync/prod/*` — production Shopify store operations
 - `GET /auth/ebay/*` — eBay OAuth login/callback/status
 - `GET|POST /webhooks/ebay/orders` — eBay listing + order webhook endpoints
@@ -243,7 +244,31 @@ Important endpoints:
 Creation requests accept at most 50 items. The UI uses batches of 10 and its
 **Create All Ready Drafts** action repeats batches until no auto-approved items
 remain. Items still requiring taxonomy review do not block already approved
-items. See [BULK_PUBLISHING_GUIDE.md](BULK_PUBLISHING_GUIDE.md) for canary,
+items.
+
+### Durable browser-independent operations
+
+The Etsy Publish Prep page submits Refresh, Prepare/Validate, Publish, Canary,
+and Retry actions to Cloud Tasks. Operation state and progress are stored in the
+MongoDB `durable_operations` collection. The browser only polls that state, so
+closing the tab, changing devices, or losing a request does not stop the work.
+
+The deploy helper creates the `etsy-background` queue, stores a stable worker
+secret in Secret Manager, grants the Cloud Run service identity permission to
+enqueue tasks/read the secret, and configures these service variables:
+
+- `GOOGLE_CLOUD_PROJECT`
+- `GOOGLE_CLOUD_REGION` / `CLOUD_TASKS_LOCATION`
+- `CLOUD_TASKS_QUEUE`
+- `CLOUD_RUN_SERVICE_URL`
+- `CLOUD_TASKS_WORKER_SECRET` (Secret Manager reference)
+
+The queue is intentionally limited to one concurrent dispatch per second so
+Etsy validation and publishing remain serialized. Each task processes one
+bounded checkpoint and schedules the next; Cloud Tasks retries transient
+failures, while MongoDB leases prevent two workers from processing the same
+checkpoint concurrently.
+See [BULK_PUBLISHING_GUIDE.md](BULK_PUBLISHING_GUIDE.md) for canary,
 retry, and Excel-report details.
 
 When a creation request supplies a quantity/limit, Ready products are selected
@@ -255,7 +280,8 @@ backfilled from the source product dates before selection.
 Open `GET /audit-dashboard` for the front end or poll these JSON endpoints:
 
 - `GET /audit/summary` — every audit in one call
-- `GET /audit/sold-still-live` — quantity-zero products with an **active** Etsy listing
+- `GET /audit/sold-still-live` — confirmed eBay sales with an **active** Etsy listing
+- `GET /audit/zero-quantity-unverified` — zero-quantity products with an active Etsy listing but no eBay sale evidence
 - `GET /audit/duplicates` — SKUs appearing on multiple active Etsy listings
 - `GET /audit/missing-skus` — Etsy listings without an inventory SKU
 - `GET /audit/unlinked` — Etsy listings not linked to a normalized product

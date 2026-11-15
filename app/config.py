@@ -46,6 +46,16 @@ class Settings(BaseSettings):
     # When set, /admin, /reporting and related APIs require a passkey.
     ADMIN_PASSKEY: str | None = None
 
+    # Durable background operations. Cloud Tasks invokes short worker requests
+    # so long-running workflows are independent from the browser lifecycle.
+    GOOGLE_CLOUD_PROJECT: str | None = None
+    GOOGLE_CLOUD_REGION: str | None = None
+    CLOUD_TASKS_LOCATION: str | None = None
+    CLOUD_TASKS_QUEUE: str | None = None
+    CLOUD_TASKS_SERVICE_ACCOUNT_EMAIL: str | None = None
+    CLOUD_RUN_SERVICE_URL: str | None = None
+    CLOUD_TASKS_WORKER_SECRET: str | None = None
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore",

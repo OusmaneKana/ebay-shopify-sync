@@ -153,6 +153,31 @@
       background: rgba(2, 6, 23, 0.72);
     }
 
+    .review-product {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    .review-thumb {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #020617;
+    }
+
+    .review-title {
+      color: var(--text);
+      font-weight: 700;
+      line-height: 1.35;
+      text-decoration: none;
+    }
+
+    .review-title:hover { color: var(--accent); text-decoration: underline; }
+
     button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
     .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
@@ -496,6 +521,9 @@
     let validationLoopRunning = false;
     let validationStopRequested = false;
     let creationLoopRunning = false;
+    let activeOperationId = null;
+    let activeOperation = null;
+    let operationPollTimer = null;
     const BULK_CREATE_BATCH_SIZE = 10;
 
     const FALLBACK_HELP = {
@@ -558,6 +586,118 @@
       document.getElementById('runMessage').textContent = message;
     }
 
+    function operationIsActive(operation) {
+      return Boolean(operation && ['queued', 'running', 'pause_requested', 'paused'].includes(operation.status));
+    }
+
+    function operationMessage(operation) {
+      const progress = operation.progress || {};
+      const counts = progress.counts || {};
+      if (operation.status === 'failed') return `${operation.kind} failed: ${operation.error || 'Unknown error'}`;
+      if (operation.status === 'paused') return `${operation.kind} paused. You can close this page or resume later.`;
+      if (operation.status === 'completed') {
+        const attempted = progress.attempted;
+        return attempted === undefined
+          ? `${operation.kind} completed successfully.`
+          : `${operation.kind} completed: ${attempted} products attempted.`;
+      }
+      if (operation.kind === 'refresh') return `Refresh is running: ${operation.phase || 'starting'} phase. You can close this page.`;
+      if (operation.kind === 'prepare' || operation.kind === 'validate') {
+        return `Validation is running: ${Number(counts.queued || 0)} waiting, ${Number(counts.creation_pending || 0)} ready. You can close this page.`;
+      }
+      if (operation.kind === 'publish') {
+        const remaining = progress.remaining === undefined ? (operation.params && operation.params.count) : progress.remaining;
+        return `Publishing in the background: ${Number(remaining || 0)} remaining. You can close this page.`;
+      }
+      return `${operation.kind} is running in the background. You can close this page.`;
+    }
+
+    function renderOperation(operation) {
+      activeOperation = operation;
+      activeOperationId = operation && operation.operation_id;
+      const isActive = operationIsActive(operation);
+      const isValidation = operation && ['prepare', 'validate'].includes(operation.kind);
+      const isCreation = operation && ['publish', 'canary', 'retry'].includes(operation.kind);
+      validationLoopRunning = Boolean(isActive && isValidation && operation.status !== 'paused');
+      creationLoopRunning = Boolean(isActive && isCreation && operation.status !== 'paused');
+      if (operation && operation.run_id) activeRunId = operation.run_id;
+      setRunMessage(operationMessage(operation));
+
+      if (activeRun) renderRunStats(activeRun);
+      document.getElementById('refreshEverythingBtn').disabled = isActive;
+      document.getElementById('prepareBatchBtn').disabled = isActive;
+      document.getElementById('resumeValidationBtn').disabled = !(isValidation && ['paused', 'failed'].includes(operation.status));
+      document.getElementById('pauseValidationBtn').disabled = !(isValidation && ['queued', 'running'].includes(operation.status));
+      if (isActive && operation.status !== 'paused') {
+        document.getElementById('createCanaryBtn').disabled = true;
+        document.getElementById('createRemainingBtn').disabled = true;
+        document.getElementById('readyPublishCount').disabled = true;
+        document.getElementById('retryFailuresBtn').disabled = true;
+      }
+    }
+
+    async function startDurableOperation(kind, params = {}) {
+      if (operationIsActive(activeOperation) && activeOperation.status !== 'paused') {
+        throw new Error(`A ${activeOperation.kind} operation is already active.`);
+      }
+      const operation = await fetchJson('/reporting/etsy-publish/operations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kind, params }),
+      });
+      try { localStorage.setItem('etsyActiveOperationId', operation.operation_id); } catch (_) {}
+      renderOperation(operation);
+      scheduleOperationPoll(250);
+      return operation;
+    }
+
+    function scheduleOperationPoll(delay = 2000) {
+      if (operationPollTimer) clearTimeout(operationPollTimer);
+      operationPollTimer = setTimeout(pollActiveOperation, delay);
+    }
+
+    async function pollActiveOperation() {
+      if (!activeOperationId) return;
+      try {
+        const operation = await fetchJson(`/reporting/etsy-publish/operations/${encodeURIComponent(activeOperationId)}`);
+        if (operation.run_id) await loadActiveRun().catch(() => {});
+        renderOperation(operation);
+        if (operationIsActive(operation)) {
+          scheduleOperationPoll();
+          return;
+        }
+        try { localStorage.removeItem('etsyActiveOperationId'); } catch (_) {}
+        validationLoopRunning = false;
+        creationLoopRunning = false;
+        document.getElementById('refreshEverythingBtn').disabled = false;
+        document.getElementById('prepareBatchBtn').disabled = false;
+        if (operation.run_id) await loadActiveRun().catch(() => {});
+        else await loadLatestRun().catch(() => {});
+        if (operation.kind === 'refresh') await loadList().catch(() => {});
+      } catch (err) {
+        setRunMessage(`Could not check background progress: ${String(err)} Retrying…`);
+        scheduleOperationPoll(4000);
+      }
+    }
+
+    async function reconnectToOperation() {
+      let operationId = null;
+      try { operationId = localStorage.getItem('etsyActiveOperationId'); } catch (_) {}
+      if (operationId) {
+        activeOperationId = operationId;
+        await pollActiveOperation();
+        return;
+      }
+      try {
+        const latest = await fetchJson('/reporting/etsy-publish/operations/latest');
+        if (operationIsActive(latest)) {
+          try { localStorage.setItem('etsyActiveOperationId', latest.operation_id); } catch (_) {}
+          renderOperation(latest);
+          scheduleOperationPoll(250);
+        }
+      } catch (_) {}
+    }
+
     function renderRunStats(run) {
       activeRun = run;
       activeRunId = run && run.run_id ? run.run_id : activeRunId;
@@ -614,6 +754,18 @@
         const inputs = item.classification_inputs || {};
         const decision = item.taxonomy_decision || {};
         const candidates = item.taxonomy_candidates || [];
+        const localChoice = item.local_ranker_choice || null;
+        const aiTaxonomyId = Number(decision.taxonomy_id || 0);
+        const localTaxonomyId = Number((localChoice && localChoice.taxonomy_id) || 0);
+        const rankersAgree = aiTaxonomyId && localTaxonomyId && aiTaxonomyId === localTaxonomyId;
+        const confidence = Number(item.ai_confidence || 0);
+        const title = inputs.original_title || item.title || item.sku;
+        const linkedTitle = item.ebay_url
+          ? `<a class="review-title" href="${esc(item.ebay_url)}" target="_blank" rel="noopener noreferrer">${esc(title)} ↗</a>`
+          : `<div class="review-title">${esc(title)}</div>`;
+        const thumbnail = item.image
+          ? `<img class="review-thumb" src="${esc(item.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`
+          : '<div class="review-thumb" aria-hidden="true"></div>';
         const choices = candidates.slice(0, 3).map((candidate) => `
           <button type="button" onclick="approveRunTaxonomy(${itemIndex}, ${Number(candidate.taxonomy_id)})">
             Use ${esc(candidate.full_path || candidate.name || candidate.taxonomy_id)}
@@ -621,9 +773,23 @@
         `).join('');
         return `
           <div class="review-item">
-            <div style="font-weight:700;">${esc(inputs.original_title || item.title || item.sku)}</div>
-            <div class="small" style="margin-top:4px;">SKU ${esc(item.sku)} · ${esc(inputs.ebay_category_path || 'No eBay category')}</div>
+            <div class="review-product">
+              ${thumbnail}
+              <div>
+                ${linkedTitle}
+                <div class="small" style="margin-top:4px;">SKU ${esc(item.sku)} · ${esc(inputs.ebay_category_path || 'No eBay category')}</div>
+              </div>
+            </div>
             <div class="small" style="margin-top:6px;">${esc(decision.reason || 'Select the most appropriate Seller Taxonomy category.')}</div>
+            <div class="small" style="margin-top:6px;">
+              <strong>AI says:</strong> ${esc(decision.taxonomy_path || aiTaxonomyId || 'No selection')}
+              ${confidence ? ` · ${esc(Math.round(confidence * 100))}% confidence` : ''}
+            </div>
+            <div class="small" style="margin-top:4px;">
+              <strong>Local ranker says:</strong> ${esc((localChoice && (localChoice.full_path || localChoice.name || localChoice.taxonomy_id)) || 'No local match')}
+              ${localChoice && localChoice.local_score != null ? ` · score ${esc(Number(localChoice.local_score).toFixed(2))}` : ''}
+              ${aiTaxonomyId && localTaxonomyId ? ` · <span class="pill ${rankersAgree ? 'ok' : 'warn'}">${rankersAgree ? 'agrees' : 'disagrees'}</span>` : ''}
+            </div>
             <div class="row" style="margin-top:8px;">${choices}</div>
             <div class="row" style="margin-top:7px;">
               <button type="button" onclick="approveCustomRunTaxonomy(${itemIndex})">Enter another taxonomy ID</button>
@@ -655,17 +821,11 @@
 
     async function refreshEverything() {
       if (!confirm('Refresh eBay raw products, normalize them, and refresh Etsy listings plus Seller Taxonomy now?')) return;
-      const btn = document.getElementById('refreshEverythingBtn');
-      btn.disabled = true;
-      setRunMessage('Refreshing eBay, normalization, Etsy listings, and Seller Taxonomy. Keep this page open…');
       try {
-        const result = await fetchJson('/reporting/etsy-publish/refresh', { method: 'POST' });
-        setRunMessage(`Refresh completed at ${result.refreshed_at}. You can prepare a new batch.`);
-        await loadList();
+        setRunMessage('Queueing the refresh…');
+        await startDurableOperation('refresh');
       } catch (err) {
         setRunMessage(`Refresh failed: ${String(err)}`);
-      } finally {
-        btn.disabled = false;
       }
     }
 
@@ -676,53 +836,40 @@
         return;
       }
       if (!confirm(`Create a new validation snapshot with a ${priceMarkupPercent}% Etsy price increase? No Etsy drafts will be created yet.`)) return;
-      const btn = document.getElementById('prepareBatchBtn');
-      btn.disabled = true;
-      setRunMessage('Building candidate snapshot and historical taxonomy mappings…');
       try {
         localStorage.setItem('etsyPriceMarkupPercent', String(priceMarkupPercent));
-        const run = await fetchJson('/reporting/etsy-publish/runs', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ all: true, price_markup_percent: priceMarkupPercent }),
-        });
-        activeRunId = run.run_id;
-        renderRunStats(run);
-        await resumeValidation();
+        setRunMessage('Queueing candidate preparation and validation…');
+        await startDurableOperation('prepare', { all: true, price_markup_percent: priceMarkupPercent });
       } catch (err) {
         setRunMessage(`Could not prepare batch: ${String(err)}`);
-      } finally {
-        btn.disabled = false;
       }
     }
 
     async function resumeValidation() {
-      if (!activeRunId || validationLoopRunning) return;
-      validationStopRequested = false;
-      validationLoopRunning = true;
-      document.getElementById('resumeValidationBtn').disabled = true;
       try {
-        let run = await loadActiveRun();
-        while (run && run.counts && run.counts.queued > 0 && !validationStopRequested) {
-          setRunMessage(`Validating ${run.counts.queued} remaining products. You can safely resume if this page closes.`);
-          await fetchJson(`/reporting/etsy-publish/runs/${encodeURIComponent(activeRunId)}/process?limit=3`, { method: 'POST' });
-          run = await loadActiveRun();
+        if (activeOperation && ['paused', 'failed'].includes(activeOperation.status) && ['prepare', 'validate'].includes(activeOperation.kind)) {
+          const operation = await fetchJson(`/reporting/etsy-publish/operations/${encodeURIComponent(activeOperation.operation_id)}/resume`, { method: 'POST' });
+          try { localStorage.setItem('etsyActiveOperationId', operation.operation_id); } catch (_) {}
+          renderOperation(operation);
+          scheduleOperationPoll(250);
+          return;
         }
-        setRunMessage(validationStopRequested
-          ? 'Validation paused. Already-Ready products can now be published.'
-          : 'Validation finished. Review taxonomy exceptions and download the Excel report.');
+        if (!activeRunId) return;
+        await startDurableOperation('validate', { run_id: activeRunId, batch_size: 3 });
       } catch (err) {
-        setRunMessage(`Validation paused: ${String(err)}`);
-      } finally {
-        validationLoopRunning = false;
-        await loadActiveRun().catch(() => {});
+        setRunMessage(`Could not resume validation: ${String(err)}`);
       }
     }
 
-    function pauseValidation() {
-      validationStopRequested = true;
-      document.getElementById('pauseValidationBtn').disabled = true;
-      setRunMessage('Pause requested. The current validation batch will finish, then publishing will be enabled.');
+    async function pauseValidation() {
+      if (!activeOperationId || !activeOperation || !['prepare', 'validate'].includes(activeOperation.kind)) return;
+      try {
+        const operation = await fetchJson(`/reporting/etsy-publish/operations/${encodeURIComponent(activeOperationId)}/pause`, { method: 'POST' });
+        renderOperation(operation);
+        setRunMessage('Pause requested. The current server-side batch will finish, then the operation will pause.');
+      } catch (err) {
+        setRunMessage(`Could not pause validation: ${String(err)}`);
+      }
     }
 
     async function approveRunTaxonomy(itemIndex, taxonomyId) {
@@ -783,18 +930,10 @@
 
     async function createCanaryDrafts() {
       if (!activeRunId || !confirm('Create up to 10 Etsy drafts as a test batch?')) return;
-      const btn = document.getElementById('createCanaryBtn');
-      btn.disabled = true;
-      creationLoopRunning = true;
-      setRunMessage('Creating the test drafts…');
       try {
-        const result = await createDraftBatch(10, false, true);
-        setRunMessage(`Test batch finished: ${result.processed} products attempted. Inspect the drafts in Etsy before continuing.`);
+        await startDurableOperation('canary', { run_id: activeRunId });
       } catch (err) {
         setRunMessage(`Test batch failed: ${String(err)}`);
-      } finally {
-        creationLoopRunning = false;
-        await loadActiveRun().catch(() => {});
       }
     }
 
@@ -811,34 +950,17 @@
         return;
       }
       if (!confirm(`Create the ${requestedCount} newest Ready products as Etsy drafts?`)) return;
-      validationStopRequested = true;
-      const btn = document.getElementById('createRemainingBtn');
-      btn.disabled = true;
-      creationLoopRunning = true;
-      let attempted = 0;
       try {
-        let remaining = requestedCount;
-        while (remaining > 0) {
-          setRunMessage(`Publishing the ${requestedCount} newest Ready products: ${remaining} remaining. Completed work is saved after every batch.`);
-          const result = await createDraftBatch(Math.min(BULK_CREATE_BATCH_SIZE, remaining), false, false, true);
-          if (!result.processed) break;
-          attempted += result.processed;
-          remaining -= result.processed;
-        }
-        setRunMessage(`Publish pass finished: ${attempted} of ${requestedCount} products attempted. Download the Excel report for results and errors.`);
+        await startDurableOperation('publish', { run_id: activeRunId, count: requestedCount, batch_size: BULK_CREATE_BATCH_SIZE });
       } catch (err) {
-        setRunMessage(`Publishing paused after ${attempted} products: ${String(err)} Completed batches are saved.`);
-      } finally {
-        creationLoopRunning = false;
-        await loadActiveRun().catch(() => {});
+        setRunMessage(`Could not start publishing: ${String(err)}`);
       }
     }
 
     async function retryCreationFailures() {
       if (!activeRunId || !confirm('Retry the currently failed Etsy draft creations once?')) return;
       try {
-        const result = await createDraftBatch(50, true);
-        setRunMessage(`Retry pass finished: ${result.processed} products attempted.`);
+        await startDurableOperation('retry', { run_id: activeRunId, limit: 50 });
       } catch (err) {
         setRunMessage(`Retry failed: ${String(err)}`);
       }
@@ -1275,8 +1397,10 @@
     document.getElementById('priceMarkupPercent').addEventListener('change', (event) => {
       try { localStorage.setItem('etsyPriceMarkupPercent', event.target.value); } catch (_) {}
     });
-    loadList();
-    loadLatestRun();
+    (async () => {
+      await Promise.all([loadList(), loadLatestRun()]);
+      await reconnectToOperation();
+    })();
     document.getElementById('suggestTaxonomyBtn').disabled = true;
     document.getElementById('suggestTaxonomyBtn').textContent = 'Remake Taxonomy';
   </script>

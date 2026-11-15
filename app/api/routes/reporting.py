@@ -7,6 +7,7 @@ import mimetypes
 import math
 import traceback
 import uuid
+import secrets
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -15,7 +16,7 @@ from urllib.parse import urlparse
 import httpx
 from openai import OpenAI
 from openpyxl import load_workbook
-from fastapi import APIRouter, Query, HTTPException, Body, Depends
+from fastapi import APIRouter, Query, HTTPException, Body, Depends, Request
 from fastapi.responses import Response
 from pymongo import ReturnDocument, UpdateOne
 
@@ -39,6 +40,18 @@ from app.services.etsy_taxonomy_validation import (
     taxonomy_tree_hash,
 )
 from app.security.passkey import require_authorized
+from app.services.durable_operations import (
+    create_operation,
+    claim_operation,
+    dispatch_operation,
+    for_response as operation_for_response,
+    get_latest_operation,
+    get_operation,
+    record_retryable_error,
+    release_operation,
+    request_pause,
+    resume_operation,
+)
 from app.shopify.client import ShopifyClient
 router = APIRouter()
 
@@ -4141,6 +4154,26 @@ def _taxonomy_product_projection() -> dict[str, int]:
     }
 
 
+def _first_http_image(*values: object) -> str | None:
+    for value in values:
+        candidates = value if isinstance(value, list) else [value]
+        for candidate in candidates:
+            text = _clean_text(candidate)
+            if not text:
+                continue
+            parsed = urlparse(text)
+            if parsed.scheme in {"http", "https"} and parsed.netloc:
+                return text
+    return None
+
+
+def _ebay_listing_url(item_id: object) -> str | None:
+    value = str(item_id or "").strip()
+    if not re.fullmatch(r"\d+", value):
+        return None
+    return f"https://www.ebay.com/itm/{value}"
+
+
 def _etsy_publish_recency_fields(
     raw_doc: dict[str, Any] | None,
     normalized: dict[str, Any] | None,
@@ -4335,38 +4368,85 @@ def _run_for_response(run: dict[str, Any] | None) -> dict[str, Any] | None:
     return out
 
 
+def _operation_result_summary(value: Any) -> Any:
+    """Keep durable operation documents useful without copying huge API payloads."""
+    if not isinstance(value, dict):
+        return value
+    summary: dict[str, Any] = {}
+    for key in (
+        "ok",
+        "message",
+        "count",
+        "total",
+        "processed",
+        "created",
+        "updated",
+        "skipped",
+        "failed",
+        "elapsed_seconds",
+        "node_count",
+        "tree_hash",
+        "fetched_at",
+    ):
+        if key in value:
+            summary[key] = value[key]
+    if summary:
+        return summary
+    return {"completed": True, "keys": sorted(value.keys())[:30]}
+
+
+async def _etsy_publish_refresh_step(phase: str) -> tuple[str | None, dict[str, Any]]:
+    """Execute one checkpointed refresh phase and return its successor."""
+    if phase == "ebay":
+        from app.services.product_service import sync_ebay_raw_to_mongo
+
+        result = await sync_ebay_raw_to_mongo()
+        return "normalize", _operation_result_summary(result)
+    if phase == "normalize":
+        from app.services.normalizer_service import normalize_from_raw
+
+        result = await normalize_from_raw()
+        return "etsy", _operation_result_summary(result)
+    if phase == "etsy":
+        from scripts.sync_etsy_listings_investigation import sync_etsy_listings_for_investigation
+
+        shop_id = await _resolve_etsy_shop_id()
+        api_key = _resolve_etsy_api_key()
+        if not shop_id or not api_key:
+            raise ValueError("Missing Etsy shop or API configuration")
+        result = await sync_etsy_listings_for_investigation(
+            shop_id=str(shop_id),
+            api_key=str(api_key),
+            token=await get_valid_etsy_token(),
+        )
+        return "taxonomy", _operation_result_summary(result)
+    if phase == "taxonomy":
+        _ETSY_SELLER_TAXONOMY_CACHE.update({"fetched_at": None, "nodes": None})
+        _ETSY_TAXONOMY_PROPERTIES_CACHE.clear()
+        nodes = await _fetch_seller_taxonomy_nodes()
+        return None, {
+            "node_count": len(_flatten_seller_taxonomy_nodes(nodes)),
+            "tree_hash": taxonomy_tree_hash(nodes),
+            "fetched_at": _ETSY_SELLER_TAXONOMY_CACHE.get("fetched_at"),
+        }
+    raise ValueError(f"Unknown refresh phase: {phase}")
+
+
 @router.post("/etsy-publish/refresh")
 async def etsy_publish_refresh_all(_authorized: None = Depends(require_authorized)):
     """Refresh the three data sources used to select an Etsy publishing batch."""
-    from app.services.normalizer_service import normalize_from_raw
-    from app.services.product_service import sync_ebay_raw_to_mongo
-    from scripts.sync_etsy_listings_investigation import sync_etsy_listings_for_investigation
-
-    ebay_result = await sync_ebay_raw_to_mongo()
-    normalize_result = await normalize_from_raw()
-    shop_id = await _resolve_etsy_shop_id()
-    api_key = _resolve_etsy_api_key()
-    if not shop_id or not api_key:
-        raise HTTPException(status_code=400, detail="Missing Etsy shop or API configuration")
-    etsy_result = await sync_etsy_listings_for_investigation(
-        shop_id=str(shop_id),
-        api_key=str(api_key),
-        token=await get_valid_etsy_token(),
-    )
-    _ETSY_SELLER_TAXONOMY_CACHE.update({"fetched_at": None, "nodes": None})
-    _ETSY_TAXONOMY_PROPERTIES_CACHE.clear()
-    taxonomy_nodes = await _fetch_seller_taxonomy_nodes()
+    phase = "ebay"
+    results: dict[str, Any] = {}
+    while phase:
+        current = phase
+        phase, results[current] = await _etsy_publish_refresh_step(current)
     return {
         "ok": True,
         "refreshed_at": _now_utc(),
-        "ebay_raw": ebay_result,
-        "normalized": normalize_result,
-        "etsy": etsy_result,
-        "seller_taxonomy": {
-            "node_count": len(_flatten_seller_taxonomy_nodes(taxonomy_nodes)),
-            "tree_hash": taxonomy_tree_hash(taxonomy_nodes),
-            "fetched_at": _ETSY_SELLER_TAXONOMY_CACHE.get("fetched_at"),
-        },
+        "ebay_raw": results["ebay"],
+        "normalized": results["normalize"],
+        "etsy": results["etsy"],
+        "seller_taxonomy": results["taxonomy"],
     }
 
 
@@ -4383,6 +4463,14 @@ async def etsy_publish_create_validation_run(
         price_markup_percent = float(normalize_price_markup_percent(body.get("price_markup_percent", 0)))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    requested_run_id = str(body.get("_run_id") or "").strip()
+    if requested_run_id:
+        existing_run = await db[ETSY_PUBLISH_RUNS_COLLECTION].find_one({"_id": requested_run_id})
+        if existing_run:
+            await _refresh_publish_run_counts(requested_run_id)
+            existing_run = await db[ETSY_PUBLISH_RUNS_COLLECTION].find_one({"_id": requested_run_id})
+            return _run_for_response(existing_run)
 
     nodes, taxonomy_index, tree_hash = await _seller_taxonomy_context()
     mappings, backtest = await _refresh_historical_taxonomy_mappings(taxonomy_index, tree_hash)
@@ -4401,6 +4489,7 @@ async def etsy_publish_create_validation_run(
             "raw.QuantityAvailable": 1,
             "raw.ItemID": 1,
             "raw.Title": 1,
+            "raw.Images": 1,
             "ebay_posted_at": 1,
             "updated_at": 1,
         },
@@ -4432,7 +4521,7 @@ async def etsy_publish_create_validation_run(
             if str(sku).strip():
                 live_etsy_by_sku[str(sku).strip()] = listing
 
-    run_id = f"etsy-run-{uuid.uuid4()}"
+    run_id = requested_run_id or f"etsy-run-{uuid.uuid4()}"
     now = _now_utc()
     item_docs: list[dict[str, Any]] = []
     for raw_doc in active_raw_docs:
@@ -4446,6 +4535,11 @@ async def etsy_publish_create_validation_run(
             "run_id": run_id,
             "sku": sku,
             "ebay_item_id": str((raw_doc.get("raw") or {}).get("ItemID") or sku),
+            "ebay_url": _ebay_listing_url((raw_doc.get("raw") or {}).get("ItemID")),
+            "image": _first_http_image(
+                (normalized or {}).get("images"),
+                (raw_doc.get("raw") or {}).get("Images"),
+            ),
             "title": (normalized or {}).get("title") or (raw_doc.get("raw") or {}).get("Title"),
             "processing_status": "queued",
             "decision_status": None,
@@ -4689,11 +4783,13 @@ async def _process_etsy_validation_item(
             "price_markup_percent": markup_percent,
             "price": adjusted_price,
         }
+        local_ranker_choice = suggestions.get("local_best_match") if not historical else None
         update = {
             "processing_status": "completed",
             "classification_inputs": inputs,
             "historical_mapping": historical,
             "taxonomy_candidates": candidates,
+            "local_ranker_choice": local_ranker_choice,
             "taxonomy_decision": decision,
             "decision_status": decision.get("status"),
             "proposed_taxonomy_id": selected_taxonomy_id,
@@ -4789,8 +4885,55 @@ async def etsy_publish_get_validation_run(
     run = await db[ETSY_PUBLISH_RUNS_COLLECTION].find_one({"_id": run_id})
     review_items = await db[ETSY_PUBLISH_RUN_ITEMS_COLLECTION].find(
         {"run_id": run_id, "decision_status": REVIEW_REQUIRED},
-        {"_id": 0, "sku": 1, "title": 1, "classification_inputs": 1, "taxonomy_candidates": 1, "taxonomy_decision": 1, "historical_mapping": 1, "ai_confidence": 1},
+        {"_id": 0, "sku": 1, "title": 1, "ebay_item_id": 1, "ebay_url": 1, "image": 1, "classification_inputs": 1, "taxonomy_candidates": 1, "local_ranker_choice": 1, "taxonomy_decision": 1, "historical_mapping": 1, "ai_confidence": 1},
     ).sort("sku", 1).limit(100).to_list(length=100)
+
+    # Backfill the local ranker's choice in responses for validation runs made
+    # before local_ranker_choice was stored explicitly. AI selection reorders
+    # taxonomy_candidates, so use the highest local_score rather than position.
+    for item in review_items:
+        if item.get("local_ranker_choice"):
+            continue
+        locally_scored = [
+            candidate
+            for candidate in (item.get("taxonomy_candidates") or [])
+            if candidate.get("local_score") is not None
+        ]
+        if locally_scored:
+            item["local_ranker_choice"] = max(
+                locally_scored,
+                key=lambda candidate: float(candidate.get("local_score") or 0.0),
+            )
+
+    # Older validation runs predate the stored media fields. Enrich the
+    # response from source collections so existing review cards improve too.
+    review_skus = [str(item.get("sku")) for item in review_items if item.get("sku")]
+    if review_skus:
+        normalized_docs, raw_docs = await asyncio.gather(
+            db.product_normalized.find(
+                {"$or": [{"_id": {"$in": review_skus}}, {"sku": {"$in": review_skus}}]},
+                {"_id": 1, "sku": 1, "images": 1},
+            ).to_list(length=len(review_skus)),
+            db.product_raw.find(
+                {"$or": [{"_id": {"$in": review_skus}}, {"sku": {"$in": review_skus}}]},
+                {"_id": 1, "sku": 1, "raw.ItemID": 1, "raw.Images": 1},
+            ).to_list(length=len(review_skus)),
+        )
+        normalized_by_sku = {
+            str(doc.get("_id") or doc.get("sku")): doc for doc in normalized_docs
+        }
+        raw_by_sku = {str(doc.get("_id") or doc.get("sku")): doc for doc in raw_docs}
+        for item in review_items:
+            sku = str(item.get("sku") or "")
+            normalized = normalized_by_sku.get(sku) or {}
+            raw_doc = raw_by_sku.get(sku) or {}
+            raw = raw_doc.get("raw") or {}
+            item_id = item.get("ebay_item_id") or raw.get("ItemID")
+            item["ebay_item_id"] = str(item_id) if item_id else None
+            item["ebay_url"] = item.get("ebay_url") or _ebay_listing_url(item_id)
+            item["image"] = item.get("image") or _first_http_image(
+                normalized.get("images"), raw.get("Images")
+            )
     response = _run_for_response(run) or {}
     response["review_items"] = review_items
     return response
@@ -5094,3 +5237,298 @@ async def etsy_publish_create_run_drafts(
         "counts": counts,
         "items": results,
     }
+
+
+ETSY_OPERATION_KINDS = {"refresh", "prepare", "validate", "publish", "canary", "retry"}
+
+
+def _etsy_operation_callback_url(request: Request) -> str:
+    base_url = (settings.CLOUD_RUN_SERVICE_URL or str(request.base_url)).rstrip("/")
+    return f"{base_url}/reporting/etsy-publish/operations/{{operation_id}}/execute"
+
+
+def _require_operation_worker(request: Request) -> None:
+    expected = settings.CLOUD_TASKS_WORKER_SECRET
+    provided = request.headers.get("X-Worker-Secret")
+    if expected:
+        if not provided or not secrets.compare_digest(str(provided).strip(), str(expected).strip()):
+            raise HTTPException(status_code=401, detail="Invalid worker credentials")
+        return
+    # Existing passkey deployments can use the passkey as the task credential.
+    # A dedicated worker secret is preferred and is configured by the deploy helper.
+    if settings.ADMIN_PASSKEY:
+        require_authorized(request)
+        return
+    raise HTTPException(status_code=503, detail="CLOUD_TASKS_WORKER_SECRET is not configured")
+
+
+async def _advance_etsy_operation(operation: dict[str, Any]) -> tuple[bool, dict[str, Any]]:
+    """Run one bounded, checkpointable unit. Returns (continue, persisted updates)."""
+    kind = str(operation.get("kind"))
+    params = operation.get("params") or {}
+    progress = dict(operation.get("progress") or {})
+    phase = str(operation.get("phase") or "queued")
+
+    if kind == "refresh":
+        current_phase = "ebay" if phase == "queued" else phase
+        next_phase, phase_result = await _etsy_publish_refresh_step(current_phase)
+        step_results = dict(progress.get("step_results") or {})
+        step_results[current_phase] = phase_result
+        progress.update({"step_results": step_results, "last_completed_phase": current_phase})
+        if next_phase:
+            return True, {"phase": next_phase, "progress": progress, "error": None}
+        return False, {
+            "phase": "completed",
+            "progress": progress,
+            "result": {"ok": True, "refreshed_at": _now_utc(), **step_results},
+            "error": None,
+        }
+
+    if kind == "prepare" and phase in {"queued", "create_run"}:
+        run = await etsy_publish_create_validation_run(
+            body={
+                "all": bool(params.get("all", True)),
+                "skus": params.get("skus"),
+                "price_markup_percent": params.get("price_markup_percent", 0),
+                "_run_id": f"etsy-run-{operation['_id']}",
+            },
+            _authorized=None,
+        )
+        run_id = str(run["run_id"])
+        progress.update({"run_id": run_id, "counts": run.get("counts") or {}})
+        return True, {"phase": "validate", "run_id": run_id, "progress": progress, "error": None}
+
+    if kind in {"prepare", "validate"}:
+        run_id = str(operation.get("run_id") or params.get("run_id") or "")
+        if not run_id:
+            raise ValueError("Validation operation is missing run_id")
+        result = await etsy_publish_process_validation_run(
+            run_id,
+            limit=max(1, min(int(params.get("batch_size") or 3), 20)),
+            _authorized=None,
+        )
+        counts = result.get("counts") or {}
+        progress.update({"run_id": run_id, "counts": counts})
+        if int(counts.get("queued") or 0) > 0:
+            return True, {"phase": "validate", "run_id": run_id, "progress": progress, "error": None}
+        return False, {
+            "phase": "completed",
+            "run_id": run_id,
+            "progress": progress,
+            "result": {"ok": True, "run_id": run_id, "counts": counts},
+            "error": None,
+        }
+
+    if kind == "publish":
+        run_id = str(operation.get("run_id") or params.get("run_id") or "")
+        requested = max(1, int(params.get("count") or 1))
+        attempted = int(progress.get("attempted") or 0)
+        remaining = max(0, int(progress.get("remaining", requested - attempted)))
+        if remaining == 0:
+            return False, {
+                "phase": "completed",
+                "run_id": run_id,
+                "progress": progress,
+                "result": {"ok": True, "run_id": run_id, "attempted": attempted},
+            }
+        result = await etsy_publish_create_run_drafts(
+            run_id,
+            body={
+                "confirmed": True,
+                "limit": min(int(params.get("batch_size") or 10), remaining),
+                "ready_only": True,
+            },
+            _authorized=None,
+        )
+        processed = int(result.get("processed") or 0)
+        attempted += processed
+        remaining = max(0, remaining - processed)
+        progress.update({"requested": requested, "attempted": attempted, "remaining": remaining, "counts": result.get("counts") or {}})
+        should_continue = processed > 0 and remaining > 0
+        updates = {"phase": "publish", "run_id": run_id, "progress": progress, "error": None}
+        if not should_continue:
+            updates.update(
+                {
+                    "phase": "completed",
+                    "result": {"ok": True, "run_id": run_id, "requested": requested, "attempted": attempted},
+                }
+            )
+        return should_continue, updates
+
+    if kind in {"canary", "retry"}:
+        run_id = str(operation.get("run_id") or params.get("run_id") or "")
+        is_canary = kind == "canary"
+        result = await etsy_publish_create_run_drafts(
+            run_id,
+            body={
+                "confirmed": True,
+                "limit": 10 if is_canary else min(int(params.get("limit") or 50), 50),
+                "canary": is_canary,
+                "retry_failures": kind == "retry",
+            },
+            _authorized=None,
+        )
+        progress.update({"attempted": int(result.get("processed") or 0), "counts": result.get("counts") or {}})
+        return False, {
+            "phase": "completed",
+            "run_id": run_id,
+            "progress": progress,
+            "result": {"ok": True, "run_id": run_id, "attempted": progress["attempted"]},
+            "error": None,
+        }
+
+    raise ValueError(f"Unsupported Etsy operation kind: {kind}")
+
+
+@router.post("/etsy-publish/operations", status_code=202)
+async def etsy_publish_start_operation(
+    request: Request,
+    body: dict = Body(...),
+    _authorized: None = Depends(require_authorized),
+):
+    kind = str(body.get("kind") or "").strip().lower()
+    if kind not in ETSY_OPERATION_KINDS:
+        raise HTTPException(status_code=400, detail=f"Unsupported operation kind: {kind}")
+    params = body.get("params") if isinstance(body.get("params"), dict) else {}
+    if kind in {"validate", "publish", "canary", "retry"} and not params.get("run_id"):
+        raise HTTPException(status_code=400, detail="run_id is required")
+    if kind == "publish":
+        try:
+            count = int(params.get("count"))
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail="count must be a positive integer") from exc
+        if count < 1:
+            raise HTTPException(status_code=400, detail="count must be a positive integer")
+        params["count"] = count
+
+    existing = await db["durable_operations"].find_one(
+        {"status": {"$in": ["queued", "running", "pause_requested", "paused"]}},
+        sort=[("created_at", -1)],
+    )
+    if existing:
+        if existing.get("status") == "paused":
+            await db["durable_operations"].update_one(
+                {"_id": existing["_id"], "status": "paused"},
+                {
+                    "$set": {
+                        "status": "cancelled",
+                        "finished_at": _now_utc(),
+                        "updated_at": _now_utc(),
+                        "error": "Superseded by a new operation",
+                    }
+                },
+            )
+        else:
+            raise HTTPException(
+                status_code=409,
+                detail=f"A {existing.get('kind')} operation is already {existing.get('status')}",
+            )
+
+    operation = await create_operation(
+        kind,
+        params=params,
+        callback_url=_etsy_operation_callback_url(request),
+    )
+    try:
+        task_name = await dispatch_operation(operation)
+        operation["task_name"] = task_name
+        await db["durable_operations"].update_one(
+            {"_id": operation["_id"]},
+            {"$set": {"task_name": task_name, "updated_at": _now_utc()}},
+        )
+    except Exception as exc:
+        await db["durable_operations"].update_one(
+            {"_id": operation["_id"]},
+            {"$set": {"status": "failed", "error": str(exc), "finished_at": _now_utc(), "updated_at": _now_utc()}},
+        )
+        raise HTTPException(status_code=503, detail=f"Could not queue background operation: {exc}") from exc
+    return operation_for_response(operation)
+
+
+@router.get("/etsy-publish/operations/latest")
+async def etsy_publish_latest_operation(_authorized: None = Depends(require_authorized)):
+    operation = await get_latest_operation(kinds=sorted(ETSY_OPERATION_KINDS))
+    if not operation:
+        raise HTTPException(status_code=404, detail="No background operations found")
+    return operation_for_response(operation)
+
+
+@router.get("/etsy-publish/operations/{operation_id}")
+async def etsy_publish_get_operation(
+    operation_id: str,
+    _authorized: None = Depends(require_authorized),
+):
+    operation = await get_operation(operation_id)
+    if not operation:
+        raise HTTPException(status_code=404, detail="Background operation not found")
+    return operation_for_response(operation)
+
+
+@router.post("/etsy-publish/operations/{operation_id}/pause")
+async def etsy_publish_pause_operation(
+    operation_id: str,
+    _authorized: None = Depends(require_authorized),
+):
+    operation = await request_pause(operation_id)
+    if not operation:
+        raise HTTPException(status_code=404, detail="Background operation not found")
+    return operation_for_response(operation)
+
+
+@router.post("/etsy-publish/operations/{operation_id}/resume", status_code=202)
+async def etsy_publish_resume_operation(
+    operation_id: str,
+    _authorized: None = Depends(require_authorized),
+):
+    operation = await resume_operation(operation_id)
+    if not operation:
+        existing = await get_operation(operation_id)
+        if not existing:
+            raise HTTPException(status_code=404, detail="Background operation not found")
+        raise HTTPException(status_code=409, detail=f"Operation cannot resume from {existing.get('status')}")
+    try:
+        await dispatch_operation(operation)
+    except Exception as exc:
+        await db["durable_operations"].update_one(
+            {"_id": operation_id},
+            {"$set": {"status": "failed", "error": str(exc), "updated_at": _now_utc()}},
+        )
+        raise HTTPException(status_code=503, detail=f"Could not resume operation: {exc}") from exc
+    return operation_for_response(operation)
+
+
+@router.post("/etsy-publish/operations/{operation_id}/execute")
+async def etsy_publish_execute_operation(operation_id: str, request: Request):
+    _require_operation_worker(request)
+    operation = await claim_operation(operation_id)
+    if not operation:
+        existing = await get_operation(operation_id)
+        if not existing:
+            raise HTTPException(status_code=404, detail="Background operation not found")
+        return {"ok": True, "claimed": False, "status": existing.get("status")}
+
+    lease_token = str(operation["lease_token"])
+    try:
+        should_continue, updates = await _advance_etsy_operation(operation)
+        latest = await get_operation(operation_id)
+        pause_requested = bool(latest and latest.get("status") == "pause_requested")
+        next_status = "paused" if pause_requested else ("queued" if should_continue else "completed")
+        released = await release_operation(
+            operation_id,
+            lease_token,
+            status=next_status,
+            updates=updates,
+        )
+        if should_continue and not pause_requested and released:
+            await dispatch_operation(released)
+        return {"ok": True, "status": next_status, "operation": operation_for_response(released)}
+    except Exception as exc:
+        retry_count = int(request.headers.get("X-CloudTasks-TaskRetryCount") or 0)
+        terminal = retry_count >= 4
+        await record_retryable_error(
+            operation_id,
+            lease_token,
+            error=_exception_details(exc),
+            terminal=terminal,
+        )
+        raise HTTPException(status_code=500, detail=str(exc)) from exc

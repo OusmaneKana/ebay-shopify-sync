@@ -12,6 +12,7 @@ All endpoints return a consistent envelope:
 
 GET /audit/summary                → all audits in one call (for Telegram daily digest)
 GET /audit/sold-still-live        → Etsy listings for products sold on eBay
+GET /audit/zero-quantity-unverified → zero-quantity products without eBay sale evidence
 GET /audit/duplicates             → SKUs with multiple active Etsy listings
 GET /audit/missing-skus           → Etsy listings with no SKU set
 GET /audit/unlinked               → Etsy listings not linked to normalized DB
@@ -45,8 +46,66 @@ def _status(count: int, warn: int = 1, crit: int = 5) -> str:
 
 # ── helpers ──────────────────────────────────────────────────────────────────
 
-async def _audit_sold_still_live() -> dict:
-    """Active Etsy listings for products where qty=0 in normalized DB."""
+def _positive_int(value) -> bool:
+    try:
+        return int(value or 0) > 0
+    except (TypeError, ValueError):
+        return False
+
+
+def _collect_ebay_sale_evidence(
+    skus: set[str],
+    raw_docs: list[dict],
+    event_docs: list[dict],
+    insight_snapshots: list[dict],
+) -> tuple[dict[str, set[str]], dict[str, dict]]:
+    """Return confirmed sale sources and the newest eBay snapshot per SKU.
+
+    A zero quantity alone is deliberately not sale evidence: the active-list
+    sync also sets ended or missing listings to zero. Evidence must come from
+    eBay's QuantitySold field, a persisted eBay sale event, or order/sale data
+    retained in an Insights snapshot.
+    """
+    evidence: dict[str, set[str]] = {sku: set() for sku in skus}
+    latest_listing: dict[str, dict] = {}
+
+    for document in raw_docs:
+        raw = document.get("raw") or {}
+        sku = str(raw.get("SKU") or document.get("sku") or document.get("_id") or "")
+        if sku in evidence and _positive_int(raw.get("QuantitySold")):
+            evidence[sku].add("ebay_quantity_sold")
+
+    for event in event_docs:
+        sku = str(event.get("sku") or "")
+        if (
+            sku in evidence
+            and event.get("source_channel") == "ebay"
+            and event.get("type") == "sale"
+            and _positive_int(event.get("quantity_sold"))
+        ):
+            evidence[sku].add("ebay_sale_event")
+
+    # Snapshots are supplied newest first. Keep the first listing snapshot for
+    # display, while retaining sale evidence from any historical snapshot.
+    for snapshot in insight_snapshots:
+        for product in snapshot.get("products") or []:
+            sku = str(product.get("sku") or "")
+            if sku not in evidence:
+                continue
+            latest_listing.setdefault(sku, product)
+            if (
+                _positive_int(product.get("lifetime_sold"))
+                or _positive_int(product.get("orders"))
+                or _positive_int(product.get("units"))
+                or bool(product.get("sold_at"))
+            ):
+                evidence[sku].add("ebay_orders")
+
+    return evidence, latest_listing
+
+
+async def _audit_etsy_zero_quantity() -> tuple[dict, dict]:
+    """Split active Etsy/zero-quantity records by confirmed eBay sale evidence."""
     listings = await db.etsy_listings_investigation.find(
         {"listing_state": {"$in": ETSY_ACTIVE_STATES}},
         {"listing_id": 1, "title": 1, "listing_state": 1, "raw.skus": 1},
@@ -58,28 +117,106 @@ async def _audit_sold_still_live() -> dict:
         {"channels.etsy.listing_id": 1, "sku": 1, "title": 1},
     ).to_list(length=None)
 
-    sold_lids = {d["channels"]["etsy"]["listing_id"] for d in sold_norms}
-    sold_norm_map = {d["channels"]["etsy"]["listing_id"]: d for d in sold_norms}
+    zero_lids = {d["channels"]["etsy"]["listing_id"] for d in sold_norms}
+    zero_norm_map = {d["channels"]["etsy"]["listing_id"]: d for d in sold_norms}
+    skus = {str(d.get("sku") or d.get("_id")) for d in sold_norms}
 
-    items = []
+    raw_docs = []
+    event_docs = []
+    insight_snapshots = []
+    if skus:
+        raw_docs = await db.product_raw.find(
+            {"_id": {"$in": list(skus)}},
+            {
+                "sku": 1,
+                "raw.SKU": 1,
+                "raw.QuantityAvailable": 1,
+                "raw.QuantitySold": 1,
+            },
+        ).to_list(length=None)
+        event_docs = await db.inventory_events.find(
+            {
+                "sku": {"$in": list(skus)},
+                "source_channel": "ebay",
+                "type": "sale",
+                "quantity_sold": {"$gt": 0},
+            },
+            {"sku": 1, "source_channel": 1, "type": 1, "quantity_sold": 1},
+        ).to_list(length=None)
+        insight_snapshots = await db.ebay_insight_snapshots.find(
+            {"products.sku": {"$in": list(skus)}},
+            {
+                "captured_at": 1,
+                "products.sku": 1,
+                "products.state": 1,
+                "products.quantity": 1,
+                "products.lifetime_sold": 1,
+                "products.orders": 1,
+                "products.units": 1,
+                "products.sold_at": 1,
+            },
+        ).sort("captured_at", -1).to_list(length=None)
+
+    sale_evidence, latest_ebay = _collect_ebay_sale_evidence(
+        skus, raw_docs, event_docs, insight_snapshots
+    )
+    raw_by_sku = {
+        str((d.get("raw") or {}).get("SKU") or d.get("sku") or d.get("_id")): d
+        for d in raw_docs
+    }
+
+    sold_items = []
+    unverified_items = []
     for d in listings:
         lid = d["listing_id"]
-        if lid in sold_lids:
-            norm = sold_norm_map[lid]
-            items.append({
+        if lid in zero_lids:
+            norm = zero_norm_map[lid]
+            sku = str(norm.get("sku") or norm.get("_id"))
+            item = {
                 "listing_id": lid,
                 "listing_state": d.get("listing_state"),
-                "sku": norm.get("sku") or str(norm.get("_id")),
+                "sku": sku,
                 "title": (d.get("title") or "")[:80],
-            })
+            }
+            sources = sorted(sale_evidence.get(sku) or [])
+            if sources:
+                item["sale_evidence"] = sources
+                sold_items.append(item)
+            else:
+                raw = (raw_by_sku.get(sku) or {}).get("raw") or {}
+                ebay = latest_ebay.get(sku) or {}
+                item.update({
+                    "ebay_state": ebay.get("state") or "unknown",
+                    "ebay_quantity": ebay.get("quantity"),
+                    "ebay_quantity_sold": raw.get("QuantitySold"),
+                })
+                unverified_items.append(item)
 
-    return {
+    sold_audit = {
         "audit": "sold_still_live",
-        "status": _status(len(items), warn=1, crit=3),
-        "count": len(items),
-        "items": items[:10],
+        "status": _status(len(sold_items), warn=1, crit=3),
+        "count": len(sold_items),
+        "items": sold_items[:10],
         "ran_at": _now_iso(),
     }
+    unverified_audit = {
+        "audit": "zero_quantity_unverified",
+        "status": _status(len(unverified_items), warn=1, crit=3),
+        "count": len(unverified_items),
+        "items": unverified_items[:10],
+        "ran_at": _now_iso(),
+    }
+    return sold_audit, unverified_audit
+
+
+async def _audit_sold_still_live() -> dict:
+    sold, _ = await _audit_etsy_zero_quantity()
+    return sold
+
+
+async def _audit_zero_quantity_unverified() -> dict:
+    _, unverified = await _audit_etsy_zero_quantity()
+    return unverified
 
 
 async def _audit_duplicates() -> dict:
@@ -277,6 +414,11 @@ async def audit_sold_still_live():
     return await _audit_sold_still_live()
 
 
+@router.get("/zero-quantity-unverified")
+async def audit_zero_quantity_unverified():
+    return await _audit_zero_quantity_unverified()
+
+
 @router.get("/duplicates")
 async def audit_duplicates():
     return await _audit_duplicates()
@@ -310,14 +452,15 @@ async def audit_summary():
     """
     import asyncio
 
-    results = await asyncio.gather(
-        _audit_sold_still_live(),
+    zero_quantity_audits, *results = await asyncio.gather(
+        _audit_etsy_zero_quantity(),
         _audit_duplicates(),
         _audit_missing_skus(),
         _audit_unlinked(),
         _audit_publish_queue(),
         _audit_low_res_images(),
     )
+    results = [*zero_quantity_audits, *results]
 
     audits = {r["audit"]: r for r in results}
 
@@ -337,6 +480,7 @@ async def audit_summary():
         f"📊 *Daily Store Audit* — {datetime.now(timezone.utc).strftime('%b %d, %Y')}",
         "",
         f"{STATUS_EMOJI[audits['sold_still_live']['status']]} Sold still live on Etsy: *{audits['sold_still_live']['count']}*",
+        f"{STATUS_EMOJI[audits['zero_quantity_unverified']['status']]} Zero quantity, sale unverified: *{audits['zero_quantity_unverified']['count']}*",
         f"{STATUS_EMOJI[audits['duplicates']['status']]} Duplicate Etsy listings: *{audits['duplicates']['count']}*",
         f"{STATUS_EMOJI[audits['missing_skus']['status']]} Missing SKUs: *{audits['missing_skus']['count']}*",
         f"{STATUS_EMOJI[audits['unlinked']['status']]} Unlinked listings: *{audits['unlinked']['count']}*",

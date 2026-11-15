@@ -187,8 +187,13 @@
     const AUDIT_META = {
       sold_still_live: {
         title: 'Sold, still listed',
-        description: 'Zero-quantity products that still have an Etsy listing.',
-        preferred: ['sku', 'listing_id', 'listing_state', 'title']
+        description: 'Products with confirmed eBay sale evidence that still have an active Etsy listing.',
+        preferred: ['sku', 'sale_evidence', 'listing_id', 'listing_state', 'title']
+      },
+      zero_quantity_unverified: {
+        title: 'Zero quantity, sale unverified',
+        description: 'Zero-quantity products with an active Etsy listing but no confirmed eBay sale evidence.',
+        preferred: ['sku', 'ebay_state', 'ebay_quantity', 'ebay_quantity_sold', 'listing_id', 'title']
       },
       duplicates: {
         title: 'Duplicate listings',

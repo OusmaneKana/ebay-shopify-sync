@@ -15,6 +15,17 @@ class _Cursor:
 
 
 class EtsyPublishOrderTests(unittest.IsolatedAsyncioTestCase):
+    def test_review_media_only_accepts_http_images_and_numeric_ebay_ids(self):
+        self.assertEqual(
+            reporting._first_http_image([], ["javascript:alert(1)", "https://i.ebayimg.com/item.jpg"]),
+            "https://i.ebayimg.com/item.jpg",
+        )
+        self.assertEqual(
+            reporting._ebay_listing_url("158217264758"),
+            "https://www.ebay.com/itm/158217264758",
+        )
+        self.assertIsNone(reporting._ebay_listing_url("EB-158217264758"))
+
     def test_recency_uses_ebay_listing_date_before_fallback_dates(self):
         raw_posted_at = datetime(2026, 10, 8, tzinfo=timezone.utc)
         normalized_posted_at = datetime(2026, 10, 7, tzinfo=timezone.utc)

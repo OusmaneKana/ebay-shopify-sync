@@ -21,6 +21,7 @@ EBAY_TOKEN_URL = "https://api.ebay.com/identity/v1/oauth2/token"
 #
 EBAY_SCOPES = [
     "https://api.ebay.com/oauth/api_scope",
+    "https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly",
     "https://api.ebay.com/oauth/api_scope/sell.analytics.readonly",
     "https://api.ebay.com/oauth/api_scope/sell.marketing.readonly",
 ]
