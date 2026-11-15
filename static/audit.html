@@ -49,6 +49,7 @@
     button:hover, a.btn:hover { border-color: var(--accent); transform: translateY(-1px); }
     button:disabled { cursor: wait; opacity: .65; transform: none; }
     button.primary { border-color: var(--accent); background: rgba(14, 116, 144, .2); }
+    button.danger { border-color: var(--critical); color: #fecdd3; background: rgba(159, 18, 57, .2); }
 
     .topbar, .hero, .filterbar, .section-heading {
       display: flex;
@@ -99,6 +100,7 @@
     .audit-card { overflow: hidden; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); }
     .audit-card[data-hidden="true"] { display: none; }
     .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 17px 13px; }
+    .card-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
     .card-title { margin: 0; font-size: 16px; }
     .card-description { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
     .count { min-width: 44px; text-align: center; padding: 5px 9px; border: 1px solid currentColor; border-radius: 999px; font-weight: 750; }
@@ -116,6 +118,9 @@
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
     .cell-title { min-width: 170px; max-width: 330px; }
     .tag { display: inline-block; margin: 1px 3px 1px 0; padding: 2px 6px; border-radius: 999px; background: rgba(148, 163, 184, .12); white-space: nowrap; }
+    .action-result { margin: 0; padding: 10px 17px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
+    .action-result.success { color: var(--ok); }
+    .action-result.error { color: #fecdd3; }
 
     .error-box { display: none; margin-top: 16px; padding: 15px; border: 1px solid var(--critical); border-radius: 13px; color: #fecdd3; background: rgba(159, 18, 57, .16); }
     .error-box.visible { display: block; }
@@ -224,6 +229,8 @@
 
     let currentAudits = {};
     let activeFilter = 'all';
+    let bulkActionMessage = '';
+    let bulkActionState = '';
 
     const escapeHtml = (value) => String(value ?? '')
       .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
@@ -262,13 +269,19 @@
         ? `<div class="table-wrap"><table><thead><tr>${columns.map(column => `<th>${escapeHtml(labelFor(column))}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`
         : `<div class="empty">✓ No issues found in this check.</div>`;
       const truncated = count > items.length ? `<div class="empty" style="color:var(--muted)">Showing ${items.length} of ${count} results returned by the audit preview.</div>` : '';
+      const action = key === 'sold_still_live' && count > 0
+        ? `<button class="danger" type="button" data-action="deactivate-sold">Deactivate all ${count} on Etsy</button>`
+        : '';
+      const actionResult = key === 'sold_still_live' && bulkActionMessage
+        ? `<p class="action-result ${escapeHtml(bulkActionState)}">${escapeHtml(bulkActionMessage)}</p>`
+        : '';
 
       return `<article class="audit-card ${status}" data-status="${status}">
         <div class="card-header">
           <div><h2 class="card-title">${escapeHtml(meta.title)}</h2><p class="card-description">${escapeHtml(meta.description)}</p></div>
-          <div class="count" title="${count} result${count === 1 ? '' : 's'}">${count}</div>
+          <div class="card-actions">${action}<div class="count" title="${count} result${count === 1 ? '' : 's'}">${count}</div></div>
         </div>
-        ${details}${truncated}
+        ${actionResult}${details}${truncated}
       </article>`;
     }
 
@@ -302,15 +315,54 @@
         .filter(key => currentAudits[key])
         .map(key => renderAuditCard(key, currentAudits[key]))
         .join('') || '<div class="empty">No audit checks were returned.</div>';
+      document.querySelector('[data-action="deactivate-sold"]')?.addEventListener('click', deactivateSoldListings);
       applyFilter();
     }
 
-    async function loadAudit() {
+    async function deactivateSoldListings(event) {
+      const count = Number(currentAudits.sold_still_live?.count) || 0;
+      if (!count) return;
+      const confirmed = window.confirm(
+        `Deactivate all ${count} confirmed sold listing${count === 1 ? '' : 's'} on Etsy?\n\n` +
+        'They will no longer be searchable or purchasable. This does not delete the product record.'
+      );
+      if (!confirmed) return;
+
+      const button = event.currentTarget;
+      button.disabled = true;
+      button.textContent = 'Deactivating…';
+      bulkActionMessage = '';
+      bulkActionState = '';
+      try {
+        const response = await fetch('/audit/sold-still-live/deactivate-all', {
+          method: 'POST',
+          headers: { Accept: 'application/json' }
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.detail || `Bulk action failed (${response.status})`);
+
+        bulkActionState = result.failed ? 'error' : 'success';
+        bulkActionMessage = result.failed
+          ? `Deactivated ${result.deactivated} listing${result.deactivated === 1 ? '' : 's'}; ${result.failed} failed. Refreshing the audit…`
+          : `Deactivated ${result.deactivated} listing${result.deactivated === 1 ? '' : 's'} on Etsy. Refreshing the audit…`;
+        await loadAudit({ preserveActionMessage: true });
+      } catch (error) {
+        bulkActionState = 'error';
+        bulkActionMessage = error.message;
+        render({ audits: currentAudits, ran_at: new Date().toISOString() });
+      }
+    }
+
+    async function loadAudit({ preserveActionMessage = false } = {}) {
       const refresh = document.getElementById('refresh');
       const errorBox = document.getElementById('errorBox');
       refresh.disabled = true;
       refresh.textContent = 'Running…';
       errorBox.classList.remove('visible');
+      if (!preserveActionMessage) {
+        bulkActionMessage = '';
+        bulkActionState = '';
+      }
       try {
         const response = await fetch('/audit/summary', { headers: { Accept: 'application/json' } });
         if (!response.ok) throw new Error(`Audit request failed (${response.status})`);

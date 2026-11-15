@@ -23,8 +23,10 @@ GET /audit/low-res-images         → Shopify products with non-_32 image URLs
 import logging
 from datetime import datetime, timezone
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from app.database.mongo import db
+from app.security.passkey import require_authorized
+from app.services.multichannel_sync_service import _push_etsy_quantity
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -104,11 +106,11 @@ def _collect_ebay_sale_evidence(
     return evidence, latest_listing
 
 
-async def _audit_etsy_zero_quantity() -> tuple[dict, dict]:
+async def _audit_etsy_zero_quantity(*, include_all_items: bool = False) -> tuple[dict, dict]:
     """Split active Etsy/zero-quantity records by confirmed eBay sale evidence."""
     listings = await db.etsy_listings_investigation.find(
         {"listing_state": {"$in": ETSY_ACTIVE_STATES}},
-        {"listing_id": 1, "title": 1, "listing_state": 1, "raw.skus": 1},
+        {"listing_id": 1, "shop_id": 1, "title": 1, "listing_state": 1, "raw.skus": 1},
     ).to_list(length=None)
 
     listing_ids = [d["listing_id"] for d in listings]
@@ -174,6 +176,7 @@ async def _audit_etsy_zero_quantity() -> tuple[dict, dict]:
             sku = str(norm.get("sku") or norm.get("_id"))
             item = {
                 "listing_id": lid,
+                "shop_id": d.get("shop_id"),
                 "listing_state": d.get("listing_state"),
                 "sku": sku,
                 "title": (d.get("title") or "")[:80],
@@ -196,14 +199,14 @@ async def _audit_etsy_zero_quantity() -> tuple[dict, dict]:
         "audit": "sold_still_live",
         "status": _status(len(sold_items), warn=1, crit=3),
         "count": len(sold_items),
-        "items": sold_items[:10],
+        "items": sold_items if include_all_items else sold_items[:10],
         "ran_at": _now_iso(),
     }
     unverified_audit = {
         "audit": "zero_quantity_unverified",
         "status": _status(len(unverified_items), warn=1, crit=3),
         "count": len(unverified_items),
-        "items": unverified_items[:10],
+        "items": unverified_items if include_all_items else unverified_items[:10],
         "ran_at": _now_iso(),
     }
     return sold_audit, unverified_audit
@@ -217,6 +220,135 @@ async def _audit_sold_still_live() -> dict:
 async def _audit_zero_quantity_unverified() -> dict:
     _, unverified = await _audit_etsy_zero_quantity()
     return unverified
+
+
+def _listing_id_candidates(listing_id) -> list:
+    """Match listing IDs stored as either strings or integers."""
+    values = [listing_id]
+    text = str(listing_id or "").strip()
+    if text and text not in values:
+        values.append(text)
+    if text.isdigit() and int(text) not in values:
+        values.append(int(text))
+    return values
+
+
+async def _record_etsy_deactivation(sku: str, listing_id) -> None:
+    """Update local snapshots after Etsy confirms a listing deactivation."""
+    confirmed_at = datetime.now(timezone.utc)
+    candidates = _listing_id_candidates(listing_id)
+    await db.product_normalized.update_one(
+        {
+            "$or": [
+                {"_id": sku},
+                {"sku": sku},
+                {"channels.etsy.listing_id": {"$in": candidates}},
+            ]
+        },
+        {
+            "$set": {
+                "channels.etsy.listing_state": "inactive",
+                "channels.etsy.quantity": 0,
+                "channels.etsy.last_inventory_sync_at": confirmed_at,
+            }
+        },
+    )
+    await db.etsy_listings_investigation.update_one(
+        {"listing_id": {"$in": candidates}},
+        {
+            "$set": {
+                "listing_state": "inactive",
+                "quantity": 0,
+                "deactivation_confirmed_at": confirmed_at,
+            }
+        },
+    )
+
+
+async def _deactivate_all_sold_still_live() -> dict:
+    """Re-audit and deactivate every currently eligible Etsy listing."""
+    sold_audit, _ = await _audit_etsy_zero_quantity(include_all_items=True)
+    results = []
+    deactivated = 0
+    failed = 0
+
+    for item in sold_audit["items"]:
+        listing_id = item.get("listing_id")
+        sku = str(item.get("sku") or "").strip()
+        candidates = _listing_id_candidates(listing_id)
+        normalized = await db.product_normalized.find_one(
+            {"channels.etsy.listing_id": {"$in": candidates}}
+        )
+        if not normalized:
+            failed += 1
+            results.append({
+                "listing_id": listing_id,
+                "sku": sku,
+                "ok": False,
+                "error": "normalized_product_not_found",
+            })
+            continue
+
+
+        try:
+            current_quantity = int(normalized.get("quantity"))
+        except (TypeError, ValueError):
+            current_quantity = None
+        if current_quantity != 0:
+            failed += 1
+            results.append({
+                "listing_id": listing_id,
+                "sku": sku,
+                "ok": False,
+                "error": "product_no_longer_zero_quantity",
+            })
+            continue
+
+        # Older normalized links may not include shop_id even though the audit
+        # snapshot does. Supply it to the existing Etsy deactivation routine.
+        etsy_channel = ((normalized.get("channels") or {}).get("etsy") or {})
+        if not etsy_channel.get("shop_id") and item.get("shop_id"):
+            normalized = {
+                **normalized,
+                "channels": {
+                    **(normalized.get("channels") or {}),
+                    "etsy": {**etsy_channel, "shop_id": item["shop_id"]},
+                },
+            }
+
+        try:
+            ok, error = await _push_etsy_quantity(normalized, 0)
+            if not ok:
+                failed += 1
+                results.append({
+                    "listing_id": listing_id,
+                    "sku": sku,
+                    "ok": False,
+                    "error": error or "etsy_deactivation_failed",
+                })
+                continue
+
+            await _record_etsy_deactivation(sku, listing_id)
+            deactivated += 1
+            results.append({"listing_id": listing_id, "sku": sku, "ok": True})
+        except Exception as exc:  # pragma: no cover - defensive per-listing isolation
+            logger.exception("Failed to deactivate sold Etsy listing %s", listing_id)
+            failed += 1
+            results.append({
+                "listing_id": listing_id,
+                "sku": sku,
+                "ok": False,
+                "error": str(exc),
+            })
+
+    return {
+        "ok": failed == 0,
+        "eligible": sold_audit["count"],
+        "deactivated": deactivated,
+        "failed": failed,
+        "results": results,
+        "ran_at": _now_iso(),
+    }
 
 
 async def _audit_duplicates() -> dict:
@@ -412,6 +544,15 @@ async def _audit_low_res_images() -> dict:
 @router.get("/sold-still-live")
 async def audit_sold_still_live():
     return await _audit_sold_still_live()
+
+
+@router.post(
+    "/sold-still-live/deactivate-all",
+    dependencies=[Depends(require_authorized)],
+)
+async def deactivate_all_sold_still_live():
+    """Deactivate all Etsy listings that the current audit confirms as sold."""
+    return await _deactivate_all_sold_still_live()
 
 
 @router.get("/zero-quantity-unverified")
